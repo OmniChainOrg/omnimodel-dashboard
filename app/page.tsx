@@ -1,6 +1,8 @@
 import SimulationAnchorFeed from './SimulationAnchorFeed'
 import ValidatorExplorer from './ValidatorExplorer'
 
+// ValidatorExplorer UI activated
+
 export default function Home() {
   return (
     <main className="p-8 space-y-8">
