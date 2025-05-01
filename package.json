@@ -19,3 +19,11 @@
     "postcss": "^8.4.0"
   }
 }
+
+"devDependencies": {
+  "autoprefixer": "^10.4.0",
+  "postcss": "^8.4.0",
+  "typescript": "^5.2.2",
+  "@types/react": "^18.2.15",
+  "@types/node": "^20.6.0"
+}
