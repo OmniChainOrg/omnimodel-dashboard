@@ -1,1 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styling */
+body {
+  @apply bg-background text-foreground font-sans antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply text-primary font-semibold;
+}
+
+.card {
+  @apply p-4 rounded-xl shadow-md bg-white;
+}
 
