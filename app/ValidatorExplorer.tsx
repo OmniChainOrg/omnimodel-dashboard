@@ -29,7 +29,7 @@ export default function ValidatorExplorer() {
           <p className="text-sm text-gray-700">Zone: {v.zone || 'Unassigned'}</p>
           <p className="text-sm text-gray-700">Plugins: {v.plugins.join(', ')}</p>
           <p className="text-xs text-gray-500 break-all mt-2">PubKey: {v.public_key}</p>
-          {v.last_sync && <p className="text-xs text-green-600 mt-1">Last sync: {v.last_sync}</p>}
+          {v.last_sync && <p className=\"text-xs text-green-600 mt-1\">Last sync: {v.last_sync}</p>}
         </div>
       ))}
     </section>
