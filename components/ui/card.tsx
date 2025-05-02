@@ -1,4 +1,3 @@
-ls components/ui/
 import * as React from "react"
 
 export const Card = React.forwardRef<
