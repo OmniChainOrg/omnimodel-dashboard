@@ -7,5 +7,5 @@ export function Badge({ children, variant = "default" }) {
     outline: "border border-gray-300 text-gray-800",
     destructive: "bg-red-100 text-red-800"
   };
-  return <span className={\`\${base} \${variants[variant] || variants.default}\`}>{children}</span>;
+  return <span className={`${base} ${variants[variant] || variants.default}`}>{children}</span>;
 }
