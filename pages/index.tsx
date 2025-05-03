@@ -1,5 +1,4 @@
-import ChainExplorerDashboard from "../components/ChainExplorerDashboard";
+import ChronoMatchPanel from "@/components/ChronoMatchPanel";
 
-export default function Home() {
-  return <ChainExplorerDashboard />;
-}
+// Then somewhere inside the return:
+<ChronoMatchPanel />
