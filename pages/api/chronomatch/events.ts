@@ -1,35 +1,28 @@
-import os
+// Simulates dynamic ChronoMatch™ validator events with zone activity
 
-# Recreate directory structure after kernel reset
-os.makedirs("/mnt/data/pages/api/chronomatch", exist_ok=True)
-os.makedirs("/mnt/data/components/ui", exist_ok=True)
+const validators = ["Validator-5", "Validator-12", "Validator-X", "Validator-8"];
+const zones = ["LongevityZone™", "BIODEFMatch™", "NeuroAdapt™", "ImmunoMeta™"];
+const actions = [
+  "crosslink registered",
+  "biomarker sync",
+  "zone anomaly detected",
+  "validator handshake",
+  "predictive consensus update",
+];
 
-# API file: /pages/api/chronomatch/events.ts
-api_file_content = '''// pages/api/chronomatch/events.ts
+function generateEvent() {
+  const now = Date.now();
+  return {
+    timestamp: now - Math.floor(Math.random() * 300000), // Up to 5 mins ago
+    agent: validators[Math.floor(Math.random() * validators.length)],
+    action: actions[Math.floor(Math.random() * actions.length)],
+    zone: zones[Math.floor(Math.random() * zones.length)],
+    severity: ["info", "warning", "critical"][Math.floor(Math.random() * 3)],
+    tx_id: `0x${Math.random().toString(16).substr(2, 8)}...${Math.random().toString(16).substr(2, 6)}`,
+  };
+}
 
 export default function handler(req, res) {
-  res.status(200).json([
-    {
-      event_id: "tx-8842a",
-      type: "Neoantigen Match",
-      timestamp: Date.now() - 3600000,
-      matched_zone: "LongevityZone",
-      confidence: "0.92"
-    },
-    {
-      event_id: "tx-5210b",
-      type: "Immuno Response Alignment",
-      timestamp: Date.now() - 1800000,
-      matched_zone: "BIODEFMatch",
-      confidence: "0.88"
-    },
-    {
-      event_id: "tx-9023z",
-      type: "Cellular Drift Sync",
-      timestamp: Date.now(),
-      matched_zone: "ChronoZone",
-      confidence: "0.97"
-    }
-  ]);
+  const events = Array.from({ length: 5 }, generateEvent);
+  res.status(200).json(events);
 }
-'''
