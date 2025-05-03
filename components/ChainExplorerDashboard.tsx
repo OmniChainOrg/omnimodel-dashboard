@@ -1,3 +1,4 @@
+import ChronoMatchPanel from "@/components/ChronoMatchPanel";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -124,3 +125,11 @@ export default function ChainExplorerDashboard() {
     </div>
   );
 }
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="col-span-3 mt-4"
+>
+  <ChronoMatchPanel />
+</motion.div>
