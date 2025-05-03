@@ -1,9 +1,8 @@
 [build]
-command = "npm run build"
-publish = ".next"
+  command = "npm run build"
+  publish = ".next"
 
-[context.production.environment]
-  NODE_VERSION = "18"
-  API_URL = "https://api.omnichain.devnet2/"
-  CHAIN_ID = "omnichain-devnet-2"
-  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
