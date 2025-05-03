@@ -8,13 +8,15 @@
     "start": "next start"
   },
   "dependencies": {
+    "framer-motion": "latest",
+    "lucide-react": "latest",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "lucide-react": "latest",
-    "framer-motion": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
+    "@types/node": "22.15.3",
+    "@types/react": "19.1.2",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.24",
     "tailwindcss": "^3.3.2",
