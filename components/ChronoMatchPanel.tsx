@@ -47,7 +47,6 @@ export default function ChronoMatchPanel() {
 }
 '''
 
-# Write both files
 with open("/mnt/data/pages/api/chronomatch/events.ts", "w") as f:
     f.write(api_file_content)
 
