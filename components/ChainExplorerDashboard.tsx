@@ -125,11 +125,12 @@ export default function ChainExplorerDashboard() {
     </div>
   );
 }
-
+{/* ChronoMatch™ Panel */}
 <motion.div
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
-  className="col-span-3 mt-4"
+  className="col-span-3"
 >
   <ChronoMatchPanel />
 </motion.div>
+
