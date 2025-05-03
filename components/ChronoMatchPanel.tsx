@@ -1,6 +1,3 @@
-# UI file: /components/ChronoMatchPanel.tsx
-ui_file_content = '''// components/ChronoMatchPanel.tsx
-
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
