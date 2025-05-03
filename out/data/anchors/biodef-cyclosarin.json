@@ -1,9 +1,0 @@
-{
-    "subnet": "BIODEFMatch\u2122",
-    "zone_id": "zone-biodef-002",
-    "validator": "TeslaDuo_Validator",
-    "molecule": "Cyclosarin",
-    "plugin": "biohazard_sim.py",
-    "timestamp_utc": "2025-05-01T01:27:43",
-    "simulation_hash": "76c7fa5d11bff7f29265d1bfe67c56b07d1a382ef46ec1b54b2f56730c35e0ab"
-}

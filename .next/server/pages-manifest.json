@@ -1,6 +1,9 @@
 {
-  "/": "pages/index.html",
   "/_app": "pages/_app.js",
+  "/api/model_provenance/latest": "pages/api/model_provenance/latest.js",
+  "/api/simulation_trace/latest": "pages/api/simulation_trace/latest.js",
+  "/api/validators": "pages/api/validators.js",
+  "/": "pages/index.html",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/404": "pages/404.html"

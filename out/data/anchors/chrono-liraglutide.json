@@ -1,9 +1,0 @@
-{
-    "subnet": "ChronoMatch\u2122",
-    "zone_id": "zone-chrono-001",
-    "validator": "TheraVacNode",
-    "molecule": "Liraglutide",
-    "plugin": "chrono_formulator.py",
-    "timestamp_utc": "2025-05-01T01:27:43",
-    "simulation_hash": "189ad6e213f2fa7d93e9fbc84976ad458e6b9359c897c725cb9c4a30aa88a918"
-}

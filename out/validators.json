@@ -1,9 +1,0 @@
-[
-  {
-    "moniker": "MatrixedCore",
-    "public_key": "omnipub1xyz...",
-    "plugins": ["model_checker.py"],
-    "zone": "ChronoMatch™",
-    "last_sync": "2025-05-01T01:27:43"
-  }
-]

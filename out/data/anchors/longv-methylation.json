@@ -1,9 +1,0 @@
-{
-    "subnet": "LongevityZone\u2122",
-    "zone_id": "zone-longev-003",
-    "validator": "MatrixedCore",
-    "molecule": "Centenarian Methylation Signature",
-    "plugin": "aging_ai.py",
-    "timestamp_utc": "2025-05-01T01:27:43",
-    "simulation_hash": "1c2926473625a291e21d837cfe99b1b3079c8fa9c4cfe85ff19e3c390ac024b5"
-}
