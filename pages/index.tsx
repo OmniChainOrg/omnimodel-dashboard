@@ -18,6 +18,9 @@ export default function Home() {
       
       {/* LongevityZone Panel */}
       <LongevityZonePanel />
+
+      {/* NEURODiag Panel */}
+      <NEURODiagPanel />
     </div>
   );
 }
