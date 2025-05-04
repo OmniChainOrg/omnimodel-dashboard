@@ -139,9 +139,9 @@ export default function ChainExplorerDashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="col-span-3"
-        >
-          <BIODEFMatchPanel />
-        </motion.div>
+      >
+        <BIODEFMatchPanel />
+      </motion.div>
     </div>
   );
 }
