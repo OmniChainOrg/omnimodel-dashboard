@@ -3,6 +3,7 @@
 import React from "react";
 import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
+import LongevityZonePanel from "../components/LongevityZonePanel";
 
 export default function Home() {
   return (
@@ -14,6 +15,15 @@ export default function Home() {
 
       {/* BIODEFMatch Panel */}
       <BIODEFMatchPanel />
+      
+      {/* LongevityZone Panel */}
+      <LongevityZonePanel />
     </div>
   );
 }
+
+
+
+// Inside the return block:
+
+
