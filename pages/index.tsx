@@ -21,6 +21,7 @@ export default function Home() {
 
       {/* NEURODiag Panel */}
       <NEURODiagPanel />
+      
     </div>
   );
 }
