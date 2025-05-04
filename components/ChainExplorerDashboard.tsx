@@ -4,6 +4,7 @@ import { Badge } from "../components/ui/badge";
 import { Loader2, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import ChronoMatchPanel from "../components/ChronoMatchPanel";
+import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
 
 export default function ChainExplorerDashboard() {
   const [simulationLog, setSimulationLog] = useState<any>(null);
@@ -132,6 +133,15 @@ export default function ChainExplorerDashboard() {
       >
         <ChronoMatchPanel />
       </motion.div>
+
+      {/* BIODEFMatch Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+        >
+          <BIODEFMatchPanel />
+        </motion.div>
     </div>
   );
 }
