@@ -4,6 +4,8 @@ import React from "react";
 import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
 import LongevityZonePanel from "../components/LongevityZonePanel";
+import NEURODiagPanel from "../components/NEURODiagPanel";
+
 
 export default function Home() {
   return (
