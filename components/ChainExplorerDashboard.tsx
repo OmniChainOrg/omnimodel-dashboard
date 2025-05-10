@@ -7,6 +7,7 @@ import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
 import LongevityZonePanel from "../components/LongevityZonePanel";
 import NEURODiagPanel from "../components/NEURODiagPanel";
+import OmniVestPanel from "../components/OmniVestPanel";
 
 export default function ChainExplorerDashboard() {
   const [simulationLog, setSimulationLog] = useState<any>(null);
@@ -161,6 +162,14 @@ export default function ChainExplorerDashboard() {
         className="col-span-3"
       >
         <NEURODiagPanel />
+
+      {/* OmniVest Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <OmniVestPanel />
       </motion.div>
 
       
