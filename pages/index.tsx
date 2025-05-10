@@ -5,6 +5,7 @@ import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
 import LongevityZonePanel from "../components/LongevityZonePanel";
 import NEURODiagPanel from "../components/NEURODiagPanel";
+import OmniVestPanel from "../components/OmniVestPanel";
 
 
 export default function Home() {
@@ -23,6 +24,9 @@ export default function Home() {
 
       {/* NEURODiag Panel */}
       <NEURODiagPanel />
+
+      {/* OmniVest Panel */}
+      <OmniVestPanel />
       
     </div>
   );
