@@ -25,10 +25,10 @@ export default function OmniVestPanel() {
 
   const filtered = events.filter(
     (e) =>
-      e.zone.toLowerCase().includes(search.toLowerCase()) ||
-      e.type.toLowerCase().includes(search.toLowerCase())
+      (e.zone || "").toLowerCase().includes(search.toLowerCase()) ||
+      (e.type || "").toLowerCase().includes(search.toLowerCase())
   );
-
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: -10 }}
