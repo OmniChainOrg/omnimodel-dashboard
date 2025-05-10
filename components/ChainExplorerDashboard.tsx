@@ -3,11 +3,11 @@ import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Loader2, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import OmniVestPanel from "../components/OmniVestPanel";
 import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
 import LongevityZonePanel from "../components/LongevityZonePanel";
 import NEURODiagPanel from "../components/NEURODiagPanel";
-import OmniVestPanel from "../components/OmniVestPanel";
 
 export default function ChainExplorerDashboard() {
   const [simulationLog, setSimulationLog] = useState<any>(null);
@@ -128,6 +128,15 @@ export default function ChainExplorerDashboard() {
         </Card>
       </motion.div>
 
+      {/* OmniVest Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <OmniVestPanel />
+      </motion.div>
+      
       {/* ChronoMatch Panel */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -162,15 +171,6 @@ export default function ChainExplorerDashboard() {
         className="col-span-3"
       >
         <NEURODiagPanel />
-      </motion.div>
-
-      {/* OmniVest Panel */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="col-span-3"
-      >
-        <OmniVestPanel />
       </motion.div>
 
       
