@@ -1,31 +1,29 @@
-// Simulates investment telemetry from the OmniVest™ zone
-
 export default function handler(req, res) {
   res.status(200).json([
     {
-      description: "Seed round committed to LongevityZone™ pilot study",
+      type: "Validator network expansion backed by Omniversalis Impact Fund",
       timestamp: Date.now(),
-      project: "LongevityZone™"
+      zone: "Validator Network"
     },
     {
-      description: "Impact allocation approved for NEURODiag™ community cohort",
+      type: "Seed round committed to LongevityZone™ pilot study",
       timestamp: Date.now(),
-      project: "NEURODiag™"
+      zone: "LongevityZone™"
     },
     {
-      description: "Validator network expansion backed by Omniversalis Impact Fund",
+      type: "Impact allocation approved for NEURODiag™ community cohort",
       timestamp: Date.now(),
-      project: "Validator Network"
+      zone: "NEURODiag™"
     },
     {
-      description: "Public-private partnership formed around BIODEFMatch™ screening",
+      type: "Strategic grant issued to ChronoMatch™ early detection study",
       timestamp: Date.now(),
-      project: "BIODEFMatch™"
+      zone: "ChronoMatch™"
     },
     {
-      description: "Strategic grant issued to ChronoMatch™ early detection study",
+      type: "Public-private partnership formed around BIODEFMatch™ screening",
       timestamp: Date.now(),
-      project: "ChronoMatch™"
+      zone: "BIODEFMatch™"
     }
   ]);
 }
