@@ -162,6 +162,7 @@ export default function ChainExplorerDashboard() {
         className="col-span-3"
       >
         <NEURODiagPanel />
+      </motion.div>
 
       {/* OmniVest Panel */}
       <motion.div
