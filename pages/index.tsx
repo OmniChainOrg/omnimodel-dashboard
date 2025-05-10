@@ -1,11 +1,11 @@
 // pages/index.tsx
 
 import React from "react";
+import OmniVestPanel from "../components/OmniVestPanel";
 import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
 import LongevityZonePanel from "../components/LongevityZonePanel";
 import NEURODiagPanel from "../components/NEURODiagPanel";
-import OmniVestPanel from "../components/OmniVestPanel";
 
 
 export default function Home() {
@@ -13,6 +13,9 @@ export default function Home() {
     <div className="p-6 font-sans space-y-6">
       <h1 className="text-3xl font-bold mb-4">OmniModel Dashboard</h1>
 
+      {/* OmniVest Panel */}
+      <OmniVestPanel />
+      
       {/* ChronoMatch Panel */}
       <ChronoMatchPanel />
 
@@ -24,9 +27,6 @@ export default function Home() {
 
       {/* NEURODiag Panel */}
       <NEURODiagPanel />
-
-      {/* OmniVest Panel */}
-      <OmniVestPanel />
       
     </div>
   );
