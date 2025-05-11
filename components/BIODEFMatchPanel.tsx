@@ -37,9 +37,10 @@ export default function BIODEFMatchPanel() {
             <Loader2 className="animate-spin w-6 h-6" />
           ) : (
             <div className="space-y-2">
-              events.map((event, idx) => <ExpandedEvent key={idx} event={event} />)
+              {events.map((event, idx) => (
+                <ExpandedEvent key={idx} event={event} />
+              ))}
             </div>
-          )}
         </CardContent>
       </Card>
     </motion.div>
