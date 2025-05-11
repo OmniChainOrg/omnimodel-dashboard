@@ -53,18 +53,9 @@ export default function OmniVestPanel() {
           {!filtered.length ? (
             <Loader2 className="animate-spin w-6 h-6 text-yellow-400 mx-auto" />
           ) : (
-            filtered.map((event, idx) => (
-              <div
-                key={idx}
-                className="py-2 border-b last:border-0 text-sm space-y-1"
-              >
-                <p className="font-medium">{event.type}</p>
-                <p className="text-muted-foreground">
-                  {new Date(event.timestamp).toLocaleString()}
-                </p>
-                <Badge>{event.zone}</Badge>
-              </div>
-            ))
+           filtered.map((event, idx) => (
+            <ExpandedEvent key={idx} event={event} />
+           ))
           )}
         </CardContent>
       </Card>
