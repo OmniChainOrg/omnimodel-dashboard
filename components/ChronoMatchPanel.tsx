@@ -42,7 +42,9 @@ export default function ChronoMatchPanel() {
             <p className="text-sm text-muted-foreground">No events logged yet.</p>
           ) : (
             <div className="space-y-2">
-              events.map((event, idx) => <ExpandedEvent key={idx} event={event} />)
+              {events.map((event, idx) => (
+                <ExpandedEvent key={idx} event={event} />
+              ))}
             </div>
           )}
         </CardContent>
