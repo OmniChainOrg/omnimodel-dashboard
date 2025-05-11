@@ -41,6 +41,7 @@ export default function BIODEFMatchPanel() {
                 <ExpandedEvent key={idx} event={event} />
               ))}
             </div>
+          )}
         </CardContent>
       </Card>
     </motion.div>
