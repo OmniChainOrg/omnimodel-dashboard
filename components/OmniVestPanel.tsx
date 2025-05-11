@@ -1,6 +1,6 @@
 // OmniVestPanel.tsx
 
-import ExpandedEvent from "./ExpandedEvent";
+import ExpandedEvent from "../ExpandedEvent";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
