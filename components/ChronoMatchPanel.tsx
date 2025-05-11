@@ -42,22 +42,7 @@ export default function ChronoMatchPanel() {
             <p className="text-sm text-muted-foreground">No events logged yet.</p>
           ) : (
             <div className="space-y-2">
-              {events.map((e, idx) => (
-                <div
-                  key={idx}
-                  className="border-b last:border-none pb-2 flex justify-between items-center"
-                >
-                  <div>
-                    <p className="font-medium">
-                      <span className="text-purple-600">{e.validator}</span> {e.action} in <strong>{e.zone}</strong>
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(e.timestamp).toLocaleString()}
-                    </p>
-                  </div>
-                  <Badge variant="outline">{e.zone}</Badge>
-                </div>
-              ))}
+              events.map((event, idx) => <ExpandedEvent key={idx} event={event} />)
             </div>
           )}
         </CardContent>
