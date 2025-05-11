@@ -37,17 +37,7 @@ export default function BIODEFMatchPanel() {
             <Loader2 className="animate-spin w-6 h-6" />
           ) : (
             <div className="space-y-2">
-              {events.map((event, idx) => (
-                <div key={idx} className="flex items-center justify-between border-b pb-2 last:border-none">
-                  <div>
-                    <p className="text-sm">{event.type}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(event.timestamp).toLocaleString()}
-                    </p>
-                  </div>
-                  <Badge variant="outline">{event.zone}</Badge>
-                </div>
-              ))}
+              events.map((event, idx) => <ExpandedEvent key={idx} event={event} />)
             </div>
           )}
         </CardContent>
