@@ -1,45 +1,31 @@
 import React from "react";
+import { Badge } from "./ui/badge";
 
-interface Event {
-  timestamp?: number;
-  zone?: string;
-  type?: string;
-  description?: string;
-  validator_id?: string;
-  confidence?: number;
-  data_source?: string;
+interface EventProps {
+  event?: {
+    type?: string;
+    timestamp?: number;
+    zone?: string;
+    [key: string]: any;
+  };
 }
 
-interface ExpandedEventProps {
-  event?: Event; // optional to prevent crash on undefined
-}
-
-const ExpandedEvent: React.FC<ExpandedEventProps> = ({ event }) => {
+const ExpandedEvent: React.FC<EventProps> = ({ event }) => {
   if (!event) {
-    return <div className="text-red-600">Error: Event data not available.</div>;
+    return <div className="text-sm text-red-500">Invalid event data</div>;
   }
 
   const formattedDate = event.timestamp
     ? new Date(event.timestamp).toLocaleString()
-    : "Invalid timestamp";
+    : "Invalid date";
 
   return (
-    <div className="p-4 rounded-lg shadow-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-      <h3 className="text-lg font-semibold mb-1">
-        {event.type || "Unknown event type"}
-      </h3>
-      <p className="text-sm text-zinc-500 mb-2">
-        {formattedDate} — {event.zone || "Unknown zone"}
-      </p>
-      {event.description && <p className="mb-2">{event.description}</p>}
-
-      <div className="text-xs text-zinc-400 space-y-1">
-        {event.validator_id && <p>Validator ID: {event.validator_id}</p>}
-        {typeof event.confidence === "number" && (
-          <p>Confidence: {event.confidence}%</p>
-        )}
-        {event.data_source && <p>Source: {event.data_source}</p>}
+    <div className="flex justify-between items-center py-2 border-b last:border-0">
+      <div>
+        <p className="font-medium">{event.type || "Unknown event"}</p>
+        <p className="text-sm text-muted-foreground">{formattedDate}</p>
       </div>
+      <Badge variant="outline">{event.zone || "Unknown zone"}</Badge>
     </div>
   );
 };
