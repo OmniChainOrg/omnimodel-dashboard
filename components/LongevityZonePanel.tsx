@@ -29,17 +29,7 @@ export default function LongevityZonePanel() {
           {!events.length ? (
             <Loader2 className="animate-spin w-6 h-6" />
           ) : (
-            events.map((e, i) => (
-              <div key={i} className="flex items-center justify-between py-2 border-b last:border-0">
-                <div>
-                  <p className="font-medium">{e.type}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(e.timestamp).toLocaleString()}
-                  </p>
-                </div>
-                <Badge variant="outline">{e.zone}</Badge>
-              </div>
-            ))
+            events.map((event, idx) => <ExpandedEvent key={idx} event={event} />)
           )}
         </CardContent>
       </Card>
