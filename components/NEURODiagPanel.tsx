@@ -1,6 +1,6 @@
 // components/NEURODiagPanel.tsx
 
-import ExpandedEvent from "./ExpandedEvent";
+import ExpandedEvent from "../ExpandedEvent";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Loader2, ActivitySquare } from "lucide-react";
