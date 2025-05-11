@@ -28,22 +28,7 @@ export default function NEURODiagPanel() {
           {!events.length ? (
             <Loader2 className="animate-spin w-6 h-6" />
           ) : (
-            events.map((event, idx) => (
-              <div
-                key={idx}
-                className="flex justify-between items-center py-2 border-b last:border-0"
-              >
-                <div>
-                  <p className="font-medium">{event.type}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(event.timestamp).toLocaleString()}
-                  </p>
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  {event.zone}
-                </span>
-              </div>
-            ))
+            events.map((event, idx) => <ExpandedEvent key={idx} event={event} />)
           )}
         </CardContent>
       </Card>
