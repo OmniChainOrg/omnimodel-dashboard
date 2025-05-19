@@ -4,6 +4,13 @@ import BIODEFMatchPanel from "./BIODEFMatchPanel";
 import LongevityZonePanel from "./LongevityZonePanel";
 import NEURODiagPanel from "./NEURODiagPanel";
 import OmniVestPanel from "./OmniVestPanel";
+import NEUROEdgePanel from "./NEUROEdgePanel";
+import BioSynthesisPanel from "./BioSynthesisPanel";
+import ImmunoAtlasPanel from "./ImmunoAtlasPanel";
+import HopePanel from "./HopePanel";
+import OmniversalisDAOPanel from "./OmniversalisDAOPanel";
+import TradePharmaPanel from "./TradePharmaPanel";
+import RegOpsPanel from "./RegOpsPanel";
 
 const zones = [
   { label: "💰 OmniVest", value: "omnivest" },
@@ -11,6 +18,13 @@ const zones = [
   { label: "🧫 BIODEFMatch", value: "biodefmatch" },
   { label: "🧬 LongevityZone", value: "longevityzone" },
   { label: "🧠 NEURODiag", value: "neurodiag" },
+  { label: "🧠 NEUROEdge", value: "neuroedge" },
+  { label: "🧬 BioSynthesis", value: "biosynthesis" },
+  { label: "🛡 ImmunoAtlas", value: "immunoatlas" },
+  { label: "🌈 HOPE", value: "hope" },
+  { label: "🧭 OmniversalisDAO", value: "omniversalisdao" },
+  { label: "💊 TradePharma", value: "tradepharma" },
+  { label: "📜 RegOps", value: "regops" },
 ];
 
 export default function OmniModelDashboard() {
@@ -29,6 +43,20 @@ export default function OmniModelDashboard() {
       case "omnivest":
       default:
         return <OmniVestPanel />;
+      case "neuroedge":
+        return <NEUROEdgePanel />;
+      case "biosynthesis":
+        return <BioSynthesisPanel />;
+      case "immunoatlas":
+        return <ImmunoAtlasPanel />;
+      case "hope":
+        return <HopePanel />;
+      case "omniversalisdao":
+        return <OmniversalisDAOPanel />;
+      case "tradepharma":
+        return <TradePharmaPanel />;
+      case "regops":
+        return <RegOpsPanel />;
     }
   };
 
