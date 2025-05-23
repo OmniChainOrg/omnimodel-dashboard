@@ -8,14 +8,14 @@ import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
 import LongevityZonePanel from "../components/LongevityZonePanel";
 import NEURODiagPanel from "../components/NEURODiagPanel";
-import NEUROEdgePanel from "../components/NEURODiagPanel";
-import RegOpsPanel from "../components/NEURODiagPanel";
-import BioSynthesisPanel from "../components/NEURODiagPanel";
-import HopePanel from "../components/NEURODiagPanel";
-import ImmunoAtlasPanel from "../components/NEURODiagPanel";
-import OmniversalisDAOPanel from "../components/NEURODiagPanel";
-import TradePharmaPanel from "../components/NEURODiagPanel";
-import SirrenaSimPanel from "../components/NEURODiagPanel";
+import NEUROEdgePanel from "../components/NEUROEdgePanel";
+import RegOpsPanel from "../components/RegOpsPanel";
+import BioSynthesisPanel from "../components/BioSynthesisPanel";
+import HopePanel from "../components/HopePanel";
+import ImmunoAtlasPanel from "../components/ImmunoAtlasPanel";
+import OmniversalisDAOPanel from "../components/OmniversalisDAOPanel";
+import TradePharmaPanel from "../components/TradePharmaPanel";
+import SirrenaSimPanel from "../components/SirrenaSimPanel";
 
 const zones = [
   { label: "💰 OmniVest", value: "omnivest" },
