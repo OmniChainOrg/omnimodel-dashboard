@@ -27,7 +27,6 @@ const zones = [
   { label: "🌈 HOPEChain", value: "hope" },
   { label: "🧭 OmniversalisDAO", value: "omniversalisdao" },
   { label: "💊 TradePharma", value: "tradepharma" },
-  { label: "📜 RegOps", value: "regops" },
   { label: "🔁 SirrenaSim", value: "SirrenaSim" },
 ];
 
