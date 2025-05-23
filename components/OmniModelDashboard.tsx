@@ -1,16 +1,18 @@
 import React, { useState } from "react";
+import OmniVestPanel from "./OmniVestPanel";
 import ChronoMatchPanel from "./ChronoMatchPanel";
 import BIODEFMatchPanel from "./BIODEFMatchPanel";
 import LongevityZonePanel from "./LongevityZonePanel";
 import NEURODiagPanel from "./NEURODiagPanel";
-import OmniVestPanel from "./OmniVestPanel";
 import NEUROEdgePanel from "./NEUROEdgePanel";
+import RegOpsPanel from "./RegOpsPanel";
 import BioSynthesisPanel from "./BioSynthesisPanel";
 import ImmunoAtlasPanel from "./ImmunoAtlasPanel";
 import HopePanel from "./HopePanel";
 import OmniversalisDAOPanel from "./OmniversalisDAOPanel";
 import TradePharmaPanel from "./TradePharmaPanel";
-import RegOpsPanel from "./RegOpsPanel";
+import SirrenaSimPanel from "./SirrenaSimPanel";
+
 
 const zones = [
   { label: "💰 OmniVest", value: "omnivest" },
@@ -18,13 +20,15 @@ const zones = [
   { label: "🧫 BIODEFMatch", value: "biodefmatch" },
   { label: "🧬 LongevityZone", value: "longevityzone" },
   { label: "🧠 NEURODiag", value: "neurodiag" },
-  { label: "🧠 NEUROEdge", value: "neuroedge" },
-  { label: "🧬 BioSynthesis", value: "biosynthesis" },
+  { label: "🧩 NEUROEdge", value: "neuroedge" },
+  { label: "📜 RegOps", value: "regops" },
+  { label: "🧪 BioSynthesis", value: "biosynthesis" },
   { label: "🛡 ImmunoAtlas", value: "immunoatlas" },
-  { label: "🌈 HOPE", value: "hope" },
+  { label: "🌈 HOPEChain", value: "hope" },
   { label: "🧭 OmniversalisDAO", value: "omniversalisdao" },
   { label: "💊 TradePharma", value: "tradepharma" },
   { label: "📜 RegOps", value: "regops" },
+  { label: "🔁 SirrenaSim", value: "SirrenaSim" },
 ];
 
 export default function OmniModelDashboard() {
@@ -32,6 +36,9 @@ export default function OmniModelDashboard() {
 
   const renderPanel = () => {
     switch (activeZone) {
+      case "omnivest":
+      default:
+        return <OmniVestPanel />;
       case "chronomatch":
         return <ChronoMatchPanel />;
       case "biodefmatch":
@@ -40,11 +47,10 @@ export default function OmniModelDashboard() {
         return <LongevityZonePanel />;
       case "neurodiag":
         return <NEURODiagPanel />;
-      case "omnivest":
-      default:
-        return <OmniVestPanel />;
       case "neuroedge":
         return <NEUROEdgePanel />;
+      case "regops":
+        return <RegOpsPanel />;
       case "biosynthesis":
         return <BioSynthesisPanel />;
       case "immunoatlas":
@@ -55,8 +61,6 @@ export default function OmniModelDashboard() {
         return <OmniversalisDAOPanel />;
       case "tradepharma":
         return <TradePharmaPanel />;
-      case "regops":
-        return <RegOpsPanel />;
     }
   };
 
