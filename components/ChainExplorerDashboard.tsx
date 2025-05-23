@@ -8,6 +8,30 @@ import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
 import LongevityZonePanel from "../components/LongevityZonePanel";
 import NEURODiagPanel from "../components/NEURODiagPanel";
+import NEUROEdgePanel from "../components/NEURODiagPanel";
+import RegOpsPanel from "../components/NEURODiagPanel";
+import BioSynthesisPanel from "../components/NEURODiagPanel";
+import HopePanel from "../components/NEURODiagPanel";
+import ImmunoAtlasPanel from "../components/NEURODiagPanel";
+import OmniversalisDAOPanel from "../components/NEURODiagPanel";
+import TradePharmaPanel from "../components/NEURODiagPanel";
+import SirrenaSimPanel from "../components/NEURODiagPanel";
+
+const zones = [
+  { label: "💰 OmniVest", value: "omnivest" },
+  { label: "⏱ ChronoMatch", value: "chronomatch" },
+  { label: "🧫 BIODEFMatch", value: "biodefmatch" },
+  { label: "🧬 LongevityZone", value: "longevityzone" },
+  { label: "🧠 NEURODiag", value: "neurodiag" },
+  { label: "🧩 NEUROEdge", value: "neuroedge" },
+  { label: "📜 RegOps", value: "regops" },
+  { label: "🧪 BioSynthesis", value: "biosynthesis" },
+  { label: "🌈 HOPE", value: "hope" },
+  { label: "🛡 ImmunoAtlas", value: "immunoatlas" },
+  { label: "🧭 OmniversalisDAO", value: "omniversalisdao" },
+  { label: "💊 TradePharma", value: "tradepharma" },
+  { label: "🔁 SirrenaSim", value: "sirrenasim" }
+];
 
 export default function ChainExplorerDashboard() {
   const [simulationLog, setSimulationLog] = useState<any>(null);
@@ -171,6 +195,78 @@ export default function ChainExplorerDashboard() {
         className="col-span-3"
       >
         <NEURODiagPanel />
+      </motion.div>
+      
+      {/* NEUROEdge Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <NEUROEdgePanel />
+      </motion.div>
+
+      {/* RegOps Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <RegOpsPanel />
+      </motion.div>
+
+      {/* BioSynthesis Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <BioSynthesisPanel />
+      </motion.div>      
+      
+      {/* Hope Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <HopePanel />
+      </motion.div>
+
+      {/* ImmunoAtlas Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <ImmunoAtlasPanel />
+      </motion.div>
+
+      {/* OmniversalisDAO Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <OmniversalisDAOPanel />
+      </motion.div>
+
+      {/* TradePharma Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <TradePharmaPanel />
+      </motion.div>
+
+       {/* SirrenaSim Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="col-span-3"
+      >
+        <SirrenaSimPanel />
       </motion.div>
 
       
