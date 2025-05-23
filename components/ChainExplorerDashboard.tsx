@@ -26,7 +26,7 @@ const zones = [
   { label: "🧩 NEUROEdge", value: "neuroedge" },
   { label: "📜 RegOps", value: "regops" },
   { label: "🧪 BioSynthesis", value: "biosynthesis" },
-  { label: "🌈 HOPE", value: "hope" },
+  { label: "🌈 HOPEChain", value: "hope" },
   { label: "🛡 ImmunoAtlas", value: "immunoatlas" },
   { label: "🧭 OmniversalisDAO", value: "omniversalisdao" },
   { label: "💊 TradePharma", value: "tradepharma" },
