@@ -61,6 +61,8 @@ export default function OmniModelDashboard() {
         return <OmniversalisDAOPanel />;
       case "tradepharma":
         return <TradePharmaPanel />;
+      case "sirrenasim":
+        return <SirrenaSimPanel />;
     }
   };
 
