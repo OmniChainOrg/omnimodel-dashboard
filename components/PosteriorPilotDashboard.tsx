@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -9,7 +9,7 @@ export default function PosteriorPilotDashboard() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch("/api/sirrenasim/posterior")https://github.com/OmniChainOrg/omnimodel-dashboard/blob/main/components/PosteriorPilotDashboard.tsx
+    fetch("/api/sirrenasim/posterior")
       .then((res) => res.json())
       .then(setData)
       .catch(() => {});
