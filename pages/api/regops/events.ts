@@ -1,12 +1,12 @@
-// Simulates dynamic OmniversalisDAO™ activity events
+// Simulates dynamic RegOps™ activity events
 
 export default function handler(req, res) {
-  const zones = ["OmniversalisDAO™"];
-  const validators = ["ProposalChain-Ω", "VoteLogic-7", "BudgetAI-02", "GovernNode-X", "CollectiveTrust-Alpha"];
+  const zones = ["RegOps™"];
+  const validators = ["GxP-Agent-3", "RegAudit-Beta", "TrialPhaseBot", "Submission-Node-X", "ComplianceTrace-7"];
   const types = [
-    "Proposal submitted",
-    "Budget allocated",
-    "Vote registry updated"
+    "Regulatory phase advanced",
+    "Compliance log updated",
+    "Submission received"
   ];
 
   const generateEvent = () => ({
