@@ -82,6 +82,23 @@ export default function PosteriorPilotDashboard() {
               </ul>
             </CardContent>
           </Card>
+
+          {/* Memory Trace View */}
+          <Card className="rounded-2xl shadow-lg">
+            <CardContent className="p-4">
+              <h3 className="text-xl font-semibold mb-2">🧠 L5 Memory Trace</h3>
+              <ul className="space-y-2">
+                {data.memoryTrace?.map((entry, idx) => (
+                  <li key={idx} className="p-2 border rounded-md">
+                    <div className="text-sm font-medium">{entry.label}</div>
+                    <div className="text-sm text-muted-foreground">{new Date(entry.timestamp).toLocaleString()}</div>
+                    <div className="text-xs">Anchor: {entry.anchor_id}</div>
+                    <div className="text-xs text-muted-foreground italic">"{entry.snapshot}"</div>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
         </>
       )}
     </motion.div>
