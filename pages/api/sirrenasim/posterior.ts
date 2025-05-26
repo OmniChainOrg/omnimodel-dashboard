@@ -3,12 +3,12 @@ export default function handler(req, res) {
   const forecasts = zones.map((zone) => ({
     zone,
     prediction: ["Spike", "Moderate Activity", "High Sync"][Math.floor(Math.random() * 3)],
-    probability: Math.random()
+    probability: Math.random(),
   }));
 
   const confidenceTimeline = Array.from({ length: 12 }).map((_, i) => ({
     timestamp: Date.now() - i * 60000,
-    confidence: Math.random()
+    confidence: Math.random(),
   }));
 
   const beliefPath = Array.from({ length: 6 }).map((_, i) => ({
@@ -16,12 +16,12 @@ export default function handler(req, res) {
     event_type: ["Threshold Breach", "Meta-Validation", "Temporal Sync"][i % 3],
     prior: Math.random(),
     posterior: Math.random(),
-    meta: { cause: "simulated_trigger" }
+    meta: { cause: "simulated_trigger" },
   }));
 
   res.status(200).json({
     forecasts,
     confidenceTimeline,
-    beliefPath
+    beliefPath,
   });
 }
