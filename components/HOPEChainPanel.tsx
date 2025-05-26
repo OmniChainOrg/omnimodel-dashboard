@@ -15,7 +15,9 @@ type Event = {
 };
 
 export default function HOPEChainPanel() {
-  const [events, setEvents] = useState<Event[] | null>(null);
+  return <div className="text-lg">🌈 HOPEChain Zone Under Construction</div>;
+}
+
 
   useEffect(() => {
     fetch("/api/hope/events")
