@@ -55,7 +55,7 @@ export default function OmniModelDashboard() {
       case "immunoatlas":
         return <ImmunoAtlasPanel />;
       case "hope":
-        return <HopePanel />;
+        return <HOPEChainPanel />;
       case "omniversalisdao":
         return <OmniversalisDAOPanel />;
       case "tradepharma":
