@@ -27,7 +27,7 @@ const zones = [
   { label: "🌈 HOPEChain", value: "hope" },
   { label: "🧭 OmniversalisDAO", value: "omniversalisdao" },
   { label: "💊 TradePharma", value: "tradepharma" },
-  { label: "🔁 SirrenaSim", value: "SirrenaSim" },
+  { label: "🔁 SirrenaSim", value: "sirrenasim" },
 ];
 
 export default function OmniModelDashboard() {
