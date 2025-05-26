@@ -36,7 +36,6 @@ export default function OmniModelDashboard() {
   const renderPanel = () => {
     switch (activeZone) {
       case "omnivest":
-      default:
         return <OmniVestPanel />;
       case "chronomatch":
         return <ChronoMatchPanel />;
@@ -62,6 +61,8 @@ export default function OmniModelDashboard() {
         return <TradePharmaPanel />;
       case "sirrenasim":
         return <SirrenaSimPanel />;
+      default:
+        return <OmniVestPanel />;
     }
   };
 
