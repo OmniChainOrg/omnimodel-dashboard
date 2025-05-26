@@ -11,7 +11,7 @@ import NEURODiagPanel from "../components/NEURODiagPanel";
 import NEUROEdgePanel from "../components/NEUROEdgePanel";
 import RegOpsPanel from "../components/RegOpsPanel";
 import BioSynthesisPanel from "../components/BioSynthesisPanel";
-import HopePanel from "../components/HopePanel";
+import HOPEChainPanel from "../components/HOPEChainPanel";
 import ImmunoAtlasPanel from "../components/ImmunoAtlasPanel";
 import OmniversalisDAOPanel from "../components/OmniversalisDAOPanel";
 import TradePharmaPanel from "../components/TradePharmaPanel";
@@ -224,13 +224,13 @@ export default function ChainExplorerDashboard() {
         <BioSynthesisPanel />
       </motion.div>      
       
-      {/* Hope Panel */}
+      {/* HOPEChain Panel */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="col-span-3"
       >
-        <HopePanel />
+        <HOPEChainPanel />
       </motion.div>
 
       {/* ImmunoAtlas Panel */}
