@@ -2,9 +2,9 @@
 
 import ExpandedEvent from "./ExpandedEvent";
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Card, CardContent } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 type Event = {
@@ -15,9 +15,7 @@ type Event = {
 };
 
 export default function HOPEChainPanel() {
-  return <div className="text-lg">🌈 HOPEChain Zone Under Construction</div>;
-}
-
+  const [events, setEvents] = useState<Event[] | null>(null);
 
   useEffect(() => {
     fetch("/api/hope/events")
