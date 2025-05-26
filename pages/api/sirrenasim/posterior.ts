@@ -1,5 +1,8 @@
+// pages/api/sirrenasim/posterior.ts
+
 export default function handler(req, res) {
   const zones = ["NEUROEdge", "BioSynthesis", "RegOps", "HOPEChain", "ImmunoAtlas"];
+
   const forecasts = zones.map((zone) => ({
     zone,
     prediction: ["Spike", "Moderate Activity", "High Sync"][Math.floor(Math.random() * 3)],
