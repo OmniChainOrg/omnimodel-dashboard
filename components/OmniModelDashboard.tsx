@@ -8,7 +8,7 @@ import NEUROEdgePanel from "./NEUROEdgePanel";
 import RegOpsPanel from "./RegOpsPanel";
 import BioSynthesisPanel from "./BioSynthesisPanel";
 import ImmunoAtlasPanel from "./ImmunoAtlasPanel";
-import HopePanel from "./HopePanel";
+import HOPEChainPanel from "./HOPEChainPanel";
 import OmniversalisDAOPanel from "./OmniversalisDAOPanel";
 import TradePharmaPanel from "./TradePharmaPanel";
 import SirrenaSimPanel from "./SirrenaSimPanel";
