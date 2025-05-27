@@ -1,3 +1,4 @@
+import OracleThread from "./OracleThread";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -148,8 +149,12 @@ export default function PosteriorPilotDashboard() {
               </ul>
             </CardContent>
           </Card>
-        </>
-      )}
+
+          {/* Oracle Commentary Thread */}
+          <OracleThread
+            simulationId={`post_${zone}_${Date.now()}`}
+            zone={zone}
+         />
     </motion.div>
   );
 }
