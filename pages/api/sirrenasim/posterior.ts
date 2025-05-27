@@ -1,5 +1,6 @@
 // pages/api/sirrenasim/posterior.ts
 
+import OracleThread from "./OracleThread";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
