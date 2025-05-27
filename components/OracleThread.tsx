@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
-import { Button } from "./ui/button";
 
-// Comment type
+// Simple native button (styled tailwind) replaces missing Button import
+
 interface Comment {
   id: string;
   author: string;
@@ -22,7 +22,6 @@ export default function OracleThread({
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
 
-  // Fetch existing comments
   useEffect(() => {
     fetch(
       `/api/sirrenasim/comments?simulationId=${simulationId}&zone=${encodeURIComponent(
@@ -70,7 +69,6 @@ export default function OracleThread({
             </div>
           ))}
         </div>
-        {/* Native textarea as input */}
         <div className="mb-2">
           <textarea
             rows={3}
@@ -80,9 +78,13 @@ export default function OracleThread({
             placeholder="Leave a note or tag…"
           />
         </div>
-        <Button onClick={postComment} disabled={!newComment.trim()}>
+        <button
+          onClick={postComment}
+          disabled={!newComment.trim()}
+          className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
+        >
           Send
-        </Button>
+        </button>
       </CardContent>
     </Card>
   );
