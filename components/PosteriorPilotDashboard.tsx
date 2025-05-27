@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import OracleThread from "./OracleThread";
 
 /** Data types for the Posterior API */
 interface Forecast {
@@ -58,7 +59,7 @@ interface PosteriorData {
 }
 
 export default function PosteriorPilotDashboard() {
-  // Define your available zones in one place
+  // Define zones once
   const ZONES = ["Zone A", "Zone B", "Zone C"] as const;
   type Zone = typeof ZONES[number];
 
@@ -81,7 +82,7 @@ export default function PosteriorPilotDashboard() {
     >
       <h2 className="text-2xl font-bold">🎛️ Posterior Pilot Dashboard</h2>
 
-      {/* Zone selector dropdown */}
+      {/* Zone selector */}
       <div className="mb-4">
         <label className="font-medium mr-2">Select Zone:</label>
         <select
@@ -97,27 +98,27 @@ export default function PosteriorPilotDashboard() {
         </select>
       </div>
 
-      {/* Warning if fallback occurred */}
+      {/* Fallback warning */}
       {data?.warning && (
         <div className="p-2 bg-yellow-100 text-yellow-800 rounded">
           ⚠️ {data.warning}
         </div>
       )}
 
-      {/* Loading state */}
+      {/* Loader */}
       {!data ? (
         <Loader2 className="animate-spin w-6 h-6" />
       ) : (
         <>
-          {/* Inference Forecast Panel */}
+          {/* Inference Forecast */}
           <Card className="rounded-2xl shadow-lg">
             <CardContent className="p-4">
               <h3 className="text-xl font-semibold mb-2">
                 🔮 Inference Forecast
               </h3>
               <div className="grid grid-cols-2 gap-4">
-                {data.forecasts.map((f, idx) => (
-                  <div key={idx} className="p-2 border rounded-md">
+                {data.forecasts.map((f, i) => (
+                  <div key={i} className="p-2 border rounded-md">
                     <div className="text-sm text-muted-foreground">
                       Zone: {f.zone}
                     </div>
@@ -139,7 +140,7 @@ export default function PosteriorPilotDashboard() {
             </CardContent>
           </Card>
 
-          {/* Confidence Evolution Chart */}
+          {/* Confidence Evolution */}
           <Card className="rounded-2xl shadow-lg">
             <CardContent className="p-4">
               <h3 className="text-xl font-semibold mb-2">
@@ -149,9 +150,7 @@ export default function PosteriorPilotDashboard() {
                 <LineChart data={data.confidenceTimeline}>
                   <XAxis
                     dataKey="timestamp"
-                    tickFormatter={(t) =>
-                      new Date(t).toLocaleTimeString()
-                    }
+                    tickFormatter={(t) => new Date(t).toLocaleTimeString()}
                   />
                   <YAxis domain={[0, 1]} />
                   <Tooltip />
@@ -173,8 +172,8 @@ export default function PosteriorPilotDashboard() {
                 🧭 Belief Path Explorer
               </h3>
               <ul className="space-y-2">
-                {data.beliefPath.map((b, idx) => (
-                  <li key={idx} className="p-2 border rounded-md">
+                {data.beliefPath.map((b, i) => (
+                  <li key={i} className="p-2 border rounded-md">
                     <div className="font-medium">{b.event_type}</div>
                     <div className="text-sm text-muted-foreground">
                       {new Date(b.timestamp).toLocaleString()}
@@ -208,8 +207,8 @@ export default function PosteriorPilotDashboard() {
                 🧠 L5 Memory Trace
               </h3>
               <ul className="space-y-2">
-                {data.memoryTrace.map((entry, idx) => (
-                  <li key={idx} className="p-2 border rounded-md">
+                {data.memoryTrace.map((entry, i) => (
+                  <li key={i} className="p-2 border rounded-md">
                     <div className="text-sm font-medium">{entry.label}</div>
                     <div className="text-sm text-muted-foreground">
                       {new Date(entry.timestamp).toLocaleString()}
@@ -224,7 +223,11 @@ export default function PosteriorPilotDashboard() {
             </CardContent>
           </Card>
 
-          {/* TODO: Oracle Commentary Thread component goes here */}
+          {/* Oracle Commentary Thread */}
+          <OracleThread
+            simulationId={`post_${zone}_${Date.now()}`}
+            zone={zone}
+          />
         </>
       )}
     </motion.div>
