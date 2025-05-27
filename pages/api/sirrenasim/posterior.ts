@@ -1,110 +1,42 @@
-// pages/api/sirrenasim/posterior.ts
-
 import type { NextApiRequest, NextApiResponse } from "next";
 
-/**
- * The JSON shape returned by /api/sirrenasim/posterior
- */
-export type PosteriorData = {
-  forecasts: Array<{
-    zone: string;
-    prediction: number;
-    probability: number;
-    method: "variational" | "sampling";
-    meta: {
-      epistemic_friction_score: number;
-      isaad_alignment_delta: number;
-      recursive_echo_index: number;
-    };
-  }>;
+// … (your PosteriorData type) …
 
-  confidenceTimeline: Array<{
-    timestamp: string;
-    confidence: number;
-  }>;
-
-  beliefPath: Array<{
-    event_type: string;
-    timestamp: string;
-    prior: number;
-    posterior: number;
-    meta: {
-      cause: string;
-      inference_method: "variational" | "sampling";
-      epistemic_friction_score: number;
-      isaad_alignment_delta: number;
-      recursive_echo_index: number;
-    };
-  }>;
-
-  memoryTrace: Array<{
-    label: string;
-    timestamp: string;
-    anchor_id: string;
-    snapshot: string;
-  }>;
-};
-
-/**
- * Handler for /api/sirrenasim/posterior?zone=<zoneName>
- */
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<PosteriorData | { error: string }>
+  res: NextApiResponse<PosteriorData | { error: string; warning?: string }>
 ) {
-  const { zone } = req.query as { zone?: string };
+  const rawZone = req.query.zone;
+  let zone: string | undefined =
+    Array.isArray(rawZone) ? rawZone[0] : (rawZone as string | undefined);
+
+  const enableFallback = process.env.NEXT_PUBLIC_ENABLE_ZONE_FALLBACK === "true";
+
+  // Fallback logic
+  let warning: string | undefined;
   if (!zone) {
-    return res.status(400).json({ error: "Missing required query parameter `zone`" });
+    if (!enableFallback) {
+      return res.status(400).json({ error: "Missing required `zone` parameter" });
+    }
+    zone = "Zone A";  // your chosen default
+    warning = "`zone` missing—defaulted to Zone A";
+    // Log it on the server
+    console.warn(`[posterior] fallback applied: ${warning}`);
   }
 
   const now = Date.now();
-
-  // Generate forecasts
-  const forecasts: PosteriorData["forecasts"] = Array.from({ length: 3 }, (_, i) => ({
+  // … build forecasts, confidenceTimeline, beliefPath, memoryTrace …
+  const forecasts = Array.from({ length: 3 }, (_, i) => ({
     zone,
-    prediction: parseFloat((Math.random() * 100).toFixed(2)),
-    probability: parseFloat(Math.random().toFixed(2)),
+    prediction: Math.random() * 100,
+    probability: Math.random(),
     method: i % 2 === 0 ? "variational" : "sampling",
-    meta: {
-      epistemic_friction_score: parseFloat(Math.random().toFixed(2)),
-      isaad_alignment_delta: parseFloat(Math.random().toFixed(2)),
-      recursive_echo_index: parseFloat(Math.random().toFixed(2)),
-    },
+    meta: { /* … */ },
   }));
+  // ... rest of your stub or real logic ...
 
-  // Build confidence timeline
-  const confidenceTimeline: PosteriorData["confidenceTimeline"] = forecasts.map((_, i) => ({
-    timestamp: new Date(now + i * 60000).toISOString(),
-    confidence: parseFloat(Math.random().toFixed(2)),
-  }));
-
-  // Build belief path
-  const beliefPath: PosteriorData["beliefPath"] = forecasts.map((f, i) => ({
-    event_type: `Event ${i + 1}`,
-    timestamp: new Date(now + i * 2 * 60000).toISOString(),
-    prior: parseFloat(Math.random().toFixed(2)),
-    posterior: parseFloat(Math.random().toFixed(2)),
-    meta: {
-      cause: "auto",
-      inference_method: f.method,
-      epistemic_friction_score: parseFloat(Math.random().toFixed(2)),
-      isaad_alignment_delta: parseFloat(Math.random().toFixed(2)),
-      recursive_echo_index: parseFloat(Math.random().toFixed(2)),
-    },
-  }));
-
-  // Build memory trace
-  const memoryTrace: PosteriorData["memoryTrace"] = Array.from({ length: 2 }, (_, i) => ({
-    label: `State ${i}`,
-    timestamp: new Date(now + i * 3 * 60000).toISOString(),
-    anchor_id: `anchor${i}`,
-    snapshot: JSON.stringify({ zone, step: i }),
-  }));
-
-  return res.status(200).json({
-    forecasts,
-    confidenceTimeline,
-    beliefPath,
-    memoryTrace,
-  });
+  // Return with optional warning field
+  const payload = { forecasts, /* … */ } as PosteriorData & { warning?: string };
+  if (warning) payload.warning = warning;
+  return res.status(200).json(payload);
 }
