@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
-import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 
-type Comment = {
+// Comment type
+interface Comment {
   id: string;
   author: string;
   timestamp: string;
   content: string;
-};
+}
 
 export default function OracleThread({
   simulationId,
@@ -24,7 +24,11 @@ export default function OracleThread({
 
   // Fetch existing comments
   useEffect(() => {
-    fetch(`/api/sirrenasim/comments?simulationId=${simulationId}&zone=${encodeURIComponent(zone)}`)
+    fetch(
+      `/api/sirrenasim/comments?simulationId=${simulationId}&zone=${encodeURIComponent(
+        zone
+      )}`
+    )
       .then((r) => r.json())
       .then(setComments)
       .catch(console.error);
@@ -39,9 +43,15 @@ export default function OracleThread({
     });
     if (res.ok) {
       setNewComment("");
-      // re-fetch
-      const updated = await fetch(`/api/sirrenasim/comments?simulationId=${simulationId}&zone=${encodeURIComponent(zone)}`);
-      setComments(await updated.json());
+      // re-fetch comments
+      fetch(
+        `/api/sirrenasim/comments?simulationId=${simulationId}&zone=${encodeURIComponent(
+          zone
+        )}`
+      )
+        .then((r) => r.json())
+        .then(setComments)
+        .catch(console.error);
     }
   };
 
@@ -53,19 +63,27 @@ export default function OracleThread({
           {comments.map((c) => (
             <div key={c.id} className="p-2 border rounded-md">
               <div className="text-sm font-medium">{c.author}</div>
-              <div className="text-xs text-muted-foreground">{new Date(c.timestamp).toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground">
+                {new Date(c.timestamp).toLocaleString()}
+              </div>
               <div className="mt-1">{c.content}</div>
             </div>
           ))}
         </div>
-        <Textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Leave a note or tag…"
-          className="mb-2"
-        />
+        {/* Native textarea as input */}
+        <div className="mb-2">
+          <textarea
+            rows={3}
+            className="w-full border rounded p-2"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Leave a note or tag…"
+          />
+        </div>
         <Button onClick={postComment} disabled={!newComment.trim()}>
           Send
         </Button>
       </CardContent>
     </Card>
+  );
+}
