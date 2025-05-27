@@ -6,11 +6,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
  * The JSON shape returned by /api/sirrenasim/posterior
  */
 export type PosteriorData = {
-  /** One or more forecasts, all tagged with the input zone */
   forecasts: Array<{
-    zone: string;              // the SirrenaSim zone name
-    prediction: number;        // your model’s posterior value
-    probability: number;       // confidence as a 0–1 float
+    zone: string;
+    prediction: number;
+    probability: number;
     method: "variational" | "sampling";
     meta: {
       epistemic_friction_score: number;
@@ -19,15 +18,13 @@ export type PosteriorData = {
     };
   }>;
 
-  /** Time-series of confidence values for this zone */
   confidenceTimeline: Array<{
-    timestamp: string;         // ISO timestamp
-    confidence: number;        // 0–1 float
+    timestamp: string;
+    confidence: number;
   }>;
 
-  /** A sequence of belief-update events in this zone */
   beliefPath: Array<{
-    event_type: string;        // e.g. “Init”, “SensorUpdate”
+    event_type: string;
     timestamp: string;
     prior: number;
     posterior: number;
@@ -40,12 +37,11 @@ export type PosteriorData = {
     };
   }>;
 
-  /** Memory-trace entries captured during inference in this zone */
   memoryTrace: Array<{
-    label: string;             // e.g. “State0”, “State1”
+    label: string;
     timestamp: string;
     anchor_id: string;
-    snapshot: string;          // textual or JSON snapshot
+    snapshot: string;
   }>;
 };
 
@@ -61,9 +57,10 @@ export default async function handler(
     return res.status(400).json({ error: "Missing required query parameter `zone`" });
   }
 
-  // Dynamic stub using SirrenaSim zone
   const now = Date.now();
-  const forecasts: PosteriorData["forecasts"] = Array.from({ length: 3 }, (_, i) => ({({ length: 3 }, (_, i) => ({
+
+  // Generate forecasts
+  const forecasts: PosteriorData["forecasts"] = Array.from({ length: 3 }, (_, i) => ({
     zone,
     prediction: parseFloat((Math.random() * 100).toFixed(2)),
     probability: parseFloat(Math.random().toFixed(2)),
@@ -75,14 +72,16 @@ export default async function handler(
     },
   }));
 
-  const confidenceTimeline = forecasts.map((_, i) => ({
-    timestamp: new Date(now + i * 60_000).toISOString(),
+  // Build confidence timeline
+  const confidenceTimeline: PosteriorData["confidenceTimeline"] = forecasts.map((_, i) => ({
+    timestamp: new Date(now + i * 60000).toISOString(),
     confidence: parseFloat(Math.random().toFixed(2)),
   }));
 
-  const beliefPath = forecasts.map((f, i) => ({
+  // Build belief path
+  const beliefPath: PosteriorData["beliefPath"] = forecasts.map((f, i) => ({
     event_type: `Event ${i + 1}`,
-    timestamp: new Date(now + i * 2 * 60_000).toISOString(),
+    timestamp: new Date(now + i * 2 * 60000).toISOString(),
     prior: parseFloat(Math.random().toFixed(2)),
     posterior: parseFloat(Math.random().toFixed(2)),
     meta: {
@@ -94,9 +93,10 @@ export default async function handler(
     },
   }));
 
-  const memoryTrace = Array.from({ length: 2 }, (_, i) => ({
+  // Build memory trace
+  const memoryTrace: PosteriorData["memoryTrace"] = Array.from({ length: 2 }, (_, i) => ({
     label: `State ${i}`,
-    timestamp: new Date(now + i * 3 * 60_000).toISOString(),
+    timestamp: new Date(now + i * 3 * 60000).toISOString(),
     anchor_id: `anchor${i}`,
     snapshot: JSON.stringify({ zone, step: i }),
   }));
