@@ -1,5 +1,3 @@
-# netlify.toml (project root)
-
 [[headers]]
   for = "/*"
   [headers.values]
