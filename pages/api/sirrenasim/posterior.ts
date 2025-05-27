@@ -63,7 +63,7 @@ export default async function handler(
 
   // Dynamic stub using SirrenaSim zone
   const now = Date.now();
-  const forecasts = Array.from({ length: 3 }, (_, i) => ({
+  const forecasts: PosteriorData["forecasts"] = Array.from({ length: 3 }, (_, i) => ({({ length: 3 }, (_, i) => ({
     zone,
     prediction: parseFloat((Math.random() * 100).toFixed(2)),
     probability: parseFloat(Math.random().toFixed(2)),
