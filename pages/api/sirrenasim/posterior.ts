@@ -109,6 +109,28 @@ export default async function handler(
     },
   }));
 
+  const response: PosteriorData = {
+  forecasts: [...], // your existing data
+  confidenceTimeline: [...],
+  beliefPath: [...],
+  memoryTrace: [...],
+  intuitionTrace: [
+    {
+      timestamp: new Date().toISOString(),
+      traceSource: "OracleSigIL::Layer-8:EchoFlow",
+      insightType: "hybrid",
+      confidenceDelta: 0.14,
+      epistemicBadge: "Recursive Heuristic Lift v1.0"
+    },
+    {
+      timestamp: new Date().toISOString(),
+      traceSource: "NeuroMetaPulse",
+      insightType: "felt",
+      confidenceDelta: -0.05,
+      epistemicBadge: "Intuitive Drift Flag"
+    },
+  }));
+
   const memoryTrace: MemoryTraceEntry[] = Array.from({ length: 2 }, (_, i) => ({
     label: `State ${i}`,
     timestamp: new Date(now + i * 3 * 60000).toISOString(),
