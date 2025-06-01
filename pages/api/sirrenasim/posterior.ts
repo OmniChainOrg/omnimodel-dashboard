@@ -109,27 +109,67 @@ export default async function handler(
     },
   }));
 
-  const response: PosteriorData = {
-  forecasts: [...], // your existing data
-  confidenceTimeline: [...],
-  beliefPath: [...],
-  memoryTrace: [...],
-  intuitionTrace: [
-    {
-      timestamp: new Date().toISOString(),
-      traceSource: "OracleSigIL::Layer-8:EchoFlow",
-      insightType: "hybrid",
-      confidenceDelta: 0.14,
-      epistemicBadge: "Recursive Heuristic Lift v1.0"
-    },
-    {
-      timestamp: new Date().toISOString(),
-      traceSource: "NeuroMetaPulse",
-      insightType: "felt",
-      confidenceDelta: -0.05,
-      epistemicBadge: "Intuitive Drift Flag"
-    },
-  }));
+  const response = {
+    forecasts: [
+      {
+        zone: "Zone A",
+        prediction: 0.87,
+        probability: 0.91,
+        method: "variational",
+        meta: {
+          epistemic_friction_score: 0.12,
+          isaad_alignment_delta: 0.04,
+          recursive_echo_index: 3
+        }
+      }
+    ],
+    confidenceTimeline: [
+      { timestamp: new Date().toISOString(), confidence: 0.72 },
+      { timestamp: new Date(Date.now() - 3600000).toISOString(), confidence: 0.68 }
+    ],
+    beliefPath: [
+      {
+        event_type: "Signal Shift",
+        timestamp: new Date().toISOString(),
+        prior: 0.65,
+        posterior: 0.78,
+        meta: {
+          cause: "anomaly-drift-detection",
+          inference_method: "sampling",
+          epistemic_friction_score: 0.1,
+          isaad_alignment_delta: 0.02,
+          recursive_echo_index: 2
+        }
+      }
+    ],
+    memoryTrace: [
+      {
+        label: "Anchor event: predictive lock",
+        timestamp: new Date().toISOString(),
+        anchor_id: "anc-001",
+        snapshot: "Posterior curve stabilized at 0.75"
+      }
+    ],
+    intuitionTrace: [
+      {
+        timestamp: new Date().toISOString(),
+        traceSource: "OracleSigIL::Layer-8:EchoFlow",
+        insightType: "hybrid",
+        confidenceDelta: 0.14,
+        epistemicBadge: "Recursive Heuristic Lift v1.0"
+      },
+      {
+        timestamp: new Date().toISOString(),
+        traceSource: "NeuroMetaPulse",
+        insightType: "felt",
+        confidenceDelta: -0.05,
+        epistemicBadge: "Intuitive Drift Flag"
+      }
+    ]
+  };
+
+  res.status(200).json(response);
+}
 
   const memoryTrace: MemoryTraceEntry[] = Array.from({ length: 2 }, (_, i) => ({
     label: `State ${i}`,
