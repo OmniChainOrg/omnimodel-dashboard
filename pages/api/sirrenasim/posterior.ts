@@ -16,10 +16,12 @@ interface Forecast {
     recursive_echo_index: number;
   };
 }
+
 interface ConfidencePoint {
   timestamp: string;
   confidence: number;
 }
+
 interface BeliefPoint {
   event_type: string;
   timestamp: string;
@@ -33,11 +35,23 @@ interface BeliefPoint {
     recursive_echo_index: number;
   };
 }
+
 interface MemoryTraceEntry {
   label: string;
   timestamp: string;
   anchor_id: string;
   snapshot: string;
+}
+
+/**
+ * New type for the intuitionTrace property
+ */
+interface IntuitionTraceEntry {
+  timestamp: string;
+  traceSource: string;
+  insightType: string;
+  confidenceDelta: number;
+  epistemicBadge: string;
 }
 
 /**
@@ -48,6 +62,7 @@ export interface PosteriorData {
   confidenceTimeline: ConfidencePoint[];
   beliefPath: BeliefPoint[];
   memoryTrace: MemoryTraceEntry[];
+  intuitionTrace?: IntuitionTraceEntry[]; // now allowed in the response
   warning?: string;
 }
 
@@ -82,7 +97,7 @@ export default async function handler(
     zone: zone!,
     prediction: parseFloat((Math.random() * 100).toFixed(2)),
     probability: parseFloat(Math.random().toFixed(2)),
-    method: i % 2 === 0 ? "variational" : "sampling",
+    method: (i % 2 === 0 ? "variational" : "sampling") as "variational" | "sampling",
     meta: {
       epistemic_friction_score: parseFloat(Math.random().toFixed(2)),
       isaad_alignment_delta: parseFloat(Math.random().toFixed(2)),
@@ -109,7 +124,15 @@ export default async function handler(
     },
   }));
 
-  const response = {
+  const memoryTrace: MemoryTraceEntry[] = Array.from({ length: 2 }, (_, i) => ({
+    label: `State ${i}`,
+    timestamp: new Date(now + i * 3 * 60000).toISOString(),
+    anchor_id: `anchor${i}`,
+    snapshot: JSON.stringify({ zone: zone!, step: i }),
+  }));
+
+  // Hard-coded “response” including intuitionTrace
+  const response: PosteriorData = {
     forecasts: [
       {
         zone: "Zone A",
@@ -119,13 +142,13 @@ export default async function handler(
         meta: {
           epistemic_friction_score: 0.12,
           isaad_alignment_delta: 0.04,
-          recursive_echo_index: 3
-        }
-      }
+          recursive_echo_index: 3,
+        },
+      },
     ],
     confidenceTimeline: [
       { timestamp: new Date().toISOString(), confidence: 0.72 },
-      { timestamp: new Date(Date.now() - 3600000).toISOString(), confidence: 0.68 }
+      { timestamp: new Date(Date.now() - 3600000).toISOString(), confidence: 0.68 },
     ],
     beliefPath: [
       {
@@ -138,17 +161,17 @@ export default async function handler(
           inference_method: "sampling",
           epistemic_friction_score: 0.1,
           isaad_alignment_delta: 0.02,
-          recursive_echo_index: 2
-        }
-      }
+          recursive_echo_index: 2,
+        },
+      },
     ],
     memoryTrace: [
       {
         label: "Anchor event: predictive lock",
         timestamp: new Date().toISOString(),
         anchor_id: "anc-001",
-        snapshot: "Posterior curve stabilized at 0.75"
-      }
+        snapshot: "Posterior curve stabilized at 0.75",
+      },
     ],
     intuitionTrace: [
       {
@@ -156,35 +179,20 @@ export default async function handler(
         traceSource: "OracleSigIL::Layer-8:EchoFlow",
         insightType: "hybrid",
         confidenceDelta: 0.14,
-        epistemicBadge: "Recursive Heuristic Lift v1.0"
+        epistemicBadge: "Recursive Heuristic Lift v1.0",
       },
       {
         timestamp: new Date().toISOString(),
         traceSource: "NeuroMetaPulse",
         insightType: "felt",
         confidenceDelta: -0.05,
-        epistemicBadge: "Intuitive Drift Flag"
-      }
-    ]
+        epistemicBadge: "Intuitive Drift Flag",
+      },
+    ],
+    // Only include warning if it was set
+    ...(warning ? { warning } : {}),
   };
 
-  res.status(200).json(response);
-}
-
-  const memoryTrace: MemoryTraceEntry[] = Array.from({ length: 2 }, (_, i) => ({
-    label: `State ${i}`,
-    timestamp: new Date(now + i * 3 * 60000).toISOString(),
-    anchor_id: `anchor${i}`,
-    snapshot: JSON.stringify({ zone: zone!, step: i }),
-  }));
-
-  const payload: PosteriorData = {
-    forecasts,
-    confidenceTimeline,
-    beliefPath,
-    memoryTrace,
-  };
-  if (warning) payload.warning = warning;
-
-  return res.status(200).json(payload);
+  // Return exactly one JSON response
+  return res.status(200).json(response);
 }
