@@ -1,8 +1,8 @@
-// components/PosteriorPilotDashboard.tsx
+"use client";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "./ui/card";
-import { Badge } from "./ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   LineChart,
   Line,
@@ -13,11 +13,13 @@ import {
 } from "recharts";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import OracleThread from "./OracleThread";
+import OracleThread from "@/components/OracleThread";
 
 /** Data types for the Posterior API */
 interface Forecast {
   zone: string;
+  zone_origin?: string;
+  zone_type?: string;
   prediction: number;
   probability: number;
   method: "variational" | "sampling";
@@ -25,12 +27,16 @@ interface Forecast {
     epistemic_friction_score: number;
     isaad_alignment_delta: number;
     recursive_echo_index: number;
+    simulation_trace_id?: string;
+    memory_activation?: "anchored" | "latent" | "unanchored";
   };
 }
+
 interface ConfidencePoint {
   timestamp: string;
   confidence: number;
 }
+
 interface BeliefPoint {
   event_type: string;
   timestamp: string;
@@ -42,27 +48,23 @@ interface BeliefPoint {
     epistemic_friction_score: number;
     isaad_alignment_delta: number;
     recursive_echo_index: number;
+    simulation_trace_id?: string;
+    memory_activation?: "anchored" | "latent" | "unanchored";
   };
 }
+
 interface MemoryTraceEntry {
   label: string;
   timestamp: string;
   anchor_id: string;
   snapshot: string;
 }
-interface IntuitionTraceEntry {
-  timestamp: string;
-  traceSource: string;
-  insightType: "inferred" | "felt" | "hybrid";
-  confidenceDelta: number;
-  epistemicBadge: string;
-}
+
 interface PosteriorData {
   forecasts: Forecast[];
   confidenceTimeline: ConfidencePoint[];
   beliefPath: BeliefPoint[];
   memoryTrace: MemoryTraceEntry[];
-  intuitionTrace?: IntuitionTraceEntry[];
   warning?: string;
 }
 
@@ -114,26 +116,26 @@ export default function PosteriorPilotDashboard() {
         <Loader2 className="animate-spin w-6 h-6" />
       ) : (
         <>
+          {/* Forecast */}
           <Card className="rounded-2xl shadow-lg">
             <CardContent className="p-4">
-              <h3 className="text-xl font-semibold mb-2">
-                🔮 Inference Forecast
-              </h3>
+              <h3 className="text-xl font-semibold mb-2">🔮 Inference Forecast</h3>
               <div className="grid grid-cols-2 gap-4">
                 {data.forecasts.map((f, i) => (
                   <div key={i} className="p-2 border rounded-md">
-                    <div className="text-sm text-muted-foreground">
-                      Zone: {f.zone}
-                    </div>
+                    <div className="text-sm text-muted-foreground">Zone: {f.zone}</div>
                     <div className="text-lg font-medium">{f.prediction}</div>
-                    <Badge variant="outline">
-                      {(f.probability * 100).toFixed(1)}%
-                    </Badge>
+                    <Badge variant="outline">{(f.probability * 100).toFixed(1)}%</Badge>
                     <Badge variant="secondary">
                       Method: {f.method === "variational" ? "⚡ VI" : "🎯 Sampling"}
                     </Badge>
                     <div className="text-xs mt-1 text-muted-foreground">
-                      🧠 EF Score: {f.meta.epistemic_friction_score} | IA Delta: {f.meta.isaad_alignment_delta} | Echo Index: {f.meta.recursive_echo_index}
+                      🧠 EF: {f.meta.epistemic_friction_score} | ΔIA: {f.meta.isaad_alignment_delta} | Echo: {f.meta.recursive_echo_index}
+                    </div>
+                    <div className="text-xs italic text-muted-foreground">
+                      Origin: {f.zone_origin} | Type: {f.zone_type}
+                      <br />
+                      Trace: {f.meta.simulation_trace_id} | Memory: {f.meta.memory_activation}
                     </div>
                   </div>
                 ))}
@@ -141,20 +143,30 @@ export default function PosteriorPilotDashboard() {
             </CardContent>
           </Card>
 
+          {/* Confidence Timeline */}
           <Card className="rounded-2xl shadow-lg">
             <CardContent className="p-4">
               <h3 className="text-xl font-semibold mb-2">📈 Confidence Evolution</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={data.confidenceTimeline}>
-                  <XAxis dataKey="timestamp" tickFormatter={(t) => new Date(t).toLocaleTimeString()} />
+                  <XAxis
+                    dataKey="timestamp"
+                    tickFormatter={(t) => new Date(t).toLocaleTimeString()}
+                  />
                   <YAxis domain={[0, 1]} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="confidence" strokeWidth={2} dot={false} />
+                  <Line
+                    type="monotone"
+                    dataKey="confidence"
+                    strokeWidth={2}
+                    dot={false}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
 
+          {/* Belief Path */}
           <Card className="rounded-2xl shadow-lg">
             <CardContent className="p-4">
               <h3 className="text-xl font-semibold mb-2">🧭 Belief Path Explorer</h3>
@@ -173,7 +185,9 @@ export default function PosteriorPilotDashboard() {
                       Method: {b.meta.inference_method === "variational" ? "⚡ VI" : "🎯 Sampling"}
                     </Badge>
                     <div className="text-xs mt-1 text-muted-foreground">
-                      🧠 EF Score: {b.meta.epistemic_friction_score} | IA Delta: {b.meta.isaad_alignment_delta} | Echo Index: {b.meta.recursive_echo_index}
+                      🧠 EF: {b.meta.epistemic_friction_score} | ΔIA: {b.meta.isaad_alignment_delta} | Echo: {b.meta.recursive_echo_index}
+                      <br />
+                      Trace: {b.meta.simulation_trace_id} | Memory: {b.meta.memory_activation}
                     </div>
                   </li>
                 ))}
@@ -181,6 +195,7 @@ export default function PosteriorPilotDashboard() {
             </CardContent>
           </Card>
 
+          {/* Memory Trace */}
           <Card className="rounded-2xl shadow-lg">
             <CardContent className="p-4">
               <h3 className="text-xl font-semibold mb-2">🧠 L5 Memory Trace</h3>
@@ -192,36 +207,14 @@ export default function PosteriorPilotDashboard() {
                       {new Date(entry.timestamp).toLocaleString()}
                     </div>
                     <div className="text-xs">Anchor: {entry.anchor_id}</div>
-                    <div className="text-xs text-muted-foreground italic">
-                      "{entry.snapshot}"
-                    </div>
+                    <div className="text-xs text-muted-foreground italic">"{entry.snapshot}"</div>
                   </li>
                 ))}
               </ul>
             </CardContent>
           </Card>
 
-          {data.intuitionTrace && (
-            <Card className="rounded-2xl shadow-lg">
-              <CardContent className="p-4">
-                <h3 className="text-xl font-semibold mb-2">🧿 L8 Intuition Trace</h3>
-                <ul className="space-y-2">
-                  {data.intuitionTrace.map((entry, i) => (
-                    <li key={i} className="p-2 border rounded-md">
-                      <div className="text-sm font-medium">
-                        {entry.insightType.toUpperCase()} — ΔConfidence: {entry.confidenceDelta.toFixed(2)}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(entry.timestamp).toLocaleString()} | Source: {entry.traceSource}
-                      </div>
-                      <Badge variant="outline">Badge: {entry.epistemicBadge}</Badge>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          )}
-
+          {/* Oracle Commentary */}
           <OracleThread simulationId={`post_${zone}_${Date.now()}`} zone={zone} />
         </>
       )}
