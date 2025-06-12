@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "../../components/ui/card";
+import { Badge } from "../../components/ui/badge";
 import {
   LineChart,
   Line,
@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import OracleThread from "@/components/OracleThread";
+import OracleThread from "../../components/OracleThread";
 
 /** Data types for the Posterior API */
 interface Forecast {
