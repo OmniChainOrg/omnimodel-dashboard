@@ -22,7 +22,13 @@
         "name": "next"
       }
     ],
-    "target": "ES2017"
+    "target": "ES2017",
+
+    // added for absolute imports
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
