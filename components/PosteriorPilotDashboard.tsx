@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   LineChart,
   Line,
@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import OracleThread from "../../components/OracleThread";
+import OracleThread from "@/components/OracleThread";
 
 /** Data types for the Posterior API */
 interface Forecast {
@@ -125,17 +125,23 @@ export default function PosteriorPilotDashboard() {
                   <div key={i} className="p-2 border rounded-md">
                     <div className="text-sm text-muted-foreground">Zone: {f.zone}</div>
                     <div className="text-lg font-medium">{f.prediction}</div>
-                    <Badge variant="outline">{(f.probability * 100).toFixed(1)}%</Badge>
+                    <Badge variant="outline">
+                      {(f.probability * 100).toFixed(1)}%
+                    </Badge>
                     <Badge variant="secondary">
-                      Method: {f.method === "variational" ? "⚡ VI" : "🎯 Sampling"}
+                      Method:{" "}
+                      {f.method === "variational" ? "⚡ VI" : "🎯 Sampling"}
                     </Badge>
                     <div className="text-xs mt-1 text-muted-foreground">
-                      🧠 EF: {f.meta.epistemic_friction_score} | ΔIA: {f.meta.isaad_alignment_delta} | Echo: {f.meta.recursive_echo_index}
+                      🧠 EF: {f.meta.epistemic_friction_score} | ΔIA:{" "}
+                      {f.meta.isaad_alignment_delta} | Echo:{" "}
+                      {f.meta.recursive_echo_index}
                     </div>
                     <div className="text-xs italic text-muted-foreground">
                       Origin: {f.zone_origin} | Type: {f.zone_type}
                       <br />
-                      Trace: {f.meta.simulation_trace_id} | Memory: {f.meta.memory_activation}
+                      Trace: {f.meta.simulation_trace_id} | Memory:{" "}
+                      {f.meta.memory_activation}
                     </div>
                   </div>
                 ))}
@@ -146,12 +152,16 @@ export default function PosteriorPilotDashboard() {
           {/* Confidence Timeline */}
           <Card className="rounded-2xl shadow-lg">
             <CardContent className="p-4">
-              <h3 className="text-xl font-semibold mb-2">📈 Confidence Evolution</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                📈 Confidence Evolution
+              </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={data.confidenceTimeline}>
                   <XAxis
                     dataKey="timestamp"
-                    tickFormatter={(t) => new Date(t).toLocaleTimeString()}
+                    tickFormatter={(t) =>
+                      new Date(t).toLocaleTimeString()
+                    }
                   />
                   <YAxis domain={[0, 1]} />
                   <Tooltip />
@@ -169,7 +179,9 @@ export default function PosteriorPilotDashboard() {
           {/* Belief Path */}
           <Card className="rounded-2xl shadow-lg">
             <CardContent className="p-4">
-              <h3 className="text-xl font-semibold mb-2">🧭 Belief Path Explorer</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                🧭 Belief Path Explorer
+              </h3>
               <ul className="space-y-2">
                 {data.beliefPath.map((b, i) => (
                   <li key={i} className="p-2 border rounded-md">
@@ -178,16 +190,23 @@ export default function PosteriorPilotDashboard() {
                       {new Date(b.timestamp).toLocaleString()}
                     </div>
                     <div className="text-sm">
-                      Prior: {b.prior.toFixed(2)} → Posterior: {b.posterior.toFixed(2)}
+                      Prior: {b.prior.toFixed(2)} → Posterior:{" "}
+                      {b.posterior.toFixed(2)}
                     </div>
                     <Badge variant="outline">Cause: {b.meta.cause}</Badge>
                     <Badge variant="secondary">
-                      Method: {b.meta.inference_method === "variational" ? "⚡ VI" : "🎯 Sampling"}
+                      Method:{" "}
+                      {b.meta.inference_method === "variational"
+                        ? "⚡ VI"
+                        : "🎯 Sampling"}
                     </Badge>
                     <div className="text-xs mt-1 text-muted-foreground">
-                      🧠 EF: {b.meta.epistemic_friction_score} | ΔIA: {b.meta.isaad_alignment_delta} | Echo: {b.meta.recursive_echo_index}
+                      🧠 EF: {b.meta.epistemic_friction_score} | ΔIA:{" "}
+                      {b.meta.isaad_alignment_delta} | Echo:{" "}
+                      {b.meta.recursive_echo_index}
                       <br />
-                      Trace: {b.meta.simulation_trace_id} | Memory: {b.meta.memory_activation}
+                      Trace: {b.meta.simulation_trace_id} | Memory:{" "}
+                      {b.meta.memory_activation}
                     </div>
                   </li>
                 ))}
@@ -207,7 +226,9 @@ export default function PosteriorPilotDashboard() {
                       {new Date(entry.timestamp).toLocaleString()}
                     </div>
                     <div className="text-xs">Anchor: {entry.anchor_id}</div>
-                    <div className="text-xs text-muted-foreground italic">"{entry.snapshot}"</div>
+                    <div className="text-xs text-muted-foreground italic">
+                      "{entry.snapshot}"
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -215,7 +236,10 @@ export default function PosteriorPilotDashboard() {
           </Card>
 
           {/* Oracle Commentary */}
-          <OracleThread simulationId={`post_${zone}_${Date.now()}`} zone={zone} />
+          <OracleThread
+            simulationId={`post_${zone}_${Date.now()}`}
+            zone={zone}
+          />
         </>
       )}
     </motion.div>
