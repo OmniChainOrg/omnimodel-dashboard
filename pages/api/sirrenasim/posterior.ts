@@ -1,8 +1,8 @@
 // components/PosteriorPilotDashboard.tsx
 
 import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "./components/ui/card";
-import { Badge } from "./components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   LineChart,
   Line,
@@ -13,7 +13,7 @@ import {
 } from "recharts";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import OracleThread from "../components/OracleThread";
+import OracleThread from "@/components/OracleThread";
 
 interface Forecast {
   zone: string;
@@ -126,11 +126,9 @@ export default function PosteriorPilotDashboard() {
                     <div className="text-sm text-muted-foreground">
                       Zone: {f.zone}
                     </div>
-                    {f.zone_origin && (
-                      <div className="text-xs text-muted-foreground italic">
-                        Origin: {f.zone_origin} ({f.zone_type})
-                      </div>
-                    )}
+                    <div className="text-sm italic text-muted-foreground">
+                      Origin: {f.zone_origin || "N/A"} ({f.zone_type})
+                    </div>
                     <div className="text-lg font-medium">{f.prediction}</div>
                     <Badge variant="outline">
                       {(f.probability * 100).toFixed(1)}%
@@ -139,13 +137,11 @@ export default function PosteriorPilotDashboard() {
                       Method: {f.method === "variational" ? "⚡ VI" : "🎯 Sampling"}
                     </Badge>
                     <div className="text-xs mt-1 text-muted-foreground">
-                      🧠 EF: {f.meta.epistemic_friction_score} | IA Δ: {f.meta.isaad_alignment_delta} | Echo: {f.meta.recursive_echo_index}
+                      🧠 EF Score: {f.meta.epistemic_friction_score} | IA Delta: {f.meta.isaad_alignment_delta} | Echo Index: {f.meta.recursive_echo_index}
                     </div>
-                    {f.meta.simulation_trace_id && (
-                      <div className="text-xs italic">
-                        Trace: {f.meta.simulation_trace_id} | Memory: {f.meta.memory_activation}
-                      </div>
-                    )}
+                    <div className="text-xs italic">
+                      Simulation ID: {f.meta.simulation_trace_id || "N/A"} | Memory: {f.meta.memory_activation || "latent"}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -188,13 +184,11 @@ export default function PosteriorPilotDashboard() {
                       Method: {b.meta.inference_method === "variational" ? "⚡ VI" : "🎯 Sampling"}
                     </Badge>
                     <div className="text-xs mt-1 text-muted-foreground">
-                      🧠 EF: {b.meta.epistemic_friction_score} | IA Δ: {b.meta.isaad_alignment_delta} | Echo: {b.meta.recursive_echo_index}
+                      🧠 EF Score: {b.meta.epistemic_friction_score} | IA Delta: {b.meta.isaad_alignment_delta} | Echo Index: {b.meta.recursive_echo_index}
                     </div>
-                    {b.meta.simulation_trace_id && (
-                      <div className="text-xs italic">
-                        Trace: {b.meta.simulation_trace_id} | Memory: {b.meta.memory_activation}
-                      </div>
-                    )}
+                    <div className="text-xs italic">
+                      Simulation ID: {b.meta.simulation_trace_id || "N/A"} | Memory: {b.meta.memory_activation || "latent"}
+                    </div>
                   </li>
                 ))}
               </ul>
