@@ -27,7 +27,7 @@
     // added for absolute imports
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["components/*"]
     }
   },
   "include": [
