@@ -29,6 +29,7 @@
     "paths": {
       "@/*": ["components/*"]
     }
+    /* …rest… */
   },
   "include": [
     "next-env.d.ts",
