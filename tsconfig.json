@@ -23,13 +23,10 @@
       }
     ],
     "target": "ES2017",
-
-    // added for absolute imports
     "baseUrl": ".",
     "paths": {
       "@/*": ["components/*"]
     }
-    /* …rest… */
   },
   "include": [
     "next-env.d.ts",
