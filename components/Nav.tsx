@@ -6,7 +6,6 @@ export default function Nav() {
 // <Link href="/epistemic-engine" className="hover:underline text-blue-600">
 //   🧠 Epistemic Engine
 // </Link>
-      </Link>
     </nav>
   );
 }
