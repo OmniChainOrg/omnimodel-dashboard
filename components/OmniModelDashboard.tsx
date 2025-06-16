@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import OmniTwin from "@/components/OmniTwin";
 import CE2ZonePanel from "./CE2ZonePanel";
 import OmniTwinNexusPanel from "./OmniTwinNexusPanel";
 import OmniVestPanel from "./OmniVestPanel";
@@ -41,8 +42,15 @@ export default function OmniModelDashboard() {
     switch (activeZone) {
       case "ce2":
         return <CE2ZonePanel />;
-      case "omnitwin":
-        return <OmniTwinNexusPanel />;
+      case "OmniTwin":
+        return (
+          <div>
+            <OmniTwin />
+            <div className="mt-6">
+              <OmniTwinNexusPanel />
+            </div>
+          </div>
+        );
       case "omnivest":
         return <OmniVestPanel />;
       case "chronomatch":
