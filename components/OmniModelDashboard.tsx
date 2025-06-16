@@ -41,7 +41,7 @@ export default function OmniModelDashboard() {
     switch (activeZone) {
       case "ce2":
         return <CE2ZonePanel />;
-      case "omnituin":
+      case "omnitwin":
         return <OmniTwinNexusPanel />;
       case "omnivest":
         return <OmniVestPanel />;
