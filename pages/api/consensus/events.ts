@@ -1,4 +1,4 @@
-// /pages/api/consensus/omnitwin.ts
+// /pages/api/consensus/events.ts
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
