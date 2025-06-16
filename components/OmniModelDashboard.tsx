@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import CE2Panel from "./CE2Panel";
+import CE2ZonePanel from "./CE2ZonePanel";
 import OmniTwinNexusPanel from "./OmniTwinNexusPanel";
-import EpistemicEngine from "./EpistemicEngine";
 import OmniVestPanel from "./OmniVestPanel";
 import ChronoMatchPanel from "./ChronoMatchPanel";
 import BIODEFMatchPanel from "./BIODEFMatchPanel";
@@ -20,7 +19,6 @@ import SirrenaSimPanel from "./SirrenaSimPanel";
 const zones = [
   { label: "💠 CE²", value: "ce2" },
   { label: "♾️ OmniTwin", value: "omnitwin" },
-  { label: "🧠 Epistemic", value: "epistemic" },
   { label: "💰 OmniVest", value: "omnivest" },
   { label: "⏱ ChronoMatch", value: "chronomatch" },
   { label: "🧫 BIODEFMatch", value: "biodefmatch" },
@@ -42,11 +40,9 @@ export default function OmniModelDashboard() {
   const renderPanel = () => {
     switch (activeZone) {
       case "ce2":
-        return <CE2Panel />;
+        return <CE2ZonePanel />;
       case "omnituin":
         return <OmniTwinNexusPanel />;
-      case "epistemic":
-        return <EpistemicEngine />;
       case "omnivest":
         return <OmniVestPanel />;
       case "chronomatch":
