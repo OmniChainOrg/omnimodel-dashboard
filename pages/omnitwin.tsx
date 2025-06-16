@@ -1,9 +1,10 @@
 // pages/omnitwin.tsx
 
 import React from "react";
+import OmniTwinNexusPanel from "@/components/OmniTwinNexusPanel";
 
-import OmniTwin from '@/components/OmniTwin';
 export default function OmniTwinPage() {
-  return <OmniTwin />;
+  return <OmniTwinNexusPanel />;
 }
+
 
