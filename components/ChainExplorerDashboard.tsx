@@ -20,6 +20,8 @@ import TradePharmaPanel from "../components/TradePharmaPanel";
 import SirrenaSimPanel from "../components/SirrenaSimPanel";
 
 const zones = [
+  { label: "💠 CE²", value: "ce2" },
+  { label: "♾️ OmniTwin", value: "omnitwin" },
   { label: "💰 OmniVest", value: "omnivest" },
   { label: "⏱ ChronoMatch", value: "chronomatch" },
   { label: "🧫 BIODEFMatch", value: "biodefmatch" },
