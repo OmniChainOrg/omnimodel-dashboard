@@ -31,10 +31,9 @@ export default function handler(
   }
 
   const payload = req.body as ConsensusEventPayload;
-
   const { zone, type, drift, entropy, anchor_id } = payload;
 
-  // Example logic for consensus evaluation
+  // Default logic
   let status: "accepted" | "rejected" | "pending" = "pending";
   let note = "Awaiting further drift stabilization.";
 
@@ -44,6 +43,12 @@ export default function handler(
   } else if (drift > 0.8 || entropy > 0.7) {
     status = "rejected";
     note = "Drift/entropy too high for stable consensus.";
+  }
+
+  // 🔁 CE² Zone-specific logic
+  if (zone === "ce2") {
+    console.log("🔁 CE² Zone event received:", payload);
+    note += " [CE²-specific recursive evaluation in progress]";
   }
 
   return res.status(200).json({
