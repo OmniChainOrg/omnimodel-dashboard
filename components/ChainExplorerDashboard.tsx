@@ -3,6 +3,8 @@ import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Loader2, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import CE2ZonePanel from "./CE2ZonePanel";
+import OmniTwinNexusPanel from "./OmniTwinNexusPanel";
 import OmniVestPanel from "../components/OmniVestPanel";
 import ChronoMatchPanel from "../components/ChronoMatchPanel";
 import BIODEFMatchPanel from "../components/BIODEFMatchPanel";
