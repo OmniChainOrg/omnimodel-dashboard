@@ -1,4 +1,4 @@
-// components/epistemicEngine.tsx
+// components/EpistemicEngine.tsx
 
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
