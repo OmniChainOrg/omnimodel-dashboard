@@ -15,7 +15,7 @@ export default function CE2ZonePanel() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/ce2zone/route", {
+      const res = await fetch("/api/ce2/route", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ zone, payload: JSON.parse(payload) }),
