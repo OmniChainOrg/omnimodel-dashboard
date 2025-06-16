@@ -3,9 +3,9 @@ import Link from "next/link";
 export default function Nav() {
   return (
     <nav className="flex space-x-4">
-      {/* other nav links */}
-      <Link href="/epistemic-engine" className="hover:underline text-blue-600">
-        🧠 Epistemic Engine
+// <Link href="/epistemic-engine" className="hover:underline text-blue-600">
+//   🧠 Epistemic Engine
+// </Link>
       </Link>
     </nav>
   );
