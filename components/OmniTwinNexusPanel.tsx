@@ -20,7 +20,7 @@ export default function OmniTwinNexusPanel() {
   const [data, setData] = useState<NexusResponse | null>(null);
 
   useEffect(() => {
-    fetch("/api/omnituin")
+    fetch("/api/omnitwin")
       .then((res) => res.json())
       .then(setData)
       .catch(console.error);
