@@ -43,14 +43,7 @@ export default function OmniModelDashboard() {
       case "ce2":
         return <CE2ZonePanel />;
       case "omnitwin":
-        return (
-          <div>
-            <OmniTwin />
-            <div className="mt-6">
-              <OmniTwinNexusPanel />
-            </div>
-          </div>
-        );
+        return <OmniTwin />;
       case "omnivest":
         return <OmniVestPanel />;
       case "chronomatch":
