@@ -72,9 +72,10 @@ export default function OmniTwinNexusPanel() {
                 <div className="text-gray-600">
                   {Object.entries(evt.payload).map(([key, value]) => (
                     <div key={key}>
-                      <span className="font-medium">{key}:</span> {value}
+                      <span className="font-medium">{key}:</span> {typeof value === 'object' ? JSON.stringify(value) : String(value)}
                     </div>
                   ))}
+
                 </div>
               </div>
             );
