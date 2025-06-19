@@ -1,19 +1,24 @@
-//events.ts
-export default function handler(req, res) {
-  res.status(200).json([
-    {
-      id: 1,
-      zone: "TradePharma",
-      action: "belief_update",
-      timestamp: "2025-06-17T00:00:00Z",
-      payload: { alignmentScore: 0.91 }
-    },
-    {
-      id: 2,
-      zone: "SirrenaSim",
-      action: "anchor_shift",
-      timestamp: "2025-06-17T00:05:00Z",
-      payload: { entropyDelta: 0.08 }
-    }
-  ]);
+// pages/api/consensus/events.ts
+
+function generateEntropyEvent(id, zone) {
+  const entropyDelta = parseFloat((Math.random() * 0.2).toFixed(2));
+  return {
+    id,
+    zone,
+    action: "anchor_shift",
+    timestamp: new Date(Date.now() - Math.random() * 100000).toISOString(),
+    payload: { entropyDelta },
+  };
 }
+
+export default function handler(req, res) {
+  const events = [
+    generateEntropyEvent(1, "OmniTwin"),
+    generateEntropyEvent(2, "SirrenaSim"),
+    generateEntropyEvent(3, "CE2"),
+    generateEntropyEvent(4, "TradePharma"),
+  ];
+
+  res.status(200).json(events);
+}
+
