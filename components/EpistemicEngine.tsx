@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Network } from "lucide-react";
 import { motion } from "framer-motion";
+import EntropyDriftChart from "@/components/EntropyDriftChart";
 
 interface ConsensusData {
   consensus_score: number;
