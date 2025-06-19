@@ -70,10 +70,7 @@ export default function RecursiveEpistemicEngine() {
                 </span>
               </p>
               <p className="text-sm">{consensus.justification_summary}</p>
-              <Badge
-                variant={consensus.memory_alignment_passed ? "default" : "destructive"}
-                className="text-xs"
-              >
+              <Badge variant={consensus.memory_alignment_passed ? "default" : "destructive"}>
                 {consensus.memory_alignment_passed ? "Memory Aligned" : "Needs More Anchoring"}
               </Badge>
               <p className="text-sm text-muted-foreground">
