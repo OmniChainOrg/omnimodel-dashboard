@@ -96,5 +96,10 @@ export default function RecursiveEpistemicEngine() {
       {/* Background Bloom */}
       <div className="absolute inset-0 z-0 animate-pulse bg-gradient-to-br from-pink-100 to-transparent opacity-10" />
     </Card>
+      <CardContent>
+        {/* Other consensus UI elements */}
+        <EntropyDriftChart />
+      </CardContent>
+    </Card>
   );
 }
