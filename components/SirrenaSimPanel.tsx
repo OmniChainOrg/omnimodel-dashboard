@@ -58,8 +58,10 @@ export default function SirrenaSimPanel() {
           ) : (
             <div className="space-y-2">
               {events.map((event, idx) => (
-                <ExpandedEvent key={idx} event={event} />
-                <AnchorTrail events={anchorEvents} />
+                <>
+                  <ExpandedEvent key={idx} event={event} />
+                  <AnchorTrail events={anchorEvents} />
+                </>
               ))}
             </div>
           )}
