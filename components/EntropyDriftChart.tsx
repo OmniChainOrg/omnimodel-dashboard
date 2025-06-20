@@ -8,6 +8,7 @@ import {
   CategoryScale,
   Tooltip,
 } from "chart.js";
+import EntropyAlertBeacon from "@/components/EntropyAlertBeacon";
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
 
@@ -52,7 +53,9 @@ export default function EntropyDriftChart() {
   return (
     <div className="mt-6">
       <h4 className="font-bold mb-2 text-purple-700 text-sm">Entropy Drift Monitor</h4>
-      <Line data={chartData} height={100} />
+      {entropyPoints.length > 0 && (
+        <EntropyAlertBeacon value={entropyPoints[entropyPoints.length - 1].value} />
+      )}
     </div>
   );
 }
