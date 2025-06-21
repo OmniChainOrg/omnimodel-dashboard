@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
   },
   "dependencies": {
     "framer-motion": "latest",
@@ -16,7 +16,7 @@
     "recharts": "latest",
     "sass": "latest",
     "chart.js": "^4.4.1",
-    "react-chartjs-2": "^5.2.0"
+    "react-chartjs-2": "^5.2.0",
   },
   "devDependencies": {
     "@types/node": "22.15.3",
