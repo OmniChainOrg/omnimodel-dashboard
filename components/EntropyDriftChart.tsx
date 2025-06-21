@@ -1,4 +1,4 @@
-// components/EntropyDriftChart.tsx
+
 import React from "react";
 import {
   Chart as ChartJS,
@@ -6,33 +6,21 @@ import {
   PointElement,
   LinearScale,
   CategoryScale,
-  Tooltip,
+  Tooltip
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-ChartJS.register(
-  LineElement,
-  PointElement,
-  LinearScale,
-  CategoryScale,
-  Tooltip
-);
+ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
 
 const EntropyDriftChart = () => {
-  const entropyData = [
-    { label: "10:52:56", value: 0.07 },
-    { label: "10:52:45", value: 0.18 },
-    { label: "10:53:01", value: 0.14 },
-  ];
-
   const data = {
-    labels: entropyData.map((point) => point.label),
+    labels: ["T-4", "T-3", "T-2", "T-1", "Now"],
     datasets: [
       {
         label: "Entropy Drift",
-        data: entropyData.map((point) => point.value),
-        borderColor: "rgba(128,0,255,0.7)",
-        backgroundColor: "rgba(128,255,128,0.2)",
+        data: [0.07, 0.12, 0.18, 0.14, 0.10],
+        borderColor: "rgba(75,192,192,1)",
+        backgroundColor: "rgba(75,192,192,0.2)",
         tension: 0.4,
         fill: true,
       },
@@ -41,29 +29,22 @@ const EntropyDriftChart = () => {
 
   const options = {
     responsive: true,
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem) => `Entropy: ${tooltipItem.raw}`,
-        },
-      },
-    },
     scales: {
       x: {
         title: {
           display: true,
-          text: "Timestamp",
-        },
+          text: "Time"
+        }
       },
       y: {
-        min: 0,
-        max: 0.2,
         title: {
           display: true,
-          text: "Entropy",
+          text: "Entropy"
         },
-      },
-    },
+        min: 0,
+        max: 0.2
+      }
+    }
   };
 
   return <Line data={data} options={options} />;
