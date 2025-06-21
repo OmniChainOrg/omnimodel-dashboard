@@ -5,41 +5,36 @@ import {
   LineElement,
   PointElement,
   LinearScale,
-  TimeScale,
-  Tooltip,
-  Filler,
   CategoryScale,
+  Tooltip,
 } from "chart.js";
-import "chartjs-adapter-date-fns";
 import { Line } from "react-chartjs-2";
 
 ChartJS.register(
   LineElement,
   PointElement,
   LinearScale,
-  TimeScale,
-  Tooltip,
-  Filler,
-  CategoryScale
+  CategoryScale,
+  Tooltip
 );
 
 const EntropyDriftChart = () => {
   const entropyData = [
-    { timestamp: "2025-06-20T10:52:56Z", value: 0.07 },
-    { timestamp: "2025-06-20T10:52:45Z", value: 0.18 },
-    { timestamp: "2025-06-20T10:53:01Z", value: 0.14 },
+    { label: "10:52:56", value: 0.07 },
+    { label: "10:52:45", value: 0.18 },
+    { label: "10:53:01", value: 0.14 },
   ];
 
   const data = {
-    labels: entropyData.map((point) => new Date(point.timestamp)),
+    labels: entropyData.map((point) => point.label),
     datasets: [
       {
         label: "Entropy Drift",
         data: entropyData.map((point) => point.value),
-        fill: true,
         borderColor: "rgba(128,0,255,0.7)",
-        backgroundColor: "rgba(128,255,128,0.1)",
-        tension: 0.5,
+        backgroundColor: "rgba(128,255,128,0.2)",
+        tension: 0.4,
+        fill: true,
       },
     ],
   };
@@ -49,17 +44,12 @@ const EntropyDriftChart = () => {
     plugins: {
       tooltip: {
         callbacks: {
-          label: (tooltipItem) =>
-            `Entropy: ${tooltipItem.raw}`,
+          label: (tooltipItem) => `Entropy: ${tooltipItem.raw}`,
         },
       },
     },
     scales: {
       x: {
-        type: "time",
-        time: {
-          tooltipFormat: "yyyy-MM-dd HH:mm:ss",
-        },
         title: {
           display: true,
           text: "Timestamp",
