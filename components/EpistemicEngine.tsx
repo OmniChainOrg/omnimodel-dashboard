@@ -20,7 +20,7 @@ interface ConsensusData {
 export default function RecursiveEpistemicEngine() {
   const [consensus, setConsensus] = useState<ConsensusData | null>(null);
   const [loading, setLoading] = useState(false);
-  
+
   const fetchConsensus = async () => {
     setLoading(true);
     try {
@@ -36,14 +36,15 @@ export default function RecursiveEpistemicEngine() {
     }
   };
 
-  const divergences = [
-  { zone: "SirrenaSim", divergenceLevel: 0.76 },
-  { zone: "HOPEChain", divergenceLevel: 0.43 },
-  { zone: "TradePharma", divergenceLevel: 0.61 },
-];
   useEffect(() => {
     fetchConsensus();
   }, []);
+
+  const divergences = [
+    { zone: "SirrenaSim", divergenceLevel: 0.76 },
+    { zone: "HOPEChain", divergenceLevel: 0.43 },
+    { zone: "TradePharma", divergenceLevel: 0.61 },
+  ];
 
   return (
     <>
@@ -102,7 +103,7 @@ export default function RecursiveEpistemicEngine() {
         {/* Background Bloom */}
         <div className="absolute inset-0 z-0 animate-pulse bg-gradient-to-br from-pink-100 to-transparent opacity-10" />
       </Card>
-    <>
+
       <EntropyDriftChart />
       <L8BloomGraph divergences={divergences} />
     </>
