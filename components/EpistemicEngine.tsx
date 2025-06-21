@@ -2,8 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import EntropyDriftChart from "@/components/EntropyDriftChart";
-import { FaExclamationTriangle } from "react-icons/fa";
-import { GiSplitCross } from "react-icons/gi";
 import { motion } from "framer-motion";
 
 const EpistemicEngine = () => {
@@ -17,7 +15,6 @@ const EpistemicEngine = () => {
   });
 
   useEffect(() => {
-    // Simulated real-time update
     const timer = setInterval(() => {
       setEntropy((prev) =>
         Math.max(0, Math.min(0.2, prev + (Math.random() - 0.5) * 0.01))
@@ -52,9 +49,8 @@ const EpistemicEngine = () => {
           <div className="mt-4">
             <h3 className="text-md font-semibold">Entropy Drift Monitor</h3>
             {entropy > 0.15 && (
-              <div className="text-red-600 font-bold text-sm flex items-center">
-                <FaExclamationTriangle className="mr-1" />
-                Entropy Spike Detected: {entropy.toFixed(3)}
+              <div className="text-red-600 font-bold text-sm">
+                [ALERT] Entropy Spike Detected: {entropy.toFixed(3)}
               </div>
             )}
             <div className="mt-2">
