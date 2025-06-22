@@ -11,7 +11,7 @@ const EntropyDriftChart: React.FC<{ dynamic: boolean; entropy: number }> = ({ dy
 
 const EntropyAlertBeacon: React.FC<{ entropy: number; threshold: number }> = ({ entropy, threshold }) => (
   <div className="text-red-600 font-bold">
-    🔺 Entropy Alert: {entropy.toFixed(2)} > {threshold}
+    🔺 Entropy Alert: {entropy.toFixed(2)} {'>'} {threshold}
   </div>
 );
 
