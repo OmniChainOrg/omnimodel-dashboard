@@ -1,7 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
+
+// Local Switch implementation to avoid missing module errors
+type SwitchProps = {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+};
+
+const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
+  <button
+    role="switch"
+    aria-checked={checked}
+    onClick={() => onCheckedChange(!checked)}
+    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
+      checked ? "bg-blue-600" : "bg-gray-300"
+    }`}
+  >
+    <span
+      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+        checked ? "translate-x-6" : "translate-x-1"
+      }`}
+    />
+  </button>
+);
 
 // Existing and new visualization components
 import EntropyDriftChart from "@/components/EntropyDriftChart";
@@ -23,7 +45,6 @@ const EpistemicEngine: React.FC = () => {
   const [dynamicMode, setDynamicMode] = useState(false);
 
   useEffect(() => {
-    // Drift update loop: runs faster in dynamic mode
     const interval = dynamicMode ? 2500 : 5000;
     const timer = setInterval(() => {
       setEntropy(prev =>
