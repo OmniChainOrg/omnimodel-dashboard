@@ -70,7 +70,7 @@ const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
 const THRESHOLD = 0.15;
 
 const EpistemicEngine: React.FC = () => {
-  // default dynamic mode on for dynamic graphic
+  // Default dynamic mode on for dynamic graphic
   const [dynamicMode, setDynamicMode] = useState(true);
   const [entropy, setEntropy] = useState(0.14);
   const [consensus] = useState({
@@ -79,7 +79,6 @@ const EpistemicEngine: React.FC = () => {
     memory_alignment_passed: true,
     drift_meta: { entropy: 0.14, anchoring_ratio: 0.88 },
   });
-  const [dynamicMode, setDynamicMode] = useState(false);
 
   useEffect(() => {
     const interval = dynamicMode ? 2500 : 5000;
