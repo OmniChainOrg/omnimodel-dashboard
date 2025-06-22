@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "./ui/Card";
-import { Switch } from "./ui/Switch";
+import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
 
 // Existing and new visualization components
-import EntropyDriftChart from "./EntropyDriftChart";
-import EntropyAlertBeacon from "./EntropyAlertBeacon";
-import CrossInfluenceModel from "./CrossInfluenceModel";
-import AnchorTrails from "./AnchorTrails";
-import DivergenceBloomGraph from "./DivergenceBloomGraph";
+import EntropyDriftChart from "@/components/EntropyDriftChart";
+import EntropyAlertBeacon from "@/components/EntropyAlertBeacon";
+import CrossInfluenceModel from "@/components/CrossInfluenceModel";
+import AnchorTrails from "@/components/AnchorTrails";
+import DivergenceBloomGraph from "@/components/DivergenceBloomGraph";
 
 const THRESHOLD = 0.15;
 
