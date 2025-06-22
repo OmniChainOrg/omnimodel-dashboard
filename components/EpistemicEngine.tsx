@@ -4,8 +4,16 @@ import { motion } from "framer-motion";
 
 // Inline placeholder components to avoid missing modules
 const EntropyDriftChart: React.FC<{ dynamic: boolean; entropy: number }> = ({ dynamic, entropy }) => (
-  <div className="h-32 bg-white/20 flex items-center justify-center rounded">
-    Entropy Drift Chart: {entropy.toFixed(2)} (Mode: {dynamic ? "Dynamic" : "Static"})
+  <div className="h-32 w-full bg-gray-200 rounded overflow-hidden relative">
+    <motion.div
+      className="absolute left-0 top-0 h-full"
+      animate={{ width: `${entropy * 100}%` }}
+      transition={{ duration: dynamic ? 0.5 : 0 }}
+      style={{ backgroundColor: 'rgba(59, 130, 246, 0.7)' }}
+    />
+    <div className="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
+      Entropy: {entropy.toFixed(2)}
+    </div>
   </div>
 );
 
@@ -62,6 +70,8 @@ const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
 const THRESHOLD = 0.15;
 
 const EpistemicEngine: React.FC = () => {
+  // default dynamic mode on for dynamic graphic
+  const [dynamicMode, setDynamicMode] = useState(true);
   const [entropy, setEntropy] = useState(0.14);
   const [consensus] = useState({
     consensus_score: 0.92,
