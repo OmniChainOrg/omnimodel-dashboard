@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "./ui/card";
-import { Switch } from "./ui/switch";
+import { Card } from "./ui/Card";
+import { Switch } from "./ui/Switch";
 import { motion } from "framer-motion";
 
 // Existing and new visualization components
