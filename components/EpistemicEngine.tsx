@@ -2,7 +2,41 @@ import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
-// Local Switch implementation to avoid missing module errors
+// Inline placeholder components to avoid missing modules
+const EntropyDriftChart: React.FC<{ dynamic: boolean; entropy: number }> = ({ dynamic, entropy }) => (
+  <div className="h-32 bg-white/20 flex items-center justify-center rounded">
+    Entropy Drift Chart: {entropy.toFixed(2)} (Mode: {dynamic ? "Dynamic" : "Static"})
+  </div>
+);
+
+const EntropyAlertBeacon: React.FC<{ entropy: number; threshold: number }> = ({ entropy, threshold }) => (
+  <div className="text-red-600 font-bold">
+    🔺 Entropy Alert: {entropy.toFixed(2)} > {threshold}
+  </div>
+);
+
+const CrossInfluenceModel: React.FC<{ metrics: { entropy: number; consensusScore: number; anchoringRatio: number } }> = ({ metrics }) => (
+  <div className="h-32 bg-white/20 flex flex-col items-center justify-center rounded">
+    <p>Cross-Influence Model</p>
+    <p>Entropy: {metrics.entropy.toFixed(2)}</p>
+    <p>Consensus: {metrics.consensusScore.toFixed(2)}</p>
+    <p>Anchoring: {metrics.anchoringRatio.toFixed(2)}</p>
+  </div>
+);
+
+const AnchorTrails: React.FC<{ anchors: number }> = ({ anchors }) => (
+  <div className="h-32 bg-white/20 flex items-center justify-center rounded">
+    Animated Anchor Trails: Ratio {anchors.toFixed(2)}
+  </div>
+);
+
+const DivergenceBloomGraph: React.FC<{ divergence: number }> = ({ divergence }) => (
+  <div className="h-32 bg-white/20 flex items-center justify-center rounded">
+    L8 Divergence Bloom: {divergence.toFixed(2)}
+  </div>
+);
+
+// Local Switch implementation
 type SwitchProps = {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
@@ -25,18 +59,11 @@ const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
   </button>
 );
 
-// Existing and new visualization components
-import EntropyDriftChart from "@/components/EntropyDriftChart";
-import EntropyAlertBeacon from "@/components/EntropyAlertBeacon";
-import CrossInfluenceModel from "@/components/CrossInfluenceModel";
-import AnchorTrails from "@/components/AnchorTrails";
-import DivergenceBloomGraph from "@/components/DivergenceBloomGraph";
-
 const THRESHOLD = 0.15;
 
 const EpistemicEngine: React.FC = () => {
   const [entropy, setEntropy] = useState(0.14);
-  const [consensus, setConsensus] = useState({
+  const [consensus] = useState({
     consensus_score: 0.92,
     justification_summary: "High coherence between L8 intuition and CE² anchors.",
     memory_alignment_passed: true,
@@ -56,11 +83,7 @@ const EpistemicEngine: React.FC = () => {
 
   return (
     <Card className="rounded-2xl shadow-lg border-pink-200 relative overflow-hidden">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="p-6 space-y-4"
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="font-bold text-xl">OmniTwin ∞ Consensus Relay</h2>
           <p className="text-sm text-green-700">⦿ Status: LIVE</p>
@@ -70,9 +93,7 @@ const EpistemicEngine: React.FC = () => {
           <div>
             <p><strong>Consensus Score:</strong> {consensus.consensus_score.toFixed(2)}</p>
             <p><strong>Justification:</strong> {consensus.justification_summary}</p>
-            <p>
-              <strong>Memory Aligned:</strong> {consensus.memory_alignment_passed ? "✔" : "✘"}
-            </p>
+            <p><strong>Memory Aligned:</strong> {consensus.memory_alignment_passed ? "✔" : "✘"}</p>
           </div>
           <div>
             <p><strong>Entropy:</strong> {entropy.toFixed(2)}</p>
@@ -80,47 +101,32 @@ const EpistemicEngine: React.FC = () => {
           </div>
         </div>
 
-        {/* Dynamic Mode Toggle */}
         <div className="flex items-center">
           <Switch checked={dynamicMode} onCheckedChange={setDynamicMode} />
           <span className="ml-2 text-sm">Dynamic Mode</span>
         </div>
 
-        {/* Entropy Drift Monitor & Chart */}
         <div>
           <h3 className="text-md font-semibold">Entropy Drift Monitor</h3>
-          {entropy > THRESHOLD && (
-            <EntropyAlertBeacon entropy={entropy} threshold={THRESHOLD} />
-          )}
+          {entropy > THRESHOLD && <EntropyAlertBeacon entropy={entropy} threshold={THRESHOLD} />}
           <div className="mt-3">
             <EntropyDriftChart dynamic={dynamicMode} entropy={entropy} />
           </div>
         </div>
 
-        {/* Cross-Influence Modeling between CE² and Zones */}
         <div>
           <h3 className="text-md font-semibold">CE² → Zone Cross-Influence</h3>
-          <CrossInfluenceModel
-            metrics={{
-              entropy,
-              consensusScore: consensus.consensus_score,
-              anchoringRatio: consensus.drift_meta.anchoring_ratio,
-            }}
-          />
+          <CrossInfluenceModel metrics={{ entropy, consensusScore: consensus.consensus_score, anchoringRatio: consensus.drift_meta.anchoring_ratio }} />
         </div>
 
-        {/* Animated Anchor Trails */}
         <div>
           <h3 className="text-md font-semibold">Animated Anchor Trails</h3>
           <AnchorTrails anchors={consensus.drift_meta.anchoring_ratio} />
         </div>
 
-        {/* L8 Divergence Bloom Graph */}
         <div>
           <h3 className="text-md font-semibold">L8 Divergence Bloom Graph</h3>
-          <DivergenceBloomGraph
-            divergence={Math.abs(1 - consensus.consensus_score)}
-          />
+          <DivergenceBloomGraph divergence={Math.abs(1 - consensus.consensus_score)} />
         </div>
       </motion.div>
     </Card>
