@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import EntropyDriftChart from "@/components/EntropyDriftChart";
 
-
-// Dynamic Entropy Drift Chart using Chart.js and react-chartjs-2
+// Chart.js and react-chartjs-2 imports for dynamic graphic
 import {
   Chart as ChartJS,
   LineElement,
@@ -17,16 +15,30 @@ import { Line } from "react-chartjs-2";
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
 
-const EntropyDriftChart: React.FC<{ dynamic: boolean; entropy: number }> = ({ dynamic, entropy }) => {
-  const [dataPoints, setDataPoints] = useState<number[]>([entropy, entropy, entropy, entropy, entropy]);
+interface ChartProps {
+  entropy: number;
+  dynamic: boolean;
+}
+
+const WINDOW_SIZE = 5;
+
+// Inline dynamic Entropy Drift Chart
+const EntropyDriftChartInline: React.FC<ChartProps> = ({ entropy, dynamic }) => {
+  const [dataPoints, setDataPoints] = useState<number[]>(
+    Array(WINDOW_SIZE).fill(entropy)
+  );
+
   useEffect(() => {
     if (dynamic) {
-      setDataPoints(prev => [...prev.slice(-4), entropy]);
+      setDataPoints(prev => {
+        const slice = prev.slice(-(WINDOW_SIZE - 1));
+        return [...slice, entropy];
+      });
     }
   }, [entropy, dynamic]);
 
-  const labels = dataPoints.map((_, idx) =>
-    idx < dataPoints.length - 1 ? `T-${dataPoints.length - idx - 1}` : "Now"
+  const labels = dataPoints.map((_, i) =>
+    i < WINDOW_SIZE - 1 ? `T-${WINDOW_SIZE - i - 1}` : "Now"
   );
 
   const data = {
@@ -55,6 +67,34 @@ const EntropyDriftChart: React.FC<{ dynamic: boolean; entropy: number }> = ({ dy
   return <Line data={data} options={options} />;
 };
 
+// Other visualization placeholders
+const EntropyAlertBeacon: React.FC<{ entropy: number; threshold: number }> = ({ entropy, threshold }) => (
+  <div className="text-red-600 font-bold mt-2">
+    🔺 Entropy Alert: {entropy.toFixed(2)} {'>'} {threshold}
+  </div>
+);
+
+const CrossInfluenceModel: React.FC<{ metrics: { entropy: number; consensusScore: number; anchoringRatio: number } }> = ({ metrics }) => (
+  <div className="h-32 bg-white/20 flex flex-col items-center justify-center rounded p-2">
+    <p>Cross-Influence Model</p>
+    <p>Entropy: {metrics.entropy.toFixed(2)}</p>
+    <p>Consensus: {metrics.consensusScore.toFixed(2)}</p>
+    <p>Anchoring: {metrics.anchoringRatio.toFixed(2)}</p>
+  </div>
+);
+
+const AnchorTrails: React.FC<{ anchors: number }> = ({ anchors }) => (
+  <div className="h-32 bg-white/20 flex items-center justify-center rounded p-2">
+    Animated Anchor Trails: Ratio {anchors.toFixed(2)}
+  </div>
+);
+
+const DivergenceBloomGraph: React.FC<{ divergence: number }> = ({ divergence }) => (
+  <div className="h-32 bg-white/20 flex items-center justify-center rounded p-2">
+    L8 Divergence Bloom: {divergence.toFixed(2)}
+  </div>
+);
+
 // Local Switch component
 interface SwitchProps {
   checked: boolean;
@@ -80,7 +120,6 @@ const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
 const THRESHOLD = 0.15;
 
 const EpistemicEngine: React.FC = () => {
-  // Dynamic mode enabled by default for animated chart
   const [dynamicMode, setDynamicMode] = useState(true);
   const [entropy, setEntropy] = useState(0.14);
   const [consensus] = useState({
@@ -90,7 +129,6 @@ const EpistemicEngine: React.FC = () => {
     drift_meta: { entropy: 0.14, anchoring_ratio: 0.88 },
   });
 
-  // Update entropy drift over time
   useEffect(() => {
     const interval = dynamicMode ? 2500 : 5000;
     const timer = setInterval(() => {
@@ -133,20 +171,14 @@ const EpistemicEngine: React.FC = () => {
           <h3 className="text-md font-semibold">Entropy Drift Monitor</h3>
           {entropy > THRESHOLD && <EntropyAlertBeacon entropy={entropy} threshold={THRESHOLD} />}
           <div className="mt-3">
-            <EntropyDriftChart dynamic={dynamicMode} entropy={entropy} />
+            <EntropyDriftChartInline dynamic={dynamicMode} entropy={entropy} />
           </div>
         </div>
 
         {/* CE² → Zone Cross-Influence */}
         <div>
           <h3 className="text-md font-semibold">CE² → Zone Cross-Influence</h3>
-          <CrossInfluenceModel
-            metrics={{
-              entropy,
-              consensusScore: consensus.consensus_score,
-              anchoringRatio: consensus.drift_meta.anchoring_ratio,
-            }}
-          />
+          <CrossInfluenceModel metrics={{ entropy, consensusScore: consensus.consensus_score, anchoringRatio: consensus.drift_meta.anchoring_ratio }} />
         </div>
 
         {/* Animated Anchor Trails */}
