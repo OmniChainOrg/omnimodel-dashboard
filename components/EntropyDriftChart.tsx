@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import EntropyDriftChart from "@/components/EntropyDriftChart";
 
 // Dynamic Entropy Drift Chart using Chart.js and react-chartjs-2
 import {
