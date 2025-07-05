@@ -7,7 +7,7 @@ type Zone = {
   children?: Zone[];
 };
 
-generateZoneRecursive(
+function generateZoneRecursive(
   id: string,
   name: string,
   depth: number,
@@ -15,7 +15,6 @@ generateZoneRecursive(
 ): Zone {
   const zone: Zone = { id, name, depth };
   if (depth < maxDepth) {
-    // generate 2 sub-zones per zone for demo
     zone.children = [1, 2].map((i) =>
       generateZoneRecursive(
         `${id}-${i}`,
