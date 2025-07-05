@@ -1,6 +1,5 @@
 import React from 'react';
-import { useZoneArchetype, Zone } from '@/hooks/useZoneArchetype';
-import { motion } from 'framer-motion';
+import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 
 // Recursive Zone Node with explicit Tailwind styling
 const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
