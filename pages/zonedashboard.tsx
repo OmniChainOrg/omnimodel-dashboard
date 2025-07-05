@@ -1,16 +1,9 @@
 // pages/zonedashboard.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 
-// Debug banner to confirm this page loads
-const DebugBanner: React.FC = () => (
-  <div className="bg-red-500 text-white text-center py-2 font-bold">
-    DEBUG: zonedashboard.tsx loaded
-  </div>
-);
-
-// Recursive ZoneNode with styling
+// Recursive ZoneNode with Tailwind styling + motion
 const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
   <motion.div
     initial={{ opacity: 0, x: -20 }}
@@ -19,7 +12,7 @@ const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
     className="mb-6"
   >
     <div className="p-6 bg-white rounded-2xl shadow-lg">
-      <h3 className="text-2xl font-semibold text-blue-600">{zone.name}</h3>
+      <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
       <p className="text-sm text-gray-500">Depth: {zone.depth}</p>
     </div>
     {zone.children && (
@@ -33,30 +26,61 @@ const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
 );
 
 const ZoneDashboardPage: React.FC = () => {
-  const { tree, loading, error, refresh } = useZoneArchetype({
-    archetypeId: 'root',
-    archetypeName: 'Root Zone Archetype',
-    depth: 4,
-  });
+  // Form state
+  const [archetypeId, setArchetypeId] = useState('root');
+  const [archetypeName, setArchetypeName] = useState('Root Zone Archetype');
+  const [depth, setDepth] = useState(4);
 
-  React.useEffect(() => {
-    console.log('📡 zonedashboard.tsx rendered, loading=', loading);
-  }, [loading]);
+  // Fetch / regenerate on submit
+  const { tree, loading, error, refresh } = useZoneArchetype({ archetypeId, archetypeName, depth });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    refresh();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
-      <DebugBanner />
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Zone Archetype</h1>
+      <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">CE² Zone Archetype Generator</h1>
+        <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Archetype ID</label>
+            <input
+              type="text"
+              value={archetypeId}
+              onChange={e => setArchetypeId(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Archetype Name</label>
+            <input
+              type="text"
+              value={archetypeName}
+              onChange={e => setArchetypeName(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Depth</label>
+            <input
+              type="number"
+              min={1}
+              max={6}
+              value={depth}
+              onChange={e => setDepth(Number(e.target.value))}
+              className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
           <button
-            onClick={refresh}
-            className="px-5 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition"
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
           >
-            Refresh Zones
+            Generate Zones
           </button>
-        </div>
-        {loading && <p className="text-center text-gray-600">Loading zone archetype...</p>}
+        </form>
+
+        {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
         {tree && <ZoneNode zone={tree} />}
       </div>
