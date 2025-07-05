@@ -1,5 +1,5 @@
 import React from 'react';
-import { useZoneArchetype } from '../hooks/useZoneArchetype';
+import { useZoneArchetype } from '@/hooks/useZoneArchetype';
 
 interface ZoneProps {
   zone: {
