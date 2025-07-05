@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 
 // Recursive Zone Node with explicit Tailwind styling
