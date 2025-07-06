@@ -270,7 +270,7 @@ export default function ChainExplorerDashboard() {
         animate={{ opacity: 1, y: 0 }}
         className="col-span-3"
       >
-        <SirrenaSimPanel zone={zone} />
+        <SirrenaSimPanel />
       </motion.div>
 
       
