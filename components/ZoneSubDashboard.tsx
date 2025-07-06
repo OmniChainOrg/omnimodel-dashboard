@@ -1,79 +1,39 @@
 import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
-// Default generic components
+// Core panel components
 import SirrenaSimPanel from './SirrenaSimPanel';
-import MemoryView from './MemoryView';
-import PosteriorFeed from './PosteriorFeed';
+import MemoryPanel from '../pages/memory';
+import PosteriorPanel from './PosteriorPilotDashboard';
 import EpistemicEngine from './EpistemicEngine';
 import AnchoringTimeline from './AnchoringTimeline';
 
-// Domain-specific overrides (add your domain panels here)
-import BiotechSimPanel from './domain/BiotechSimPanel';
-import BiotechMemoryExplorer from './domain/BiotechMemoryExplorer';
-import BiotechPosteriorFeed from './domain/BiotechPosteriorFeed';
-import BiotechEpistemicEngine from './domain/BiotechEpistemicEngine';
-
-// Map each domain to its contextually relevant panels
-const domainViews: Record<string, Record<string, React.FC<any>>> = {
-  Biotech: {
-    Simulation: BiotechSimPanel,
-    Memory: BiotechMemoryExplorer,
-    Posterior: BiotechPosteriorFeed,
-    Epistemic: BiotechEpistemicEngine,
-  },
-  DeSci: {
-    Simulation: SirrenaSim,
-    Memory: MemoryView,
-    Posterior: PosteriorFeed,
-    Epistemic: EpistemicEngine,
-  },
-};
-
+// Tabs definition
 const tabs = ['Simulation', 'Memory', 'Posterior', 'Epistemic', 'Anchoring'] as const;
-
 type TabKey = typeof tabs[number];
 
 export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
   const [selectedTab, setSelectedTab] = useState<TabKey>('Simulation');
 
-  // Pick domain-specific or generic views
-  const views = domainViews[zone.domain] || {
-    Simulation: SirrenaSimControl,
-    Memory: MemoryView,
-    Posterior: PosteriorFeed,
-    Epistemic: EpistemicEngine,
-  };
-
-  const renderPanel = () => {
-    switch (selectedTab) {
-      case 'Simulation':
-        return <views.Simulation zone={zone} />;
-      case 'Memory':
-        return <views.Memory zone={zone} />;
-      case 'Posterior':
-        return <views.Posterior zone={zone} />;
-      case 'Epistemic':
-        return <views.Epistemic zone={zone} />;
-      case 'Anchoring':
-        return <AnchoringTimeline zoneId={zone.id} />;
-      default:
-        return null;
-    }
+  // Generic mapping of tabs to panels
+  const panelMap: Record<TabKey, React.ReactNode> = {
+    Simulation: <SirrenaSimPanel zone={zone} />,
+    Memory: <MemoryPanel zone={zone} />,
+    Posterior: <PosteriorPanel zone={zone} />,
+    Epistemic: <EpistemicEngine zone={zone} />,
+    Anchoring: <AnchoringTimeline zoneId={zone.id} />,
   };
 
   return (
     <div className="mt-6 bg-white rounded-2xl shadow-lg p-4">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Zone: {zone.name}</h2>
       <div className="flex space-x-2 mb-4">
-        {tabs.map((tab) => (
+        {tabs.map(tab => (
           <button
             key={tab}
             onClick={() => setSelectedTab(tab)}
             className={`px-4 py-2 font-medium rounded-t-lg transition ${
-              selectedTab === tab
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700'
+              selectedTab === tab ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
             }`}
           >
             {tab}
@@ -81,7 +41,7 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
         ))}
       </div>
       <div className="p-4">
-        {renderPanel()}
+        {panelMap[selectedTab]}
       </div>
     </div>
   );
