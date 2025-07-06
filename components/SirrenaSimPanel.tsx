@@ -15,18 +15,22 @@ type Event = {
 };
 
 type SirrenaSimPanelProps = {
-  zone: Zone;
+  zone?: Zone;
 };
 
 export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
+  // Fallback default for SirrenaSim zone
+  const defaultZone: Zone = { id: "sirrenasim", name: "SirrenaSim", depth: 1 };
+  const activeZone = zone || defaultZone;
+
   const [events, setEvents] = useState<Event[] | null>(null);
 
   useEffect(() => {
-    fetch(`/api/sirrenasim/events?zone=${zone.id}`)
+    fetch(`/api/sirrenasim/events?zone=${activeZone.id}`)
       .then((res) => res.json())
       .then((data) => setEvents(data))
       .catch(() => setEvents([]));
-  }, [zone.id]);
+  }, [activeZone.id]);
 
   return (
     <motion.div
@@ -38,7 +42,7 @@ export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-xl font-semibold">🔁 SirrenaSim™ Activity Feed</h2>
-            <span className="text-sm text-gray-500">Zone: {zone.name}</span>
+            <span className="text-sm text-gray-500">Zone: {activeZone.name}</span>
           </div>
           {!events ? (
             <Loader2 className="animate-spin w-6 h-6" />
