@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Tab } from '@headlessui/react';
 import { Zone } from '../hooks/useZoneArchetype';
 
 // Default generic components
@@ -14,11 +13,9 @@ import BiotechSimPanel from './domain/BiotechSimPanel';
 import BiotechMemoryExplorer from './domain/BiotechMemoryExplorer';
 import BiotechPosteriorFeed from './domain/BiotechPosteriorFeed';
 import BiotechEpistemicEngine from './domain/BiotechEpistemicEngine';
-// import DeSciSimPanel from './domain/DeSciSimPanel';
-// import PublicHealthSimPanel from './domain/PublicHealthSimPanel';
 
 // Map each domain to its contextually relevant panels
-const domainViews: Record<string, any> = {
+const domainViews: Record<string, Record<string, React.FC<any>>> = {
   Biotech: {
     Simulation: BiotechSimPanel,
     Memory: BiotechMemoryExplorer,
@@ -31,15 +28,14 @@ const domainViews: Record<string, any> = {
     Posterior: PosteriorFeed,
     Epistemic: EpistemicEngine,
   },
-  // PublicHealth: { Simulation: PublicHealthSimPanel, ... }
 };
 
-// Tabs including anchoring trace
 const tabs = ['Simulation', 'Memory', 'Posterior', 'Epistemic', 'Anchoring'] as const;
+
 type TabKey = typeof tabs[number];
 
 export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedTab, setSelectedTab] = useState<TabKey>('Simulation');
 
   // Pick domain-specific or generic views
   const views = domainViews[zone.domain] || {
@@ -49,8 +45,8 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
     Epistemic: EpistemicEngine,
   };
 
-  const PanelComponent = (key: TabKey) => {
-    switch (key) {
+  const renderPanel = () => {
+    switch (selectedTab) {
       case 'Simulation':
         return <views.Simulation zone={zone} />;
       case 'Memory':
@@ -69,27 +65,24 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
   return (
     <div className="mt-6 bg-white rounded-2xl shadow-lg p-4">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Zone: {zone.name}</h2>
-      <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-        <Tab.List className="flex space-x-2 border-b border-gray-200">
-          {tabs.map((tab) => (
-            <Tab
-              key={tab}
-              className={({ selected }) =>
-                `px-4 py-2 font-medium rounded-t-lg ${
-                  selected ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
-                }`
-              }
-            >
-              {tab}
-            </Tab>
-          ))}
-        </Tab.List>
-        <Tab.Panels className="mt-4">
-          {tabs.map((tab) => (
-            <Tab.Panel key={tab}>{PanelComponent(tab)}</Tab.Panel>
-          ))}
-        </Tab.Panels>
-      </Tab.Group>
+      <div className="flex space-x-2 mb-4">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setSelectedTab(tab)}
+            className={`px-4 py-2 font-medium rounded-t-lg transition ${
+              selectedTab === tab
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+      <div className="p-4">
+        {renderPanel()}
+      </div>
     </div>
   );
 }
