@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
 // Default generic components
-import SirrenaSim from './SirrenaSim';
+import SirrenaSimPanel from './SirrenaSimPanel';
 import MemoryView from './MemoryView';
 import PosteriorFeed from './PosteriorFeed';
 import EpistemicEngine from './EpistemicEngine';
