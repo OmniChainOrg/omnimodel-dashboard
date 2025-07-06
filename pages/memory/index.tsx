@@ -1,22 +1,28 @@
-// pages/memory/index.tsx
-
+// --- pages/memory/index.tsx (updated to accept zone) ---
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
+import { Zone } from "../../hooks/useZoneArchetype";
 
-export default function MemoryIndexPage() {
-  const [anchors, setAnchors] = useState([]);
+interface MemoryIndexPageProps {
+  zone: Zone;
+}
+
+export default function MemoryIndexPage({ zone }: MemoryIndexPageProps) {
+  const [anchors, setAnchors] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/api/memory/anchor")
+    fetch(`/api/memory/anchor?zone=${zone.id}`)
       .then((res) => res.json())
       .then((data) => setAnchors(data.anchors))
-      .catch(() => {});
-  }, []);
+      .catch(() => setAnchors([]));
+  }, [zone.id]);
 
   return (
     <main className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">🧠 L5 Memory Anchors</h2>
+      <h2 className="text-2xl font-bold">
+        🧠 L5 Memory Anchors for {zone.name}
+      </h2>
       {anchors.length === 0 ? (
         <p className="text-muted-foreground">No memory anchors found.</p>
       ) : (
@@ -28,7 +34,9 @@ export default function MemoryIndexPage() {
                 {new Date(anchor.timestamp).toLocaleString()}
               </p>
               <p className="text-xs">Anchor ID: {anchor.anchor_id}</p>
-              <p className="text-sm italic text-muted-foreground">“{anchor.snapshot}”</p>
+              <p className="text-sm italic text-muted-foreground">
+                “{anchor.snapshot}”
+              </p>
               <Badge variant="outline">Stored by: {anchor.stored_by}</Badge>
               <div className="text-xs mt-1">
                 Verified by: {anchor.verified_by.join(", ")}
