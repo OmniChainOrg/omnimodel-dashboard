@@ -15,6 +15,9 @@ import { Line } from "react-chartjs-2";
 
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
 
+// Zone context import
+import { Zone } from "../hooks/useZoneArchetype";
+
 interface ChartProps {
   entropy: number;
   dynamic: boolean;
@@ -24,9 +27,7 @@ const WINDOW_SIZE = 5;
 
 // Inline dynamic Entropy Drift Chart
 const EntropyDriftChartInline: React.FC<ChartProps> = ({ entropy, dynamic }) => {
-  const [dataPoints, setDataPoints] = useState<number[]>(
-    Array(WINDOW_SIZE).fill(entropy)
-  );
+  const [dataPoints, setDataPoints] = useState<number[]>(Array(WINDOW_SIZE).fill(entropy));
 
   useEffect(() => {
     if (dynamic) {
@@ -119,7 +120,8 @@ const Switch: React.FC<SwitchProps> = ({ checked, onCheckedChange }) => (
 
 const THRESHOLD = 0.15;
 
-const EpistemicEngine: React.FC = () => {
+// EpistemicEngine now accepts a zone prop
+const EpistemicEngine: React.FC<{ zone: Zone }> = ({ zone }) => {
   const [dynamicMode, setDynamicMode] = useState(true);
   const [entropy, setEntropy] = useState(0.14);
   const [consensus] = useState({
@@ -133,7 +135,7 @@ const EpistemicEngine: React.FC = () => {
     const interval = dynamicMode ? 2500 : 5000;
     const timer = setInterval(() => {
       setEntropy(prev =>
-        Math.max(0, Math.min(0.25, prev + (Math.random() - 0.5) * 0.015))
+        Math.max(0, Math.min(0.25, +(prev + (Math.random() - 0.5) * 0.015).toFixed(3)))
       );
     }, interval);
     return () => clearInterval(timer);
@@ -142,10 +144,12 @@ const EpistemicEngine: React.FC = () => {
   return (
     <Card className="rounded-2xl shadow-lg border-pink-200 relative overflow-hidden">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
-        {/* Header */}
+        {/* Header with zone context */}
         <div className="flex justify-between items-center">
-          <h2 className="font-bold text-xl">OmniTwin ∞ Consensus Relay</h2>
-          <p className="text-sm text-green-700">⦿ Status: LIVE</p>
+          <h2 className="font-bold text-xl">
+            OmniTwin ∞ Consensus Relay — {zone.name}
+          </h2>
+          <Switch checked={dynamicMode} onCheckedChange={setDynamicMode} />
         </div>
 
         {/* Metrics */}
@@ -160,12 +164,6 @@ const EpistemicEngine: React.FC = () => {
           </div>
         </div>
 
-        {/* Dynamic Mode Toggle */}
-        <div className="flex items-center space-x-2">
-          <Switch checked={dynamicMode} onCheckedChange={setDynamicMode} />
-          <span className="text-sm">Dynamic Mode</span>
-        </div>
-
         {/* Entropy Drift Monitor */}
         <div>
           <h3 className="text-md font-semibold">Entropy Drift Monitor</h3>
@@ -178,7 +176,9 @@ const EpistemicEngine: React.FC = () => {
         {/* CE² → Zone Cross-Influence */}
         <div>
           <h3 className="text-md font-semibold">CE² → Zone Cross-Influence</h3>
-          <CrossInfluenceModel metrics={{ entropy, consensusScore: consensus.consensus_score, anchoringRatio: consensus.drift_meta.anchoring_ratio }} />
+          <CrossInfluenceModel
+            metrics={{ entropy, consensusScore: consensus.consensus_score, anchoringRatio: consensus.drift_meta.anchoring_ratio }}
+          />
         </div>
 
         {/* Animated Anchor Trails */}
