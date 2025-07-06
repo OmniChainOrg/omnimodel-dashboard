@@ -3,7 +3,7 @@ import { Zone } from '../hooks/useZoneArchetype';
 
 // Core panel components
 import SirrenaSimPanel from './SirrenaSimPanel';
-import MemoryView from './MemoryView';
+import MemoryPanel from '../pages/memory';
 import PosteriorPilotDashboard from './PosteriorPilotDashboard';
 import EpistemicEngine from './EpistemicEngine';
 import AnchoringTimeline from './AnchoringTimeline';
@@ -17,7 +17,7 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
   // Map tabs to panel components
   const panelMap: Record<TabKey, React.ReactNode> = {
     Simulation: <SirrenaSimPanel zone={zone} />,
-    Memory: <MemoryView zone={zone} />,
+    Memory: <MemoryPanel zone={zone} />,
     Posterior: <PosteriorPilotDashboard zone={zone} />,
     Epistemic: <EpistemicEngine zone={zone} />,
     Anchoring: <AnchoringTimeline zoneId={zone.id} />,
