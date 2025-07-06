@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
 // Default generic components
-import SirrenaSimControl from './SirrenaSimControl';
+import SirrenaSim from './SirrenaSim';
 import MemoryView from './MemoryView';
 import PosteriorFeed from './PosteriorFeed';
 import EpistemicEngine from './EpistemicEngine';
@@ -23,7 +23,7 @@ const domainViews: Record<string, Record<string, React.FC<any>>> = {
     Epistemic: BiotechEpistemicEngine,
   },
   DeSci: {
-    Simulation: SirrenaSimControl,
+    Simulation: SirrenaSim,
     Memory: MemoryView,
     Posterior: PosteriorFeed,
     Epistemic: EpistemicEngine,
