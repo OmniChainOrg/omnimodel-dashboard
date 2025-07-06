@@ -3,23 +3,22 @@ import { Zone } from '../hooks/useZoneArchetype';
 
 // Core panel components
 import SirrenaSimPanel from './SirrenaSimPanel';
-import MemoryPanel from '../pages/memory';
-import PosteriorPanel from './PosteriorPilotDashboard';
+import MemoryView from './MemoryView';
+import PosteriorPilotDashboard from './PosteriorPilotDashboard';
 import EpistemicEngine from './EpistemicEngine';
 import AnchoringTimeline from './AnchoringTimeline';
 
-// Tabs definition
 const tabs = ['Simulation', 'Memory', 'Posterior', 'Epistemic', 'Anchoring'] as const;
 type TabKey = typeof tabs[number];
 
 export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
   const [selectedTab, setSelectedTab] = useState<TabKey>('Simulation');
 
-  // Generic mapping of tabs to panels
+  // Map tabs to panel components
   const panelMap: Record<TabKey, React.ReactNode> = {
     Simulation: <SirrenaSimPanel zone={zone} />,
-    Memory: <MemoryPanel zone={zone} />,
-    Posterior: <PosteriorPanel zone={zone} />,
+    Memory: <MemoryView zone={zone} />,
+    Posterior: <PosteriorPilotDashboard zone={zone} />,
     Epistemic: <EpistemicEngine zone={zone} />,
     Anchoring: <AnchoringTimeline zoneId={zone.id} />,
   };
@@ -40,9 +39,7 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
           </button>
         ))}
       </div>
-      <div className="p-4">
-        {panelMap[selectedTab]}
-      </div>
+      <div className="p-4">{panelMap[selectedTab]}</div>
     </div>
   );
 }
