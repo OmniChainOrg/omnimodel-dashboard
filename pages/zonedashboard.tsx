@@ -1,5 +1,5 @@
 // pages/zonedashboard.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 
@@ -60,8 +60,10 @@ const ZoneNode: React.FC<{
       <div className="p-6 bg-white rounded-2xl shadow-lg">
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
-            <p className="text-sm text-gray-500">Depth: {zone.depth}</p>
+            <h3 className="text-xl font-semibold text-blue-600">
+              {zone.name.replace(/SubZone/g, 'Zone')}
+            </h3>
+            <p className="text-sm text-gray-500">Level: {zone.depth}</p>
           </div>
           <button
             onClick={() => setExpanded(!expanded)}
@@ -73,8 +75,8 @@ const ZoneNode: React.FC<{
         {expanded && (
           <ZoneCustomizationForm
             zone={zone}
-            settings={settings[zone.id] ? { [zone.id]: settings[zone.id] }[zone.id] : { info: '', confidentiality: 'Public' }}
-            onChange={(id, s) => onUpdate(id, s)}
+            settings={settings[zone.id] || { info: '', confidentiality: 'Public' }}
+            onChange={onUpdate}
           />
         )}
       </div>
@@ -90,14 +92,18 @@ const ZoneNode: React.FC<{
 };
 
 const ZoneDashboardPage: React.FC = () => {
-  // Form state
-  const [archetypeId, setArchetypeId] = useState('root');
-  const [archetypeName, setArchetypeName] = useState('Root Zone Archetype');
-  const [depth, setDepth] = useState(4);
-  // Custom settings per zone
+  // Form state for user input
+  const [zoneDomain, setZoneDomain] = useState('Biotech');
+  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
+  const [recursionLevel, setRecursionLevel] = useState(4);
   const [zoneSettings, setZoneSettings] = useState<Record<string, ZoneSettings>>({});
 
-  const { tree, loading, error, refresh } = useZoneArchetype({ archetypeId, archetypeName, depth });
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: zoneDomain,
+    archetypeName: prototypeZoneName,
+    depth: recursionLevel,
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     refresh();
@@ -110,34 +116,54 @@ const ZoneDashboardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">CE² Zone Archetype Generator</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          CE² Zone Prototype Generator
+        </h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Archetype ID</label>
+            <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
+            <select
+              value={zoneDomain}
+              onChange={e => setZoneDomain(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Biotech</option>
+              <option>MedTech</option>
+              <option>Pharma Formulation</option>
+              <option>Clinical Trials</option>
+              <option>RegOps</option>
+              <option>DeSci</option>
+              <option>DeTrade</option>
+              <option>DeInvest</option>
+              <option>Nonprofit</option>
+              <option>Philanthropy</option>
+              <option>Humanitarian</option>
+              <option>AI ethics</option>
+              <option>dApps DevOps</option>
+              <option>Investment</option>
+              <option>Granting</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Prototype Zone Name <span className="text-xs text-gray-500">(the name that will be added in the main dashboard)</span>
+            </label>
             <input
               type="text"
-              value={archetypeId}
-              onChange={e => setArchetypeId(e.target.value)}
+              value={prototypeZoneName}
+              onChange={e => setPrototypeZoneName(e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Archetype Name</label>
-            <input
-              type="text"
-              value={archetypeName}
-              onChange={e => setArchetypeName(e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Depth</label>
+            <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
             <input
               type="number"
               min={1}
               max={6}
-              value={depth}
-              onChange={e => setDepth(Number(e.target.value))}
+              value={recursionLevel}
+              onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
