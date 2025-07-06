@@ -1,7 +1,6 @@
-// components/SirrenaSimPanel.tsx
-
-import ExpandedEvent from "./ExpandedEvent";
 import React, { useEffect, useState } from "react";
+import { Zone } from "../hooks/useZoneArchetype";
+import ExpandedEvent from "./ExpandedEvent";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Loader2, ShieldCheck } from "lucide-react";
@@ -15,34 +14,19 @@ type Event = {
   zone: string;
 };
 
-const anchorEvents = [
-  {
-    id: "anchor-04b92e",
-    timestamp: "2025-06-20T00:36:45Z",
-    text: "Recursive echo linked RegOps → HOPEChain → SirrenaSim",
-    origin: "RegOps",
-    target: "SirrenaSim",
-    verifiedBy: ["Inference-Agent-α", "RecursiveNode-07"],
-  },
-  {
-    id: "anchor-b8d2aa",
-    timestamp: "2025-06-20T00:34:45Z",
-    text: "Forecast threshold breached, override logged",
-    origin: "HOPEChain",
-    target: "Caelis",
-    verifiedBy: ["GxP-Agent-3", "TrialPhaseBot"],
-  },
-];
+type SirrenaSimPanelProps = {
+  zone: Zone;
+};
 
-export default function SirrenaSimPanel() {
+export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
   const [events, setEvents] = useState<Event[] | null>(null);
 
   useEffect(() => {
-    fetch("/api/sirrenasim/events")
+    fetch(`/api/sirrenasim/events?zone=${zone.id}`)
       .then((res) => res.json())
       .then((data) => setEvents(data))
-      .catch(() => {});
-  }, []);
+      .catch(() => setEvents([]));
+  }, [zone.id]);
 
   return (
     <motion.div
@@ -52,16 +36,19 @@ export default function SirrenaSimPanel() {
     >
       <Card className="rounded-2xl shadow-xl">
         <CardContent className="p-4">
-          <h2 className="text-xl font-semibold mb-2">🔁 SirrenaSim™ Activity Feed</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-semibold">🔁 SirrenaSim™ Activity Feed</h2>
+            <span className="text-sm text-gray-500">Zone: {zone.name}</span>
+          </div>
           {!events ? (
             <Loader2 className="animate-spin w-6 h-6" />
           ) : (
             <div className="space-y-2">
               {events.map((event, idx) => (
-                <>
-                  <ExpandedEvent key={idx} event={event} />
-                  <AnchorTrail events={anchorEvents} />
-                </>
+                <React.Fragment key={event.id || idx}>
+                  <ExpandedEvent event={event} />
+                  <AnchorTrail events={events} />
+                </React.Fragment>
               ))}
             </div>
           )}
