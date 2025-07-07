@@ -23,11 +23,11 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
 
   // Map each tab to its panel component
   const panelMap: Record<TabKey, React.ReactNode> = {
-    Simulation: <SirrenaSimPanel zone={zone} />,  // expects zone prop
-    Memory: <MemoryView zone={zone} />,           // placeholder
-    Posterior: <PosteriorFeed zone={zone} />,    // placeholder
-    Epistemic: <EpistemicEngine />,               // generic
-    Anchoring: <AnchoringTimeline zoneId={zone.id} />,  // expects zoneId
+    Simulation: <SirrenaSimPanel zone={zone} />,            // expects zone prop
+    Memory: <MemoryView zone={zone} />,                     // placeholder
+    Posterior: <PosteriorFeed zone={zone} />,              // placeholder
+    Epistemic: <EpistemicEngine zone={zone} />,             // now passing zone
+    Anchoring: <AnchoringTimeline zoneId={zone.id} />,     // expects zoneId
   };
 
   return (
