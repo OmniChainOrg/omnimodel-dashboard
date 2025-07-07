@@ -1,23 +1,37 @@
 import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
-// Core panel components
-import SirrenaSimPanel from './SirrenaSimPanel';
-// import RealMemoryPanel from './MemoryPanel'; // temporarily unused due to prop mismatch
+// Real panel components (commented out due to prop mismatch)
+// import SirrenaSimPanel from './SirrenaSimPanel';
+// import RealMemoryPanel from './MemoryPanel';
+// import PosteriorPilotDashboard from './PosteriorPilotDashboard';
+// import EpistemicEngine from './EpistemicEngine';
+// import AnchoringTimeline from './AnchoringTimeline';
 
-import PosteriorPilotDashboard from './PosteriorPilotDashboard';
-import EpistemicEngine from './EpistemicEngine';
-import AnchoringTimeline from './AnchoringTimeline';
-
-// Dummy/fallback panel components
+// Dummy/fallback panel components with correct prop signature
 const SimulationPanel: React.FC<{ zone: Zone }> = ({ zone }) => (
   <div className="p-4 bg-gray-50 rounded-lg">
-    SirrenaSimPanel for {zone.name} (replace with real component)
+    SirrenaSimPanel for {zone.name} (dummy fallback)
   </div>
 );
 const MemoryPanelFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
   <div className="p-4 bg-gray-50 rounded-lg">
     Memory data for {zone.name} (dummy fallback)
+  </div>
+);
+const PosteriorPilotDashboardFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">
+    PosteriorPilotDashboard for {zone.name} (dummy fallback)
+  </div>
+);
+const EpistemicEngineFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">
+    EpistemicEngine for {zone.name} (dummy fallback)
+  </div>
+);
+const AnchoringTimelineFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">
+    AnchoringTimeline for {zone.name} (dummy fallback)
   </div>
 );
 
@@ -32,19 +46,16 @@ const ZoneSubDashboard: React.FC<{ zone: Zone }> = ({ zone }) => {
       panelContent = <SimulationPanel zone={zone} />;
       break;
     case 'Memory':
-      // Use fallback Memory panel due to prop mismatch on real component
       panelContent = <MemoryPanelFallback zone={zone} />;
-      // To use the real panel once prop types align, uncomment below and import appropriately
-      // panelContent = <RealMemoryPanel zone={zone} />;
       break;
     case 'PosteriorPilot':
-      panelContent = <PosteriorPilotDashboard zone={zone} />;
+      panelContent = <PosteriorPilotDashboardFallback zone={zone} />;
       break;
     case 'EpistemicEngine':
-      panelContent = <EpistemicEngine zone={zone} />;
+      panelContent = <EpistemicEngineFallback zone={zone} />;
       break;
     case 'AnchoringTimeline':
-      panelContent = <AnchoringTimeline zone={zone} />;
+      panelContent = <AnchoringTimelineFallback zone={zone} />;
       break;
     default:
       panelContent = null;
