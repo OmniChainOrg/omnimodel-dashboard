@@ -6,13 +6,9 @@ import SirrenaSimPanel from './SirrenaSimPanel';
 import EpistemicEngine from './EpistemicEngine';
 import AnchoringTimeline from './AnchoringTimeline';
 
-// Placeholder components for Memory and Posterior until real ones are available
-const MemoryView: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Memory data for {zone.name}</div>
-);
-const PosteriorFeed: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Posterior feed for {zone.name}</div>
-);
+// Memory and Posterior specialized panels
+import MemoryPanel from './MemoryPanel';
+import PosteriorPilotDashboard from './PosteriorPilotDashboard';
 
 // Tabs definition
 const tabs = ['Simulation', 'Memory', 'Posterior', 'Epistemic', 'Anchoring'] as const;
@@ -23,11 +19,11 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
 
   // Map each tab to its panel component
   const panelMap: Record<TabKey, React.ReactNode> = {
-    Simulation: <SirrenaSimPanel zone={zone} />,            // expects zone prop
-    Memory: <MemoryView zone={zone} />,                     // placeholder
-    Posterior: <PosteriorFeed zone={zone} />,              // placeholder
-    Epistemic: <EpistemicEngine zone={zone} />,             // now passing zone
-    Anchoring: <AnchoringTimeline zoneId={zone.id} />,     // expects zoneId
+    Simulation: <SirrenaSimPanel zone={zone} />,
+    Memory: <MemoryPanel zone={zone} />,
+    Posterior: <PosteriorPilotDashboard zone={zone} />,
+    Epistemic: <EpistemicEngine zone={zone} />,
+    Anchoring: <AnchoringTimeline zoneId={zone.id} />,
   };
 
   return (
