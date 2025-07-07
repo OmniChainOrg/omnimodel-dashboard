@@ -1,8 +1,8 @@
 // pages/memory/index.tsx
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Card, CardContent } from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default function MemoryIndexPage() {
   const { query } = useRouter();
