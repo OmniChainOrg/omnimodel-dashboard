@@ -1,49 +1,65 @@
-// pages/memory/index.tsx
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React, { useEffect, useState } from 'react';
+import { Zone } from '../hooks/useZoneArchetype';
 
-export default function MemoryIndexPage() {
-  const { query } = useRouter();
-  const zoneId = Array.isArray(query.zone) ? query.zone[0] : query.zone;
-  const [anchors, setAnchors] = useState<any[]>([]);
+interface MemoryRecord {
+  id: string;
+  timestamp: string;
+  content: string;
+}
+
+interface MemoryPanelProps {
+  zone: Zone;
+}
+
+const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
+  const [records, setRecords] = useState<MemoryRecord[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!zoneId) return;
-    fetch(`/api/memory/anchor?zone=${zoneId}`)
-      .then((res) => res.json())
-      .then((data) => setAnchors(data.anchors))
-      .catch(() => setAnchors([]));
-  }, [zoneId]);
+    const fetchMemory = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/memory?zoneId=${encodeURIComponent(zone.id)}`);
+        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+        const data: MemoryRecord[] = await response.json();
+        setRecords(data);
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch memory records');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!zoneId) return <p>Loading...</p>;
+    fetchMemory();
+  }, [zone.id]);
 
   return (
-    <main className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">🧠 L5 Memory Anchors for {zoneId}</h2>
-      {anchors.length === 0 ? (
-        <p className="text-muted-foreground">No memory anchors found.</p>
-      ) : (
-        anchors.map((anchor, idx) => (
-          <Card key={idx} className="rounded-xl shadow">
-            <CardContent className="p-4 space-y-1">
-              <h3 className="font-semibold">{anchor.label}</h3>
-              <p className="text-sm text-muted-foreground">
-                {new Date(anchor.timestamp).toLocaleString()}
-              </p>
-              <p className="text-xs">Anchor ID: {anchor.anchor_id}</p>
-              <p className="text-sm italic text-muted-foreground">
-                “{anchor.snapshot}”
-              </p>
-              <Badge variant="outline">Stored by: {anchor.stored_by}</Badge>
-              <div className="text-xs mt-1">
-                Verified by: {anchor.verified_by.join(", ")}
-              </div>
-            </CardContent>
-          </Card>
-        ))
+    <div className="p-4 bg-white rounded-lg shadow">
+      <h2 className="text-2xl font-semibold mb-4">Memory Panel for {zone.name}</h2>
+
+      {loading && <p className="text-gray-500">Loading memory records...</p>}
+      {error && <p className="text-red-600">Error: {error}</p>}
+
+      {!loading && !error && (
+        <ul className="space-y-3">
+          {records.length === 0 ? (
+            <li className="text-gray-600">No memory records found for this zone.</li>
+          ) : (
+            records.map(record => (
+              <li key={record.id} className="border border-gray-200 p-3 rounded-lg">
+                <div className="text-sm text-gray-500">
+                  {new Date(record.timestamp).toLocaleString()}
+                </div>
+                <div className="mt-1 text-gray-800">{record.content}</div>
+              </li>
+            ))
+          )}
+        </ul>
       )}
-    </main>
+    </div>
   );
-}
+};
+
+export default MemoryPanel;
