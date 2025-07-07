@@ -1,28 +1,27 @@
-// --- pages/memory/index.tsx (updated to accept zone) ---
+// pages/memory/index.tsx
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { Card, CardContent } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
-import { Zone } from "../../hooks/useZoneArchetype";
 
-interface MemoryIndexPageProps {
-  zone: Zone;
-}
-
-export default function MemoryIndexPage({ zone }: MemoryIndexPageProps) {
+export default function MemoryIndexPage() {
+  const { query } = useRouter();
+  const zoneId = Array.isArray(query.zone) ? query.zone[0] : query.zone;
   const [anchors, setAnchors] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`/api/memory/anchor?zone=${zone.id}`)
+    if (!zoneId) return;
+    fetch(`/api/memory/anchor?zone=${zoneId}`)
       .then((res) => res.json())
       .then((data) => setAnchors(data.anchors))
       .catch(() => setAnchors([]));
-  }, [zone.id]);
+  }, [zoneId]);
+
+  if (!zoneId) return <p>Loading...</p>;
 
   return (
     <main className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">
-        🧠 L5 Memory Anchors for {zone.name}
-      </h2>
+      <h2 className="text-2xl font-bold">🧠 L5 Memory Anchors for {zoneId}</h2>
       {anchors.length === 0 ? (
         <p className="text-muted-foreground">No memory anchors found.</p>
       ) : (
