@@ -21,14 +21,25 @@ type TabKey = typeof tabs[number];
 export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
   const [selectedTab, setSelectedTab] = useState<TabKey>('Simulation');
 
-  // Map each tab to its panel component
-  const panelMap: Record<TabKey, React.ReactNode> = {
-    Simulation: <SirrenaSimPanel zone={zone} />,          
-    Memory: <MemoryPlaceholder zone={zone} />,            
-    Posterior: <PosteriorPlaceholder zone={zone} />,      
-    Epistemic: <EpistemicEngine zone={zone} />,           
-    Anchoring: <AnchoringTimeline zoneId={zone.id} />,   
-  };
+  // Determine content based on selected tab
+  let content: React.ReactNode = null;
+  switch (selectedTab) {
+    case 'Simulation':
+      content = <SirrenaSimPanel zone={zone} />;
+      break;
+    case 'Memory':
+      content = <MemoryPlaceholder zone={zone} />;
+      break;
+    case 'Posterior':
+      content = <PosteriorPlaceholder zone={zone} />;
+      break;
+    case 'Epistemic':
+      content = <EpistemicEngine zone={zone} />;
+      break;
+    case 'Anchoring':
+      content = <AnchoringTimeline zoneId={zone.id} />;
+      break;
+  }
 
   return (
     <div className="mt-6 bg-white rounded-2xl shadow-lg p-4">
@@ -47,7 +58,7 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
         ))}
       </div>
       <div className="p-4">
-        {panelMap[selectedTab]}
+        {content}
       </div>
     </div>
   );
