@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
-// Core panel components
-import SirrenaSimPanel from './SirrenaSimPanel';
-import EpistemicEngine from './EpistemicEngine';
-import AnchoringTimeline from './AnchoringTimeline';
-
-// Inline placeholders for Memory and Posterior panels until actual components exist
+// Placeholder panels for all tabs until real components are available
+const SimulationPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">Simulation panel for {zone.name}</div>
+);
 const MemoryPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
   <div className="p-4 bg-gray-50 rounded-lg">Memory panel for {zone.name}</div>
 );
 const PosteriorPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
   <div className="p-4 bg-gray-50 rounded-lg">Posterior panel for {zone.name}</div>
+);
+const EpistemicPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">Epistemic panel for {zone.name}</div>
+);
+const AnchoringPlaceholder: React.FC<{ zoneId: string }> = ({ zoneId }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">Anchoring timeline for {zoneId}</div>
 );
 
 // Tabs definition
@@ -22,10 +26,10 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
   const [selectedTab, setSelectedTab] = useState<TabKey>('Simulation');
 
   // Determine content based on selected tab
-  let content: React.ReactNode = null;
+  let content: React.ReactNode;
   switch (selectedTab) {
     case 'Simulation':
-      content = <SirrenaSimPanel zone={zone} />;
+      content = <SimulationPlaceholder zone={zone} />;
       break;
     case 'Memory':
       content = <MemoryPlaceholder zone={zone} />;
@@ -34,10 +38,10 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
       content = <PosteriorPlaceholder zone={zone} />;
       break;
     case 'Epistemic':
-      content = <EpistemicEngine zone={zone} />;
+      content = <EpistemicPlaceholder zone={zone} />;
       break;
     case 'Anchoring':
-      content = <AnchoringTimeline zoneId={zone.id} />;
+      content = <AnchoringPlaceholder zoneId={zone.id} />;
       break;
   }
 
