@@ -1,49 +1,53 @@
 import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
-// Placeholder panels for all tabs until real components are available
-const SimulationPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Simulation panel for {zone.name}</div>
-);
-const MemoryPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Memory panel for {zone.name}</div>
-);
-const PosteriorPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Posterior panel for {zone.name}</div>
-);
-const EpistemicPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Epistemic panel for {zone.name}</div>
-);
-const AnchoringPlaceholder: React.FC<{ zoneId: string }> = ({ zoneId }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Anchoring timeline for {zoneId}</div>
-);
+// Core generic components
+import SirrenaSimPanel from './SirrenaSimPanel';
+import EpistemicEngine from './EpistemicEngine';
+import AnchoringTimeline from './AnchoringTimeline';
+
+// Domain-specific panels
+import BiotechSimPanel from './domain/BiotechSimPanel';
+import BiotechMemoryExplorer from './domain/BiotechMemoryExplorer';
+import BiotechPosteriorFeed from './domain/BiotechPosteriorFeed';
+import BiotechEpistemicEngine from './domain/BiotechEpistemicEngine';
+// Add other domain imports as needed
+
+// Secure data fetching hook placeholder
+// import useSecureFetch from '@/hooks/useSecureFetch';
 
 // Tabs definition
 const tabs = ['Simulation', 'Memory', 'Posterior', 'Epistemic', 'Anchoring'] as const;
 type TabKey = typeof tabs[number];
 
+// Domain-to-panel mapping
+const domainViews: Record<string, Record<TabKey, React.FC<any>>> = {
+  Biotech: {
+    Simulation: BiotechSimPanel,
+    Memory: BiotechMemoryExplorer,
+    Posterior: BiotechPosteriorFeed,
+    Epistemic: BiotechEpistemicEngine,
+    Anchoring: ({ zoneId }: { zoneId: string }) => <AnchoringTimeline zoneId={zoneId} />,
+  },
+  // DeSci, Pharma, etc. fall back to generic
+};
+
 export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
   const [selectedTab, setSelectedTab] = useState<TabKey>('Simulation');
 
-  // Determine content based on selected tab
-  let content: React.ReactNode;
-  switch (selectedTab) {
-    case 'Simulation':
-      content = <SimulationPlaceholder zone={zone} />;
-      break;
-    case 'Memory':
-      content = <MemoryPlaceholder zone={zone} />;
-      break;
-    case 'Posterior':
-      content = <PosteriorPlaceholder zone={zone} />;
-      break;
-    case 'Epistemic':
-      content = <EpistemicPlaceholder zone={zone} />;
-      break;
-    case 'Anchoring':
-      content = <AnchoringPlaceholder zoneId={zone.id} />;
-      break;
-  }
+  // Determine panel component based on domain
+  const views = domainViews[zone.domain] || {
+    Simulation: SirrenaSimPanel,
+    Memory: ({ zone }: { zone: Zone }) => <AnchoringTimeline zoneId={zone.id} />, // placeholder
+    Posterior: ({ zone }: { zone: Zone }) => <AnchoringTimeline zoneId={zone.id} />,
+    Epistemic: EpistemicEngine,
+    Anchoring: ({ zoneId }: { zoneId: string }) => <AnchoringTimeline zoneId={zoneId} />,
+  };
+
+  // Secure fetch context could be applied inside each panel
+  // const secure = useSecureFetch();
+
+  const Panel = views[selectedTab];
 
   return (
     <div className="mt-6 bg-white rounded-2xl shadow-lg p-4">
@@ -62,7 +66,12 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
         ))}
       </div>
       <div className="p-4">
-        {content}
+        {/* Render the panel, passing necessary props */}
+        {selectedTab === 'Anchoring' ? (
+          <Panel zoneId={zone.id} />
+        ) : (
+          <Panel zone={zone} />
+        )}
       </div>
     </div>
   );
