@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
-// Generic panel components for all tabs
-import SirrenaSimPanel from './SirrenaSimPanel';
-import EpistemicEngine from './EpistemicEngine';
-import AnchoringTimeline from './AnchoringTimeline';
-
-// Inline placeholder panels for Memory and Posterior tabs
+// Placeholder panels for all tabs
+const SimulationPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">Simulation panel for {zone.name}</div>
+);
 const MemoryPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Memory data for {zone.name}</div>
+  <div className="p-4 bg-gray-50 rounded-lg">Memory panel for {zone.name}</div>
 );
 const PosteriorPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Posterior data for {zone.name}</div>
+  <div className="p-4 bg-gray-50 rounded-lg">Posterior panel for {zone.name}</div>
+);
+const EpistemicPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">Epistemic panel for {zone.name}</div>
+);
+const AnchoringPlaceholder: React.FC<{ zoneId: string }> = ({ zoneId }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">Anchoring timeline for {zoneId}</div>
 );
 
 // Tabs definition
@@ -21,14 +25,25 @@ type TabKey = typeof tabs[number];
 export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
   const [selectedTab, setSelectedTab] = useState<TabKey>('Simulation');
 
-  // Map each tab to its panel component
-  const panelMap: Record<TabKey, React.ReactNode> = {
-    Simulation: <SirrenaSimPanel zone={zone} />,
-    Memory: <MemoryPlaceholder zone={zone} />,
-    Posterior: <PosteriorPlaceholder zone={zone} />,
-    Epistemic: <EpistemicEngine zone={zone} />,
-    Anchoring: <AnchoringTimeline zoneId={zone.id} />,
-  };
+  // Determine content based on selected tab
+  let content: React.ReactNode;
+  switch (selectedTab) {
+    case 'Simulation':
+      content = <SimulationPlaceholder zone={zone} />;
+      break;
+    case 'Memory':
+      content = <MemoryPlaceholder zone={zone} />;
+      break;
+    case 'Posterior':
+      content = <PosteriorPlaceholder zone={zone} />;
+      break;
+    case 'Epistemic':
+      content = <EpistemicPlaceholder zone={zone} />;
+      break;
+    case 'Anchoring':
+      content = <AnchoringPlaceholder zoneId={zone.id} />;
+      break;
+  }
 
   return (
     <div className="mt-6 bg-white rounded-2xl shadow-lg p-4">
@@ -47,7 +62,7 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
         ))}
       </div>
       <div className="p-4">
-        {panelMap[selectedTab]}
+        {content}
       </div>
     </div>
   );
