@@ -6,9 +6,13 @@ import SirrenaSimPanel from './SirrenaSimPanel';
 import EpistemicEngine from './EpistemicEngine';
 import AnchoringTimeline from './AnchoringTimeline';
 
-// Memory and Posterior specialized panels
-import MemoryPanel from './MemoryPanel';
-import PosteriorPilotDashboard from './PosteriorPilotDashboard';
+// Inline placeholders for Memory and Posterior panels until actual components exist
+const MemoryPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">Memory panel for {zone.name}</div>
+);
+const PosteriorPlaceholder: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <div className="p-4 bg-gray-50 rounded-lg">Posterior panel for {zone.name}</div>
+);
 
 // Tabs definition
 const tabs = ['Simulation', 'Memory', 'Posterior', 'Epistemic', 'Anchoring'] as const;
@@ -19,11 +23,11 @@ export default function ZoneSubDashboard({ zone }: { zone: Zone }) {
 
   // Map each tab to its panel component
   const panelMap: Record<TabKey, React.ReactNode> = {
-    Simulation: <SirrenaSimPanel zone={zone} />,
-    Memory: <MemoryPanel zone={zone} />,
-    Posterior: <PosteriorPilotDashboard zone={zone} />,
-    Epistemic: <EpistemicEngine zone={zone} />,
-    Anchoring: <AnchoringTimeline zoneId={zone.id} />,
+    Simulation: <SirrenaSimPanel zone={zone} />,          
+    Memory: <MemoryPlaceholder zone={zone} />,            
+    Posterior: <PosteriorPlaceholder zone={zone} />,      
+    Epistemic: <EpistemicEngine zone={zone} />,           
+    Anchoring: <AnchoringTimeline zoneId={zone.id} />,   
   };
 
   return (
