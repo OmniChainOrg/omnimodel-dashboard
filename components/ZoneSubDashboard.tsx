@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
-// Core panel components (placeholders until real ones exist)
+// Core panel components
+import SirrenaSimPanel from './SirrenaSimPanel';
+import MemoryPanel from './MemoryPanel';
+import PosteriorPilotDashboard from './PosteriorPilotDashboard';
+import EpistemicEngine from './EpistemicEngine';
+import AnchoringTimeline from './AnchoringTimeline';
+
+// Map each tab to its panel component
 const SimulationPanel: React.FC<{ zone: Zone }> = ({ zone }) => (
   <div className="p-4 bg-gray-50 rounded-lg">SirrenaSimPanel for {zone.name} (replace with real component)</div>
 );
