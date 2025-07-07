@@ -3,7 +3,8 @@ import { Zone } from '../hooks/useZoneArchetype';
 
 // Core panel components
 import SirrenaSimPanel from './SirrenaSimPanel';
-import RealMemoryPanel from './MemoryPanel';
+// import RealMemoryPanel from './MemoryPanel'; // temporarily unused due to prop mismatch
+
 import PosteriorPilotDashboard from './PosteriorPilotDashboard';
 import EpistemicEngine from './EpistemicEngine';
 import AnchoringTimeline from './AnchoringTimeline';
@@ -31,10 +32,10 @@ const ZoneSubDashboard: React.FC<{ zone: Zone }> = ({ zone }) => {
       panelContent = <SimulationPanel zone={zone} />;
       break;
     case 'Memory':
-      // Use the real MemoryPanel or fallback
-      panelContent = <RealMemoryPanel zone={zone} />;
-      // To use fallback instead, uncomment the next line and comment the above
-      // panelContent = <MemoryPanelFallback zone={zone} />;
+      // Use fallback Memory panel due to prop mismatch on real component
+      panelContent = <MemoryPanelFallback zone={zone} />;
+      // To use the real panel once prop types align, uncomment below and import appropriately
+      // panelContent = <RealMemoryPanel zone={zone} />;
       break;
     case 'PosteriorPilot':
       panelContent = <PosteriorPilotDashboard zone={zone} />;
