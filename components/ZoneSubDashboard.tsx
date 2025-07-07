@@ -8,14 +8,52 @@ import PosteriorPilotDashboard from './PosteriorPilotDashboard';
 import EpistemicEngine from './EpistemicEngine';
 import AnchoringTimeline from './AnchoringTimeline';
 
-// Map each tab to its panel component
+// Dummy/fallback panel components
 const SimulationPanel: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">SirrenaSimPanel for {zone.name} (replace with real component)</div>
+  <div className="p-4 bg-gray-50 rounded-lg">
+    SirrenaSimPanel for {zone.name} (replace with real component)
+  </div>
 );
 const MemoryPanelFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">Memory data for {zone.name} (dummy fallback)</div>
+  <div className="p-4 bg-gray-50 rounded-lg">
+    Memory data for {zone.name} (dummy fallback)
+  </div>
 );
-...
+
+// Main dashboard component
+const ZoneSubDashboard: React.FC<{ zone: Zone }> = ({ zone }) => {
+  const [selectedTab, setSelectedTab] = useState<string>('Simulation');
+  const tabs = ['Simulation', 'Memory', 'PosteriorPilot', 'EpistemicEngine', 'AnchoringTimeline'];
+
+  let panelContent: React.ReactNode;
+  switch (selectedTab) {
+    case 'Simulation':
+      panelContent = <SimulationPanel zone={zone} />;
+      break;
+    case 'Memory':
+      // Use the real MemoryPanel or fallback
+      panelContent = <RealMemoryPanel zone={zone} />;
+      // To use fallback instead, uncomment the next line and comment the above
+      // panelContent = <MemoryPanelFallback zone={zone} />;
+      break;
+    case 'PosteriorPilot':
+      panelContent = <PosteriorPilotDashboard zone={zone} />;
+      break;
+    case 'EpistemicEngine':
+      panelContent = <EpistemicEngine zone={zone} />;
+      break;
+    case 'AnchoringTimeline':
+      panelContent = <AnchoringTimeline zone={zone} />;
+      break;
+    default:
+      panelContent = null;
+  }
+
+  return (
+    <div>
+      <div className="flex space-x-2 border-b">
+        {tabs.map((tab) => (
+          <button
             key={tab}
             onClick={() => setSelectedTab(tab)}
             className={`px-4 py-2 font-medium rounded-t-lg transition ${
@@ -29,4 +67,6 @@ const MemoryPanelFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
       <div className="p-4">{panelContent}</div>
     </div>
   );
-}
+};
+
+export default ZoneSubDashboard;
