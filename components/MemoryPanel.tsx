@@ -43,7 +43,8 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone: inputZone }) => {
         setError(null);
 
         // Simulate fetch from registry or memory DB
-        const zonePath = `/dashboard/${inputZone.slug || inputZone.id}`;
+        const zonePath = `/dashboard/${inputZone.id}`;
+
         const activeZone = ZoneRegistry.find(z => z.path === zonePath);
 
         if (!activeZone) {
