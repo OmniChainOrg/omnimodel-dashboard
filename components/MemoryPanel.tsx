@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { ZoneRegistry } from '../lib/zoneRegistry';
-import { MemoryRecord, AnchorRecord } from '../types';
+
+// Inlined types previously imported from '../types'
+type MemoryRecord = {
+  timestamp: string;
+  message: string;
+};
+
+type AnchorRecord = {
+  id: string;
+  content: string;
+  createdAt: string;
+};
 
 interface MemoryPanelProps {
   zone: string;
