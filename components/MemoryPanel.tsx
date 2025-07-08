@@ -3,7 +3,6 @@ import { Zone } from '../hooks/useZoneArchetype';
 import { ZoneRegistry } from '@/lib/zoneRegistry';
 import { approveZone as someOtherName } from '@/lib/updateRegistry';
 
-
 interface MemoryRecord {
   id: string;
   timestamp: string;
@@ -15,7 +14,7 @@ interface MemoryPanelProps {
 }
 
 export function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     const r = (Math.random() * 16) | 0,
       v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -24,63 +23,57 @@ export function generateUUID() {
 
 export function approveZone(zoneData) {
   ZoneRegistry.push({
-    id: zoneData.id || generateUUID(), // use existing or generate one
+    id: zoneData.id || generateUUID(),
     name: zoneData.name,
     path: `/dashboard/${zoneData.slug}`,
     approved: true,
-    depth: zoneData.depth ?? 0 // default to 0 if not provided
+    depth: zoneData.depth ?? 0
   });
 }
 
-const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
+const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone: inputZone }) => {
   const [records, setRecords] = useState<MemoryRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-useEffect(() => {
-  const fetchMemory = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // Simulated zone fetch logic...
-      const activeZone = ZoneRegistry.find(z => z.path === currentPath);
+  useEffect(() => {
+    const fetchMemory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      
-      if (!activeZone) {
-        setError(`Zone not found for path: ${currentPath}`);
+        // Simulate fetch from registry or memory DB
+        const zonePath = `/dashboard/${inputZone.slug || inputZone.id}`;
+        const activeZone = ZoneRegistry.find(z => z.path === zonePath);
+
+        if (!activeZone) {
+          setError(`Zone not found for path: ${zonePath}`);
+          return;
+        }
+
+        // Simulate memory fetch
+        const dummyRecords: MemoryRecord[] = [
+          {
+            id: generateUUID(),
+            timestamp: new Date().toISOString(),
+            content: `Memory initialized for ${activeZone.name}`
+          }
+        ];
+
+        setRecords(dummyRecords);
+      } catch (err) {
+        setError("Unexpected error while loading memory.");
+      } finally {
+        setLoading(false);
       }
-      
-    } catch (err) {
-      setError("Unexpected error while loading zone.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchMemory(); // 👈 call it inside useEffect
-
-  // ✅ return nothing or a cleanup function (not JSX!)
-  return;
-}, []);
-    
-    const zone = ZoneRegistry.find(z => z.path === currentPath);
-    
-    if (!zone) {
-      return (
-        <div>
-          <h1>Memory Panel</h1>
-          <p className="text-red-600">Error: Zone not found for path <code>{currentPath}</code>.</p>
-        </div>
-      );
-    }
+    };
 
     fetchMemory();
-  }, [zone.id]);
+  }, [inputZone.id]);
 
   return (
     <div className="p-4 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-semibold mb-4">Memory Panel for {zone.name}</h2>
+      <h2 className="text-2xl font-semibold mb-4">🧠 Memory Panel for {inputZone.name}</h2>
 
       {loading && <p className="text-gray-500">Loading memory records...</p>}
       {error && <p className="text-red-600">Error: {error}</p>}
