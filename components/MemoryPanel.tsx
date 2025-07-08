@@ -44,12 +44,13 @@ useEffect(() => {
       setError(null);
       
       // Simulated zone fetch logic...
-      const zone = ZoneRegistry.find(z => z.path === currentPath);
+      const activeZone = ZoneRegistry.find(z => z.path === currentPath);
 
-      if (!zone) {
-        setError(`Zone not found for path "${currentPath}"`);
+      
+      if (!activeZone) {
+        setError(`Zone not found for path: ${currentPath}`);
       }
-
+      
     } catch (err) {
       setError("Unexpected error while loading zone.");
     } finally {
