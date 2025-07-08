@@ -11,6 +11,11 @@ interface MemoryPanelProps {
   zone: Zone;
 }
 
+function approveZone(zoneData) {
+  ZoneRegistry.push({ name: zoneData.name, path: `/dashboard/${zoneData.slug}`, approved: true });
+  saveRegistryToDiskOrDB();
+}
+
 const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
   const [records, setRecords] = useState<MemoryRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
