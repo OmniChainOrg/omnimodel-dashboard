@@ -1,75 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Zone } from '../hooks/useZoneArchetype';
-import { ZoneRegistry } from '@/lib/zoneRegistry';
-import { approveZone as someOtherName } from '@/lib/updateRegistry';
-
-interface MemoryRecord {
-  id: string;
-  timestamp: string;
-  content: string;
-}
-
-interface MemoryAnchor {
-  id: string;
-  title: string;
-  summary: string;
-  createdAt: string;
-  importance: number;
-  tags: string[];
-}
+import { ZoneRegistry } from '../lib/zoneRegistry';
+import { MemoryRecord, AnchorRecord } from '../types';
 
 interface MemoryPanelProps {
-  zone: Zone;
+  zone: string;
 }
 
-export function generateUUID() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
-
-export function approveZone(zoneData) {
-  ZoneRegistry.push({
-    id: zoneData.id || generateUUID(),
-    name: zoneData.name,
-    path: `/dashboard/${zoneData.slug}`,
-    approved: true,
-    depth: zoneData.depth ?? 0
-  });
-}
-
-// 🔁 Mock anchor database
-const mockAnchorsByZone: Record<string, MemoryAnchor[]> = {
-  omnitwin: [
+const MockMemoryStore: Record<string, MemoryRecord[]> = {
+  '/dashboard/root': [
     {
-      id: 'L5-1',
-      title: '🧬 Twin Engine v2 Deployment',
-      summary: 'Released new predictive model for digital twin orchestration in Q2.',
-      createdAt: '2025-06-10T09:30:00Z',
-      importance: 5,
-      tags: ['deployment', 'prediction', 'biotech']
-    }
+      timestamp: new Date().toISOString(),
+      message: 'Memory initialized for Root Zone Prototype',
+    },
   ],
-  hopechain: [
+  '/dashboard/omnitwin': [
     {
-      id: 'L5-2',
-      title: '🌐 Cross-border Compliance Mesh',
-      summary: 'RegOps achieved interoperability between EU/US regulatory nodes.',
-      createdAt: '2025-06-18T16:00:00Z',
-      importance: 5,
-      tags: ['compliance', 'mesh', 'interop']
-    }
-  ]
+      timestamp: new Date().toISOString(),
+      message: '🧬 OmniTwin memory cluster seeded successfully.',
+    },
+  ],
 };
 
-const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone: inputZone }) => {
+const MockAnchorRegistry: Record<string, AnchorRecord[]> = {
+  '/dashboard/root': [
+    {
+      id: 'l5anchor1',
+      content: '🧠 L5 Anchor: System boot event recorded.',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'l5anchor2',
+      content: '📌 L5 Anchor: Prototype zone touched by developer.',
+      createdAt: new Date().toISOString(),
+    },
+  ],
+};
+
+const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
   const [records, setRecords] = useState<MemoryRecord[]>([]);
-  const [anchors, setAnchors] = useState<MemoryAnchor[]>([]);
+  const [anchors, setAnchors] = useState<AnchorRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [zoneTitle, setZoneTitle] = useState<string>('');
 
   useEffect(() => {
     const fetchMemory = async () => {
@@ -77,97 +49,60 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone: inputZone }) => {
         setLoading(true);
         setError(null);
 
-        const zonePath = `/dashboard/${inputZone.id}`;
+        const zonePath = `/dashboard/${zone}`;
         const activeZone = ZoneRegistry.find(z => z.path === zonePath);
 
         if (!activeZone) {
           setError(`Zone not found for path: ${zonePath}`);
+          setRecords([]);
           return;
         }
 
-        const dummyRecords: MemoryRecord[] = [
-          {
-            id: generateUUID(),
-            timestamp: new Date().toISOString(),
-            content: `Memory initialized for ${activeZone.name}`
-          }
-        ];
-
-        const zoneAnchors = mockAnchorsByZone[inputZone.id] || [];
-
-        setRecords(dummyRecords);
-        setAnchors(zoneAnchors.filter(a => a.importance >= 5));
+        setZoneTitle(activeZone.name);
+        setRecords(MockMemoryStore[zonePath] || []);
+        setAnchors(MockAnchorRegistry[zonePath] || []);
       } catch (err) {
-        setError('Unexpected error while loading memory.');
+        setError('Failed to load memory data.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchMemory();
-  }, [inputZone.id]);
-
-  const subZones = ZoneRegistry.filter(
-    z => z.depth > inputZone.depth && z.path.startsWith(`/dashboard/${inputZone.id}`)
-  );
+  }, [zone]);
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow">
-      <h2 className="text-2xl font-semibold mb-4">🧠 Memory Panel for {inputZone.name}</h2>
+    <div>
+      <h1>Memory Panel</h1>
+      <div className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-2">🧠 Memory Panel for {zoneTitle || 'Unknown Zone'}</h2>
+        {error && <p className="text-red-500">Error: {error}</p>}
+        {!error && (
+          <>
+            {records.map((record, index) => (
+              <div
+                key={index}
+                className="border p-3 mb-2 rounded-md text-gray-800"
+              >
+                <div className="text-sm text-gray-500">{new Date(record.timestamp).toLocaleString()}</div>
+                <div>{record.message}</div>
+              </div>
+            ))}
 
-      {loading && <p className="text-gray-500">Loading memory records...</p>}
-      {error && <p className="text-red-600">Error: {error}</p>}
-
-      {!loading && !error && (
-        <>
-          <ul className="space-y-3 mb-6">
-            {records.length === 0 ? (
-              <li className="text-gray-600">No memory records found for this zone.</li>
-            ) : (
-              records.map(record => (
-                <li key={record.id} className="border border-gray-200 p-3 rounded-lg">
-                  <div className="text-sm text-gray-500">
-                    {new Date(record.timestamp).toLocaleString()}
+            {anchors.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-md font-bold mb-2">🔗 Anchors (L5)</h3>
+                {anchors.map((anchor) => (
+                  <div key={anchor.id} className="border-l-4 border-indigo-500 pl-3 mb-2">
+                    <div className="text-sm text-gray-500">{new Date(anchor.createdAt).toLocaleString()}</div>
+                    <div className="font-mono">{anchor.content}</div>
                   </div>
-                  <div className="mt-1 text-gray-800">{record.content}</div>
-                </li>
-              ))
+                ))}
+              </div>
             )}
-          </ul>
-
-          {anchors.length > 0 && (
-            <>
-              <h3 className="text-lg font-bold mb-2">📌 Level 5 Anchors</h3>
-              <ul className="space-y-2 mb-6">
-                {anchors.map(anchor => (
-                  <li key={anchor.id} className="p-3 border-l-4 border-blue-500 bg-blue-50 rounded">
-                    <div className="font-semibold">{anchor.title}</div>
-                    <div className="text-sm text-gray-700">{anchor.summary}</div>
-                    <div className="text-xs text-gray-500">
-                      ⏱ {new Date(anchor.createdAt).toLocaleString()} • {anchor.tags.join(', ')}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-
-          {inputZone.depth === 0 && subZones.length > 0 && (
-            <>
-              <h3 className="text-lg font-bold mb-2">🧭 Sub-Zones</h3>
-              <ul className="list-disc pl-5 space-y-1">
-                {subZones.map(z => (
-                  <li key={z.id}>
-                    <Link href={z.path}>
-                      <span className="text-blue-600 hover:underline">{z.name}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };
