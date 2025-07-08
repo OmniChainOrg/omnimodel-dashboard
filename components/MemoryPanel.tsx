@@ -20,9 +20,6 @@ export function approveZone(zoneData) {
     path: `/dashboard/${zoneData.slug}`,
     approved: true
   });
-  saveRegistryToDiskOrDB();
-  // Placeholder for future database or file system write logic
-  return;
 }
 
 const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
