@@ -37,22 +37,32 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchMemory = async () => {
+useEffect(() => {
+  const fetchMemory = async () => {
+    try {
       setLoading(true);
       setError(null);
-      try {
-        const response = await fetch(`/api/memory?zoneId=${encodeURIComponent(zone.id)}`);
-        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
-        const data: MemoryRecord[] = await response.json();
-        setRecords(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch memory records');
-      } finally {
-        setLoading(false);
-      }
-    };
+      
+      // Simulated zone fetch logic...
+      const zone = ZoneRegistry.find(z => z.path === currentPath);
 
+      if (!zone) {
+        setError(`Zone not found for path "${currentPath}"`);
+      }
+
+    } catch (err) {
+      setError("Unexpected error while loading zone.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchMemory(); // 👈 call it inside useEffect
+
+  // ✅ return nothing or a cleanup function (not JSX!)
+  return;
+}, []);
+    
     const zone = ZoneRegistry.find(z => z.path === currentPath);
     
     if (!zone) {
