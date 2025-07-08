@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 import { ZoneRegistry } from '@/lib/zoneRegistry';
-import { approveZone } from '@/lib/updateRegistry';
+import { approveZone as someOtherName } from '@/lib/updateRegistry';
+
 
 interface MemoryRecord {
   id: string;
