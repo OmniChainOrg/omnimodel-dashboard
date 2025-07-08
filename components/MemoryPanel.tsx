@@ -13,8 +13,16 @@ type AnchorRecord = {
   createdAt: string;
 };
 
+type Zone = {
+  id: string;
+  name: string;
+  path: string;
+  approved: boolean;
+  depth: number;
+};
+
 interface MemoryPanelProps {
-  zone: string;
+  zone: Zone;
 }
 
 const MockMemoryStore: Record<string, MemoryRecord[]> = {
@@ -52,7 +60,6 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
   const [anchors, setAnchors] = useState<AnchorRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [zoneTitle, setZoneTitle] = useState<string>('');
 
   useEffect(() => {
     const fetchMemory = async () => {
@@ -60,16 +67,7 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
         setLoading(true);
         setError(null);
 
-        const zonePath = `/dashboard/${zone}`;
-        const activeZone = ZoneRegistry.find(z => z.path === zonePath);
-
-        if (!activeZone) {
-          setError(`Zone not found for path: ${zonePath}`);
-          setRecords([]);
-          return;
-        }
-
-        setZoneTitle(activeZone.name);
+        const zonePath = zone.path;
         setRecords(MockMemoryStore[zonePath] || []);
         setAnchors(MockAnchorRegistry[zonePath] || []);
       } catch (err) {
@@ -86,7 +84,7 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
     <div>
       <h1>Memory Panel</h1>
       <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-2">🧠 Memory Panel for {zoneTitle || 'Unknown Zone'}</h2>
+        <h2 className="text-xl font-semibold mb-2">🧠 Memory Panel for {zone.name || 'Unknown Zone'}</h2>
         {error && <p className="text-red-500">Error: {error}</p>}
         {!error && (
           <>
