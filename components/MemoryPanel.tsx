@@ -53,6 +53,17 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
       }
     };
 
+    const zone = ZoneRegistry.find(z => z.path === currentPath);
+    
+    if (!zone) {
+      return (
+        <div>
+          <h1>Memory Panel</h1>
+          <p className="text-red-600">Error: Zone not found for path <code>{currentPath}</code>.</p>
+        </div>
+      );
+    }
+
     fetchMemory();
   }, [zone.id]);
 
