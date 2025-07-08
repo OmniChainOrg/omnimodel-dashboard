@@ -19,7 +19,7 @@ export const ZoneRegistry = [
     path: '/dashboard/hopechain',
     approved: true,
     depth: 1
-  }
+  },
   // ✅ Biotech zone (depth 1)
   {
     id: 'bio-rnd',
