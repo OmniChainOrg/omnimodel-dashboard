@@ -1,5 +1,12 @@
 export const ZoneRegistry = [
   {
+    id: 'root',
+    name: 'Root Zone Prototype',
+    path: '/dashboard/root',
+    approved: true,
+    depth: 0
+  },
+  {
     id: 'omnitwin',
     name: 'OmniTwin',
     path: '/dashboard/omnitwin',
@@ -12,7 +19,7 @@ export const ZoneRegistry = [
     path: '/dashboard/hopechain',
     approved: true,
     depth: 1
-  },
+  }
   // ✅ Biotech zone (depth 1)
   {
     id: 'bio-rnd',
