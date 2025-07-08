@@ -16,9 +16,11 @@ interface MemoryPanelProps {
 
 export function approveZone(zoneData) {
   ZoneRegistry.push({
+    id: zoneData.id || generateUUID(), // use existing or generate one
     name: zoneData.name,
     path: `/dashboard/${zoneData.slug}`,
-    approved: true
+    approved: true,
+    depth: zoneData.depth ?? 0 // default to 0 if not provided
   });
 }
 
