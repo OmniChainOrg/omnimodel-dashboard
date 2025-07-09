@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import MemoryPanel from './MemoryPanel';
+import { ZoneRegistry, approveZone, declineZone } from '@/lib/zoneRegistry';
 
 // Zone type
 interface Zone {
