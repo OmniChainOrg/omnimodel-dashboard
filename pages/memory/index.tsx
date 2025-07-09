@@ -4,11 +4,12 @@ import { Zone } from '../../hooks/useZoneArchetype';
 import MemoryPanel from '../../components/MemoryPanel';
 
 // Dummy zone for standalone memory page
-const dummyZone: Zone = {
+const dummyZone = {
   id: 'root',
   name: 'Root Zone Prototype',
+  path: '/dashboard/root',
+  approved: true,
   depth: 1,
-  children: [],
 };
 
 export default function MemoryPage() {
