@@ -1,82 +1,57 @@
 import React, { useState } from 'react';
-import { Zone } from '../hooks/useZoneArchetype';
+import MemoryPanel from './MemoryPanel';
 
-//Real panel components (commented out due to prop mismatch)
-import SirrenaSimPanel from './SirrenaSimPanel';
-import RealMemoryPanel from './MemoryPanel';
-import PosteriorPilotDashboard from './PosteriorPilotDashboard';
-import EpistemicEngine from './EpistemicEngine';
-import AnchoringTimeline from './AnchoringTimeline';
+// Zone type
+interface Zone {
+  id: string;
+  name: string;
+  path: string;
+  approved: boolean;
+  depth: number;
+}
 
-// Dummy/fallback panel components with correct prop signature
-const SimulationPanel: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">
-    SirrenaSimPanel for {zone.name} (dummy fallback)
-  </div>
-);
-const MemoryPanelFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">
-    Memory data for {zone.name} (dummy fallback)
-  </div>
-);
-const PosteriorPilotDashboardFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">
-    PosteriorPilotDashboard for {zone.name} (dummy fallback)
-  </div>
-);
-const EpistemicEngineFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">
-    EpistemicEngine for {zone.name} (dummy fallback)
-  </div>
-);
-const AnchoringTimelineFallback: React.FC<{ zone: Zone }> = ({ zone }) => (
-  <div className="p-4 bg-gray-50 rounded-lg">
-    AnchoringTimeline for {zone.name} (dummy fallback)
-  </div>
-);
+interface ZoneSubDashboardProps {
+  zone: Zone;
+}
 
-// Main dashboard component
-const ZoneSubDashboard: React.FC<{ zone: Zone }> = ({ zone }) => {
-  const [selectedTab, setSelectedTab] = useState<string>('Simulation');
-  const tabs = ['Simulation', 'Memory', 'PosteriorPilot', 'EpistemicEngine', 'AnchoringTimeline'];
+const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
+  const [activeTab, setActiveTab] = useState<string>('Memory');
 
   let panelContent: React.ReactNode;
-  switch (selectedTab) {
-    case 'Simulation':
-      panelContent = <SimulationPanel zone={zone} />;
-      break;
+  switch (activeTab) {
     case 'Memory':
-      panelContent = <MemoryPanelFallback zone={zone} />;
+      panelContent = <MemoryPanel zone={zone} />;
       break;
     case 'PosteriorPilot':
-      panelContent = <PosteriorPilotDashboardFallback zone={zone} />;
+      panelContent = <div>PosteriorPilot content placeholder</div>;
       break;
-    case 'EpistemicEngine':
-      panelContent = <EpistemicEngineFallback zone={zone} />;
+    case 'OmniLog':
+      panelContent = <div>OmniLog content placeholder</div>;
       break;
-    case 'AnchoringTimeline':
-      panelContent = <AnchoringTimelineFallback zone={zone} />;
+    case 'NeuroBridge':
+      panelContent = <div>NeuroBridge content placeholder</div>;
       break;
     default:
-      panelContent = null;
+      panelContent = <div>Welcome to the zone dashboard</div>;
   }
 
   return (
-    <div>
-      <div className="flex space-x-2 border-b">
-        {tabs.map((tab) => (
+    <div className="bg-white rounded shadow p-4">
+      <h2 className="text-xl font-bold mb-4">🔹 SubZone Dashboard: {zone.name}</h2>
+      <div className="flex space-x-4 mb-4">
+        {['Memory', 'PosteriorPilot', 'OmniLog', 'NeuroBridge'].map((tab) => (
           <button
             key={tab}
-            onClick={() => setSelectedTab(tab)}
-            className={`px-4 py-2 font-medium rounded-t-lg transition ${
-              selectedTab === tab ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded ${
+              activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'
             }`}
           >
             {tab}
           </button>
         ))}
       </div>
-      <div className="p-4">{panelContent}</div>
+      <div className="mt-4">{panelContent}</div>
     </div>
   );
 };
