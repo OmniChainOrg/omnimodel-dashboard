@@ -1,7 +1,17 @@
-import { useEffect, useState } from 'react';
-import { ZoneRegistry } from '../lib/zoneRegistry';
+import React from 'react';
+import { Zone } from '../hooks/useZoneArchetype';
 
-export default function MemoryPanel({ zone }: { zone?: Zone }) {
+interface MemoryRecord {
+  id: string;
+  timestamp: string;
+  content: string;
+}
+
+interface MemoryPanelProps {
+  zone?: Zone;
+}
+
+export default function MemoryPanel({ zone }: MemoryPanelProps) {
   //  ➡️ Si zone est undefined, on ne tente pas d'accéder à zone.name
   if (!zone) {
     return (
