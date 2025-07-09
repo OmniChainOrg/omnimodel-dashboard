@@ -1,16 +1,17 @@
 // pages/zonesubdashboard.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import ZoneSubDashboard from '@/components/ZoneSubDashboard';
-import { ZoneRegistry } from '@/lib/zoneRegistry';
+import { ZoneRegistry, approveZone, declineZone, Zone } from '@/lib/zoneRegistry';
 
 export default function ZoneSubDashPage() {
   const router = useRouter();
+
   // Always show the root zone dashboard
-  const rootZone = ZoneRegistry.find(z => z.id === 'root')!;
+  const rootZone: Zone = ZoneRegistry.find(z => z.id === 'root')!;
 
   // Pending sub-zones are those under root path and not yet approved
-  const [pending, setPending] = React.useState<Zone[]>(
+  const [pending, setPending] = useState<Zone[]>(
     ZoneRegistry.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
   );
 
