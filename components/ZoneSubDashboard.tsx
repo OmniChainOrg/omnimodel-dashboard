@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import MemoryPanel from './MemoryPanel';
-import { ZoneRegistry, approveZone, declineZone } from '@/lib/zoneRegistry';
+import { approveZone, declineZone } from '@/lib/zoneRegistry';
 
-// Zone type
+// Zone type (should match your registry)
 interface Zone {
   id: string;
   name: string;
@@ -15,17 +15,21 @@ interface ZoneSubDashboardProps {
   zone: Zone;
 }
 
-const rootZone = {
-  id: 'root',
-  name: 'Root Zone Prototype',
-  depth: 1,
-  path: '/dashboard/root',     // chemin associé
-  approved: true               // ou false selon ton choix
-};
-
 const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const [activeTab, setActiveTab] = useState<string>('Memory');
+  const [isApproved, setIsApproved] = useState<boolean>(zone.approved);
 
+  const handleApprove = () => {
+    approveZone({ id: zone.id, name: zone.name, path: zone.path, depth: zone.depth });
+    setIsApproved(true);
+  };
+
+  const handleDecline = () => {
+    declineZone(zone.id);
+    setIsApproved(false);
+  };
+
+  // Choose which panel to render
   let panelContent: React.ReactNode;
   switch (activeTab) {
     case 'Memory':
@@ -41,18 +45,38 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
       panelContent = <div>NeuroBridge content placeholder</div>;
       break;
     default:
-      panelContent = <div>Welcome to the zone dashboard</div>;
+      panelContent = <div>Welcome to the subzone dashboard</div>;
   }
 
   return (
-    <div className="bg-white rounded shadow p-4">
+    <div className="bg-white rounded shadow p-6">
       <h2 className="text-xl font-bold mb-4">🔹 SubZone Dashboard: {zone.name}</h2>
-      <div className="flex space-x-4 mb-4">
-        {['Memory', 'PosteriorPilot', 'OmniLog', 'NeuroBridge'].map((tab) => (
+
+      {/* Approval Controls */}
+      {!isApproved && (
+        <div className="mb-4 flex space-x-2">
+          <button
+            onClick={handleApprove}
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            Approve Zone
+          </button>
+          <button
+            onClick={handleDecline}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Decline Zone
+          </button>
+        </div>
+      )}
+
+      {/* Tab Navigation */}
+      <div className="flex space-x-2 border-b mb-4">
+        {['Memory', 'PosteriorPilot', 'OmniLog', 'NeuroBridge'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded ${
+            className={`px-4 py-2 rounded-t-lg transition ${
               activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'
             }`}
           >
@@ -60,7 +84,9 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
           </button>
         ))}
       </div>
-      <div className="mt-4">{panelContent}</div>
+
+      {/* Active Panel */}
+      <div>{panelContent}</div>
     </div>
   );
 };
