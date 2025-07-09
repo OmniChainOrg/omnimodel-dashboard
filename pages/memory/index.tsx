@@ -1,25 +1,14 @@
 // pages/memory/index.tsx
-import React, { useEffect, useState } from 'react';
-import { Zone } from '../../hooks/useZoneArchetype';
 import MemoryPanel from '../../components/MemoryPanel';
-
-// Dummy zone for standalone memory page
-const dummyZone = {
-  id: 'root',
-  name: 'Root Zone Prototype',
-  path: '/dashboard/root',
-  approved: true,
-  depth: 1,
-};
+import { ZoneRegistry } from '../../lib/zoneRegistry';
 
 export default function MemoryPage() {
-  const [zone, setZone] = useState<Zone>(dummyZone);
+  // Utilise la vraie zone existante (peut être root, omnitwin, biotech-lab, etc.)
+  const zone = ZoneRegistry.find((z) => z.id === 'root');
 
-  // You could fetch a real zone here via query or context
-  useEffect(() => {
-    // Example: load zone from URL? For now, dummy
-    setZone(dummyZone);
-  }, []);
+  if (!zone) {
+    return <div className="text-red-500 p-4">❌ Zone "root" introuvable dans le registre.</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
