@@ -1,4 +1,23 @@
 // lib/zoneRegistry.ts
+export function approveZone(zoneData: {
+  id: string;
+  name: string;
+  path: string;
+  depth: number;
+}) {
+  const existing = ZoneRegistry.find(z => z.id === zoneData.id);
+  if (existing) {
+    existing.approved = true;
+  } else {
+    ZoneRegistry.push({ ...zoneData, approved: true });
+  }
+}
+
+export function declineZone(zoneId: string) {
+  const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
+  if (idx !== -1) ZoneRegistry.splice(idx, 1);
+}
+
 
 // Définition de ton type Zone
 export interface Zone {
