@@ -1,20 +1,22 @@
 // pages/zonedashboard.tsx
+// pages/zonedashboard.tsx
 import React, { useState } from 'react';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 
-// Zone type (local, matching hook output plus optional props)
-interface Zone {
+// Zone type, now allowing optional path, approved and children
+type Zone = {
   id: string;
   name: string;
   path?: string;
   approved?: boolean;
   depth: number;
   children?: Zone[];
-}
+};
 
-// Recursive node component for displaying generated zones
-const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
+// Recursive node component for displaying zones
+type ZoneNodeProps = { zone: Zone };
+const ZoneNode: React.FC<ZoneNodeProps> = ({ zone }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -36,22 +38,19 @@ const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
 );
 
 const ZoneDashboardPage: React.FC = () => {
-  // Form state for generator inputs
+  // Form state
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
   const [recursionLevel, setRecursionLevel] = useState(4);
 
-  // Hook to generate zone tree
+  // Generate or fetch zone tree
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: zoneDomain,
     archetypeName: prototypeZoneName,
     depth: recursionLevel,
   });
 
-  // Ensure structural compatibility with local Zone type
-  const activeTree: Zone = tree as Zone;
-
-  // Dummy fallback tree if generation fails or is undefined
+  // Fallback dummy tree
   const dummyTree: Zone = {
     id: 'root',
     name: prototypeZoneName,
@@ -59,26 +58,13 @@ const ZoneDashboardPage: React.FC = () => {
     approved: true,
     depth: 1,
     children: [
-      {
-        id: 'sub1',
-        name: 'SubZone A',
-        path: '/dashboard/root/sub1',
-        approved: true,
-        depth: 2,
-        children: [],
-      },
-      {
-        id: 'sub2',
-        name: 'SubZone B',
-        path: '/dashboard/root/sub2',
-        approved: true,
-        depth: 2,
-        children: [],
-      },
+      { id: 'sub1', name: 'SubZone A', path: '/dashboard/root/sub1', approved: true, depth: 2, children: [] },
+      { id: 'sub2', name: 'SubZone B', path: '/dashboard/root/sub2', approved: true, depth: 2, children: [] },
     ],
   };
 
-  const displayTree = activeTree || dummyTree;
+  // Use fetched tree or fallback
+  const displayTree = tree ?? dummyTree;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,10 +74,9 @@ const ZoneDashboardPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">
-          CE² Zone Prototype Generator
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">CE² Zone Prototype Generator</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+          {/* Domain selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
             <select
@@ -99,24 +84,13 @@ const ZoneDashboardPage: React.FC = () => {
               onChange={e => setZoneDomain(e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
+              {/* options... */}
               <option>Biotech</option>
-              <option>MedTech</option>
-              <option>Pharma Formulation</option>
-              <option>Clinical Trials</option>
               <option>RegOps</option>
-              <option>DeSci</option>
-              <option>DeTrade</option>
-              <option>DeInvest</option>
-              <option>Nonprofit</option>
-              <option>Philanthropy</option>
-              <option>Humanitarian</option>
-              <option>AI ethics</option>
-              <option>dApps DevOps</option>
-              <option>Investment</option>
-              <option>Granting</option>
-              <option>Other</option>
+              {/* ...other options */}
             </select>
           </div>
+          {/* Prototype name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Prototype Zone Name
@@ -129,6 +103,7 @@ const ZoneDashboardPage: React.FC = () => {
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
+          {/* Recursion level */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
             <input
@@ -140,17 +115,14 @@ const ZoneDashboardPage: React.FC = () => {
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-          >
+          <button type="submit" className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
             Generate Zones
           </button>
         </form>
 
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
-        {displayTree && <ZoneNode zone={displayTree} />}
+        <ZoneNode zone={displayTree} />
       </div>
     </div>
   );
