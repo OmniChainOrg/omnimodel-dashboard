@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import MemoryPanel from '../../components/MemoryPanel';
 import { ZoneRegistry } from '../../lib/zoneRegistry';
-import { approveZone, declineZone } from '../../lib/updateRegistry';
+import { ZoneRegistry, approveZone, declineZone } from '../../lib/zoneRegistry';
+
 
 export default function MemoryPage() {
   const [pendingZones, setPendingZones] = useState<typeof ZoneRegistry>([]);
