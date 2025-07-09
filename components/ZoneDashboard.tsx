@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
+import { ZoneRegistry, approveZone, declineZone } from '@/lib/zoneRegistry';
 
 // Zone type, now allowing optional path, approved and children
 type Zone = {
