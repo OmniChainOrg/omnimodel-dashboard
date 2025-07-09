@@ -1,22 +1,27 @@
 // pages/zonesubdashboard.tsx
 import React from 'react';
-import ZoneSubDashboard from '../components/ZoneSubDashboard';
-import { Zone } from '../hooks/useZoneArchetype';
+import { useRouter } from 'next/router';
+import ZoneSubDashboard from '@/components/ZoneSubDashboard';
+import { ZoneRegistry } from '@/lib/zoneRegistry';
 
-// On définit la zone de test avec tous les champs requis
-const rootZone = {
-  id: 'root',
-  name: 'Root Zone Prototype',
-  path: '/dashboard/root',
-  approved: true,
-  depth: 1,
-};
+export default function ZoneSubDashPage() {
+  const router = useRouter();
+  const zoneId = router.query.zone as string;
 
-export default function ZoneSubDashboardPage() {
+  // Find the zone in the registry
+  const zone = ZoneRegistry.find(z => z.id === zoneId);
+
+  if (!zone) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8 bg-gray-100">
+        <p className="text-gray-500">Aucune zone sélectionnée pour le moment.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-3xl font-bold mb-4">Zone Sub Dashboard</h1>
-      <ZoneSubDashboard zone={rootZone} />
+    <div className="min-h-screen bg-gray-50 p-8">
+      <ZoneSubDashboard zone={zone} />
     </div>
   );
 }
