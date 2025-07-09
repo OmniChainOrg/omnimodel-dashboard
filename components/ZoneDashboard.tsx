@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 
-// Zone type
+// Zone type (local, matching hook output plus optional props)
 interface Zone {
   id: string;
   name: string;
-  path?: string;        // ❔ optionnel
-  approved?: boolean;   // ❔ optionnel
+  path?: string;
+  approved?: boolean;
   depth: number;
-  children: Zone[];
+  children?: Zone[];
 }
 
 // Recursive node component for displaying generated zones
@@ -25,7 +25,7 @@ const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
       <h3 className="text-lg font-semibold text-gray-800">{zone.name}</h3>
       <p className="text-sm text-gray-500">Level: {zone.depth}</p>
     </div>
-    {zone.children && (
+    {zone.children && zone.children.length > 0 && (
       <div className="ml-6 mt-2 border-l-2 border-gray-200 pl-4">
         {zone.children.map(child => (
           <ZoneNode key={child.id} zone={child} />
@@ -42,6 +42,16 @@ const ZoneDashboardPage: React.FC = () => {
   const [recursionLevel, setRecursionLevel] = useState(4);
 
   // Hook to generate zone tree
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: zoneDomain,
+    archetypeName: prototypeZoneName,
+    depth: recursionLevel,
+  });
+
+  // Ensure structural compatibility with local Zone type
+  const activeTree: Zone = tree as Zone;
+
+  // Dummy fallback tree if generation fails or is undefined
   const dummyTree: Zone = {
     id: 'root',
     name: prototypeZoneName,
@@ -68,12 +78,8 @@ const ZoneDashboardPage: React.FC = () => {
     ],
   };
 
-  const { tree, loading, error, refresh } = useZoneArchetype({
-    archetypeId: zoneDomain,
-    archetypeName: prototypeZoneName,
-    depth: recursionLevel,
-  });
-  const displayTree = tree || dummyTree;
+  const displayTree = activeTree || dummyTree;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     refresh();
@@ -144,7 +150,7 @@ const ZoneDashboardPage: React.FC = () => {
 
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
-        {tree && <ZoneNode zone={tree} />}
+        {displayTree && <ZoneNode zone={displayTree} />}
       </div>
     </div>
   );
