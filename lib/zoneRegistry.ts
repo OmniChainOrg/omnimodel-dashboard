@@ -1,55 +1,57 @@
-export const ZoneRegistry = [
-  {
-    id: 'root',
-    name: 'Root Zone Prototype',
-    path: '/dashboard/root',
-    approved: true,
-    depth: 0
-  },
+// lib/zoneRegistry.ts
+
+// Définition de ton type Zone
+export interface Zone {
+  id: string;
+  name: string;
+  path: string;
+  approved: boolean;
+  depth: number;
+}
+
+// Ton registre initial
+export const ZoneRegistry: Zone[] = [
   {
     id: 'omnitwin',
     name: 'OmniTwin',
     path: '/dashboard/omnitwin',
     approved: true,
-    depth: 1
+    depth: 1,
   },
   {
     id: 'hopechain',
     name: 'HOPEChain',
     path: '/dashboard/hopechain',
     approved: true,
-    depth: 1
+    depth: 1,
   },
-  // ✅ Biotech zone (depth 1)
-  {
-    id: 'bio-rnd',
-    name: '🧬 Biotech R&D',
-    path: '/dashboard/biotech-rnd',
-    approved: true,
-    depth: 1
-  },
-  // ✅ Sub-zone for therapeutic vaccines (depth 2)
-  {
-    id: 'thera-vax',
-    name: '💉 Therapeutic Vaccines: TNBC & KRAS',
-    path: '/dashboard/thera-vaccines',
-    approved: true,
-    depth: 2
-  },
-  // ✅ RegOps zone (depth 1)
-  {
-    id: 'regops-center',
-    name: '📋 RegOps Command Center',
-    path: '/dashboard/regops',
-    approved: true,
-    depth: 1
-  },
-  // ✅ Optional fallback root zone (depth 0)
-  {
-    id: 'root',
-    name: '🧠 Root Memory Zone',
-    path: '/memory',
-    approved: true,
-    depth: 0
-  }
+  // … autres zones initiales
 ];
+
+// Approuve (ou re-approuve) une zone
+export function approveZone(zoneData: {
+  id: string;
+  name: string;
+  path: string;
+  depth: number;
+}) {
+  const existing = ZoneRegistry.find((z) => z.id === zoneData.id);
+  if (existing) {
+    // Si déjà présente, on bascule simplement le flag
+    existing.approved = true;
+  } else {
+    // Sinon on l’ajoute avec approved = true
+    ZoneRegistry.push({
+      ...zoneData,
+      approved: true,
+    });
+  }
+}
+
+// Décline (supprime) une zone par son id
+export function declineZone(zoneId: string) {
+  const idx = ZoneRegistry.findIndex((z) => z.id === zoneId);
+  if (idx !== -1) {
+    ZoneRegistry.splice(idx, 1);
+  }
+}
