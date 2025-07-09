@@ -68,6 +68,11 @@ const ZoneDashboardPage: React.FC = () => {
     ],
   };
 
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: zoneDomain,
+    archetypeName: prototypeZoneName,
+    depth: recursionLevel,
+  });
   const displayTree = tree || dummyTree;
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
