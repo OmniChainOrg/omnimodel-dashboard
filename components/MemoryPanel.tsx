@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
 import { ZoneRegistry } from '../lib/zoneRegistry';
 
+export default function MemoryPanel({ zone }: { zone?: Zone }) {
+  //  ➡️ Si zone est undefined, on ne tente pas d'accéder à zone.name
+  if (!zone) {
+    return (
+      <div className="p-4 bg-white rounded-lg shadow text-gray-500">
+        Aucune zone sélectionnée pour le moment.
+      </div>
+    );
+  }
+
 // Inlined types previously imported from '../types'
 type MemoryRecord = {
   timestamp: string;
