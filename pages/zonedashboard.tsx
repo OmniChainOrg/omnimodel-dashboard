@@ -3,61 +3,13 @@ import React, { useState } from 'react';
 import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 
-// Settings type for each zone
+// Settings type for each zone customization
 interface ZoneSettings {
   info: string;
   confidentiality: 'Public' | 'Confidential' | 'Private';
 }
 
-// Form to customize a single zone, with Save/Cancel
-const ZoneCustomizationForm: React.FC<{
-  zone: Zone;
-  settings: ZoneSettings;
-  onSave: (zoneId: string, newSettings: ZoneSettings) => void;
-  onCancel: () => void;
-}> = ({ zone, settings, onSave, onCancel }) => {
-  const [info, setInfo] = useState(settings.info);
-  const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(settings.confidentiality);
-
-  return (
-    <div className="mt-3 p-4 bg-gray-50 rounded-lg">
-      <label className="block text-sm font-medium text-gray-700">Info to Share</label>
-      <textarea
-        placeholder="Enter information to share..."
-        value={info}
-        onChange={e => setInfo(e.target.value)}
-        className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-        rows={3}
-      />
-      <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
-      <select
-        value={confidentiality}
-        onChange={e => setConfidentiality(e.target.value as ZoneSettings['confidentiality'])}
-        className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-      >à 152
-        <option>Public</option>
-        <option>Confidential</option>
-        <option>Private</option>
-      </select>
-      <div className="mt-4 flex space-x-2">
-        <button
-          onClick={() => onSave(zone.id, { info, confidentiality })}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-        >
-          Save
-        </button>
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// Recursive node with customization controls
+// Recursive node with inline customization form
 const ZoneNode: React.FC<{
   zone: Zone;
   settings: Record<string, ZoneSettings>;
@@ -65,13 +17,18 @@ const ZoneNode: React.FC<{
 }> = ({ zone, settings, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
   const currentSettings = settings[zone.id] || { info: '', confidentiality: 'Public' };
+  const [info, setInfo] = useState(currentSettings.info);
+  const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
 
-  // Handlers
-  const handleSave = (id: string, newSet: ZoneSettings) => {
-    onUpdate(id, newSet);
+  const handleSave = () => {
+    onUpdate(zone.id, { info, confidentiality });
     setExpanded(false);
   };
-  const handleCancel = () => setExpanded(false);
+  const handleCancel = () => {
+    setInfo(currentSettings.info);
+    setConfidentiality(currentSettings.confidentiality);
+    setExpanded(false);
+  };
 
   return (
     <motion.div
@@ -94,15 +51,43 @@ const ZoneNode: React.FC<{
           </button>
         </div>
         {expanded && (
-          <ZoneCustomizationForm
-            zone={zone}
-            settings={currentSettings}
-            onSave={handleSave}
-            onCancel={handleCancel}
-          />
+          <div className="mt-3 p-4 bg-gray-50 rounded-lg">
+            <label className="block text-sm font-medium text-gray-700">Info to Share</label>
+            <textarea
+              placeholder="Enter information to share..."
+              value={info}
+              onChange={e => setInfo(e.target.value)}
+              className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              rows={3}
+            />
+            <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
+            <select
+              value={confidentiality}
+              onChange={e => setConfidentiality(e.target.value as ZoneSettings['confidentiality'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Public</option>
+              <option>Confidential</option>
+              <option>Private</option>
+            </select>
+            <div className="mt-4 flex space-x-2">
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+              >
+                Save
+              </button>
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         )}
       </div>
-      {zone.children?.length && (
+      {zone.children && zone.children.length > 0 && (
         <div className="ml-10 mt-4 border-l-2 border-blue-200 pl-8">
           {zone.children.map(child => (
             <ZoneNode key={child.id} zone={child} settings={settings} onUpdate={onUpdate} />
@@ -139,7 +124,60 @@ const ZoneDashboardPage: React.FC = () => {
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">CE² Zone Prototype Generator</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-          {/* Form fields unchanged... */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
+            <select
+              value={zoneDomain}
+              onChange={e => setZoneDomain(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Biotech</option>
+              <option>MedTech</option>
+              <option>Pharma Formulation</option>
+              <option>Clinical Trials</option>
+              <option>RegOps</option>
+              <option>DeSci</option>
+              <option>DeTrade</option>
+              <option>DeInvest</option>
+              <option>Nonprofit</option>
+              <option>Philanthropy</option>
+              <option>Humanitarian</option>
+              <option>AI ethics</option>
+              <option>dApps DevOps</option>
+              <option>Investment</option>
+              <option>Granting</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Prototype Zone Name
+              <span className="text-xs text-gray-500"> (shown in main dashboard)</span>
+            </label>
+            <input
+              type="text"
+              value={prototypeZoneName}
+              onChange={e => setPrototypeZoneName(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
+            <input
+              type="number"
+              min={1}
+              max={6}
+              value={recursionLevel}
+              onChange={e => setRecursionLevel(Number(e.target.value))}
+              className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >
+            Generate Zones
+          </button>
         </form>
 
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
