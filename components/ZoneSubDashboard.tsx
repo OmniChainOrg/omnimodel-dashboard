@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
-// Real panel components (commented out due to prop mismatch)
-// import SirrenaSimPanel from './SirrenaSimPanel';
-// import RealMemoryPanel from './MemoryPanel';
-// import PosteriorPilotDashboard from './PosteriorPilotDashboard';
-// import EpistemicEngine from './EpistemicEngine';
-// import AnchoringTimeline from './AnchoringTimeline';
+//Real panel components (commented out due to prop mismatch)
+import SirrenaSimPanel from './SirrenaSimPanel';
+import RealMemoryPanel from './MemoryPanel';
+import PosteriorPilotDashboard from './PosteriorPilotDashboard';
+import EpistemicEngine from './EpistemicEngine';
+import AnchoringTimeline from './AnchoringTimeline';
 
 // Dummy/fallback panel components with correct prop signature
 const SimulationPanel: React.FC<{ zone: Zone }> = ({ zone }) => (
