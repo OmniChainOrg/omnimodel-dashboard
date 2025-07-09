@@ -7,8 +7,8 @@ import { motion } from 'framer-motion';
 interface Zone {
   id: string;
   name: string;
-  path: string;         // ✅ À ajouter
-  approved: boolean;    // ✅ À ajouter aussi
+  path?: string;        // ❔ optionnel
+  approved?: boolean;   // ❔ optionnel
   depth: number;
   children: Zone[];
 }
