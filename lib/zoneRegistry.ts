@@ -9,7 +9,6 @@ export interface Zone {
 }
 
 export const ZoneRegistry: Zone[] = [
-  // ————————————————————————————————————————————————
   // Root “Memory Panel” zone
   {
     id: 'root',
@@ -35,12 +34,11 @@ export const ZoneRegistry: Zone[] = [
     depth: 1,
   },
 
-  // … add any other default zones here …
+  // … add more defaults here as needed …
 ];
 
 /**
- * Approve a pending zone: if it already exists, flip approved=true;
- * otherwise push it into the registry as approved.
+ * Mark a zone as approved (or insert it if new)
  */
 export function approveZone(zoneData: {
   id: string;
@@ -57,7 +55,7 @@ export function approveZone(zoneData: {
 }
 
 /**
- * Decline (remove) a zone by its ID.
+ * Remove a zone by ID
  */
 export function declineZone(zoneId: string) {
   const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
