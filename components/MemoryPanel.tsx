@@ -160,6 +160,7 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
       </div>
     </div>
   );
+}
 };
 
 export default MemoryPanel;
