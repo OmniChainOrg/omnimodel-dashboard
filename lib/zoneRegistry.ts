@@ -1,25 +1,6 @@
 // lib/zoneRegistry.ts
-export function approveZone(zoneData: {
-  id: string;
-  name: string;
-  path: string;
-  depth: number;
-}) {
-  const existing = ZoneRegistry.find(z => z.id === zoneData.id);
-  if (existing) {
-    existing.approved = true;
-  } else {
-    ZoneRegistry.push({ ...zoneData, approved: true });
-  }
-}
 
-export function declineZone(zoneId: string) {
-  const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
-  if (idx !== -1) ZoneRegistry.splice(idx, 1);
-}
-
-
-// Définition de ton type Zone
+// Definition of Zone with all required fields
 export interface Zone {
   id: string;
   name: string;
@@ -28,7 +9,7 @@ export interface Zone {
   depth: number;
 }
 
-// Ton registre initial
+// Initial registry of zones
 export const ZoneRegistry: Zone[] = [
   {
     id: 'omnitwin',
@@ -44,32 +25,40 @@ export const ZoneRegistry: Zone[] = [
     approved: true,
     depth: 1,
   },
-  // … autres zones initiales
+  // Add other initial zones here
 ];
 
-// Approuve (ou re-approuve) une zone
+/**
+ * Approve a new zone or re-approve an existing one.
+ * If the zone ID already exists, only the 'approved' flag is set to true.
+ * Otherwise, the zone is pushed into the registry with approved = true.
+ */
 export function approveZone(zoneData: {
   id: string;
   name: string;
   path: string;
   depth: number;
 }) {
-  const existing = ZoneRegistry.find((z) => z.id === zoneData.id);
+  const existing = ZoneRegistry.find(z => z.id === zoneData.id);
   if (existing) {
-    // Si déjà présente, on bascule simplement le flag
     existing.approved = true;
   } else {
-    // Sinon on l’ajoute avec approved = true
     ZoneRegistry.push({
-      ...zoneData,
+      id: zoneData.id,
+      name: zoneData.name,
+      path: zoneData.path,
       approved: true,
+      depth: zoneData.depth,
     });
   }
 }
 
-// Décline (supprime) une zone par son id
+/**
+ * Decline (remove) a zone by its ID.
+ * If the zone is found, it is spliced out of the registry.
+ */
 export function declineZone(zoneId: string) {
-  const idx = ZoneRegistry.findIndex((z) => z.id === zoneId);
+  const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
   if (idx !== -1) {
     ZoneRegistry.splice(idx, 1);
   }
