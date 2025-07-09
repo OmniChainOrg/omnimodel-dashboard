@@ -1,9 +1,8 @@
 // components/MemoryPanel.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Zone } from '../lib/zoneRegistry'; // Zone définit id, name, path, approved, depth
+import { Zone } from '../lib/zoneRegistry';
 
-// Types pour les enregistrements et anchors
 interface MemoryRecord {
   timestamp: string;
   message: string;
@@ -18,7 +17,7 @@ interface MemoryPanelProps {
   zone?: Zone;
 }
 
-// Mocks indexés par zone.id
+// Mock stores keyed by zone.id
 const MockMemoryStore: Record<string, MemoryRecord[]> = {
   root: [
     { timestamp: new Date().toISOString(), message: 'Memory initialized for Root Zone Prototype' },
@@ -30,6 +29,7 @@ const MockMemoryStore: Record<string, MemoryRecord[]> = {
     { timestamp: new Date().toISOString(), message: '💙 HOPEChain operational.' },
   ],
 };
+
 const MockAnchorRegistry: Record<string, AnchorRecord[]> = {
   root: [
     {
@@ -48,7 +48,6 @@ const MockAnchorRegistry: Record<string, AnchorRecord[]> = {
 };
 
 const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
-  // Aucun crash si pas de zone
   if (!zone) {
     return (
       <div className="p-4 bg-white rounded-lg shadow text-gray-500">
@@ -66,7 +65,6 @@ const MemoryPanel: React.FC<MemoryPanelProps> = ({ zone }) => {
     setLoading(true);
     setError(null);
     try {
-      // On lit les mocks via zone.id
       const key = zone.id;
       setRecords(MockMemoryStore[key] || []);
       setAnchors(MockAnchorRegistry[key] || []);
