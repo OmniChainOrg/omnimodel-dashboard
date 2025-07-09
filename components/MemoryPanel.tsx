@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Zone } from '../hooks/useZoneArchetype';
 
 interface MemoryRecord {
