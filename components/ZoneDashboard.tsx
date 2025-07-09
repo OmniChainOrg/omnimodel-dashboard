@@ -1,6 +1,6 @@
 // pages/zonedashboard.tsx
 import React, { useState } from 'react';
-import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
+import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 
 // Zone type
