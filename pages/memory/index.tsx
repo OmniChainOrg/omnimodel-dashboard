@@ -1,43 +1,49 @@
 // /pages/memory/index.tsx
 import React, { useState, useEffect } from 'react';
 import MemoryPanel from '../../components/MemoryPanel';
-import { ZoneRegistry, approveZone, declineZone } from '../../lib/zoneRegistry';
-
+import { ZoneRegistry, approveZone, declineZone, Zone } from '../../lib/zoneRegistry';
 
 export default function MemoryPage() {
-  const [pendingZones, setPendingZones] = useState<typeof ZoneRegistry>([]);
+  // 1) État des zones à approuver
+  const [pendingZones, setPendingZones] = useState<Zone[]>([]);
 
-  // On récupère les zones en attente (approved === false)
   useEffect(() => {
-    setPendingZones(ZoneRegistry.filter(z => !z.approved));
+    setPendingZones(ZoneRegistry.filter((z) => !z.approved));
   }, []);
 
-  const handleApprove = (zone: typeof ZoneRegistry[0]) => {
+  // 2) Handlers approve / decline
+  const handleApprove = (zone: Zone) => {
     approveZone(zone);
-    setPendingZones(p => p.filter(z => z.id !== zone.id));
+    setPendingZones((prev) => prev.filter((z) => z.id !== zone.id));
   };
 
-  const handleDecline = (zone: typeof ZoneRegistry[0]) => {
+  const handleDecline = (zone: Zone) => {
     declineZone(zone.id);
-    setPendingZones(p => p.filter(z => z.id !== zone.id));
+    setPendingZones((prev) => prev.filter((z) => z.id !== zone.id));
   };
+
+  // 3) On récupère la zone « root » en toute sécurité
+  const rootZone = ZoneRegistry.find((z) => z.id === 'root');
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-bold mb-4">Memory Panel</h1>
 
-      {/* 🧠 Le panel mémoire pour une zone fixe (existant) */}
-      <MemoryPanel zone={ZoneRegistry.find(z => z.id === 'root')!} />
+      {/* MemoryPanel gère le cas zone undefined */}
+      <MemoryPanel zone={rootZone} />
 
-      {/* Liste des zones fraîchement générées */}
+      {/* Liste des zones en attente */}
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-2">🔄 Zones en attente d’approbation</h2>
         {pendingZones.length === 0 ? (
           <p className="text-gray-600">Aucune zone en attente.</p>
         ) : (
           <ul className="space-y-4">
-            {pendingZones.map(zone => (
-              <li key={zone.id} className="p-4 bg-white rounded shadow flex justify-between items-center">
+            {pendingZones.map((zone) => (
+              <li
+                key={zone.id}
+                className="p-4 bg-white rounded shadow flex justify-between items-center"
+              >
                 <div>
                   <span className="font-medium">{zone.name}</span> (level {zone.depth})
                 </div>
@@ -63,4 +69,3 @@ export default function MemoryPage() {
     </div>
   );
 }
-
