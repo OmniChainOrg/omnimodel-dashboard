@@ -1,6 +1,5 @@
 // lib/zoneRegistry.ts
 
-// Definition of Zone with all required fields
 export interface Zone {
   id: string;
   name: string;
@@ -9,8 +8,18 @@ export interface Zone {
   depth: number;
 }
 
-// Initial registry of zones
 export const ZoneRegistry: Zone[] = [
+  // ————————————————————————————————————————————————
+  // Root “Memory Panel” zone
+  {
+    id: 'root',
+    name: 'Root Zone Prototype',
+    path: '/dashboard/root',
+    approved: true,
+    depth: 1,
+  },
+
+  // Built-in zones
   {
     id: 'omnitwin',
     name: 'OmniTwin',
@@ -25,13 +34,13 @@ export const ZoneRegistry: Zone[] = [
     approved: true,
     depth: 1,
   },
-  // Add other initial zones here
+
+  // … add any other default zones here …
 ];
 
 /**
- * Approve a new zone or re-approve an existing one.
- * If the zone ID already exists, only the 'approved' flag is set to true.
- * Otherwise, the zone is pushed into the registry with approved = true.
+ * Approve a pending zone: if it already exists, flip approved=true;
+ * otherwise push it into the registry as approved.
  */
 export function approveZone(zoneData: {
   id: string;
@@ -43,19 +52,12 @@ export function approveZone(zoneData: {
   if (existing) {
     existing.approved = true;
   } else {
-    ZoneRegistry.push({
-      id: zoneData.id,
-      name: zoneData.name,
-      path: zoneData.path,
-      approved: true,
-      depth: zoneData.depth,
-    });
+    ZoneRegistry.push({ ...zoneData, approved: true });
   }
 }
 
 /**
  * Decline (remove) a zone by its ID.
- * If the zone is found, it is spliced out of the registry.
  */
 export function declineZone(zoneId: string) {
   const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
