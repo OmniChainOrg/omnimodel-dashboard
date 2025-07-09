@@ -6,22 +6,51 @@ import { ZoneRegistry } from '@/lib/zoneRegistry';
 
 export default function ZoneSubDashPage() {
   const router = useRouter();
-  const zoneId = router.query.zone as string;
+  // Always show the root zone dashboard
+  const rootZone = ZoneRegistry.find(z => z.id === 'root')!;
 
-  // Find the zone in the registry
-  const zone = ZoneRegistry.find(z => z.id === zoneId);
+  // Pending sub-zones are those under root path and not yet approved
+  const [pending, setPending] = React.useState<Zone[]>(
+    ZoneRegistry.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
+  );
 
-  if (!zone) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-8 bg-gray-100">
-        <p className="text-gray-500">Aucune zone sélectionnée pour le moment.</p>
-      </div>
-    );
-  }
+  const handleApprove = (zone: Zone) => {
+    approveZone({ id: zone.id, name: zone.name, path: zone.path, depth: zone.depth });
+    setPending(p => p.filter(z => z.id !== zone.id));
+  };
+  const handleDecline = (zone: Zone) => {
+    declineZone(zone.id);
+    setPending(p => p.filter(z => z.id !== zone.id));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <ZoneSubDashboard zone={zone} />
+      {/* Root Zone Memory */}
+      <ZoneSubDashboard zone={rootZone} />
+
+      {/* Pending Approvals */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">🔄 Zones en attente d’approbation</h2>
+        {pending.length === 0 ? (
+          <p className="text-gray-500">Aucune zone en attente.</p>
+        ) : (
+          pending.map(zone => (
+            <div key={zone.id} className="bg-white p-4 mb-4 rounded-lg shadow">
+              <h3 className="text-lg font-semibold">{zone.name} (level {zone.depth})</h3>
+              <div className="flex space-x-2 mt-3">
+                <button
+                  onClick={() => handleApprove(zone)}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >Approver</button>
+                <button
+                  onClick={() => handleDecline(zone)}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >Refuser</button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
