@@ -78,19 +78,3 @@ export function declineZone(zoneId: string) {
     ZoneRegistry.splice(idx, 1);
   }
 }
-
-// lib/zoneRegistry.ts
-export function addZone(zoneData: {
-  id: string;
-  name: string;
-  path: string;
-  depth: number;
-}) {
-  if (!ZoneRegistry.find(z => z.id === zoneData.id)) {
-    ZoneRegistry.push({
-      ...zoneData,
-      approved: false,
-      children: [],
-    });
-  }
-}
