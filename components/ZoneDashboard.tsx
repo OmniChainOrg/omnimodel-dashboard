@@ -3,6 +3,16 @@ import React, { useState } from 'react';
 import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 
+// Zone type
+interface Zone {
+  id: string;
+  name: string;
+  path: string;         // ✅ À ajouter
+  approved: boolean;    // ✅ À ajouter aussi
+  depth: number;
+  children: Zone[];
+}
+
 // Recursive node component for displaying generated zones
 const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
   <motion.div
