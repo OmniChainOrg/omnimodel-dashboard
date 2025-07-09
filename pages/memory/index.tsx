@@ -1,7 +1,6 @@
 // /pages/memory/index.tsx
 import React, { useState, useEffect } from 'react';
 import MemoryPanel from '../../components/MemoryPanel';
-import { ZoneRegistry } from '../../lib/zoneRegistry';
 import { ZoneRegistry, approveZone, declineZone } from '../../lib/zoneRegistry';
 
 
