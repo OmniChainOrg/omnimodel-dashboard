@@ -1,5 +1,20 @@
 // lib/zoneRegistry.ts
 
+export function addZone(zoneData: {
+  id: string;
+  name: string;
+  path: string;
+  depth: number;
+}) {
+  if (!ZoneRegistry.find(z => z.id === zoneData.id)) {
+    ZoneRegistry.push({
+      ...zoneData,
+      approved: false,
+      children: [],
+    });
+  }
+}
+
 export interface Zone {
   id: string;
   name: string;
@@ -61,5 +76,21 @@ export function declineZone(zoneId: string) {
   const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
   if (idx !== -1) {
     ZoneRegistry.splice(idx, 1);
+  }
+}
+
+// lib/zoneRegistry.ts
+export function addZone(zoneData: {
+  id: string;
+  name: string;
+  path: string;
+  depth: number;
+}) {
+  if (!ZoneRegistry.find(z => z.id === zoneData.id)) {
+    ZoneRegistry.push({
+      ...zoneData,
+      approved: false,
+      children: [],
+    });
   }
 }
