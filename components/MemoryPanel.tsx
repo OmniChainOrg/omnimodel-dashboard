@@ -38,6 +38,18 @@ const MockMemoryStore: Record<string, MemoryRecord[]> = {
       message: '🧬 OmniTwin memory cluster seeded successfully.',
     },
   ],
+  '/dashboard/biotech-lab': [
+    {
+      timestamp: new Date().toISOString(),
+      message: '🧪 BioTech Lab active: R&D program launched.',
+    },
+  ],
+  '/dashboard/regops/interop': [
+    {
+      timestamp: new Date().toISOString(),
+      message: '🔐 RegOps Interop layer bootstrapped (FHIR, HL7 sync).',
+    },
+  ],
 };
 
 const MockAnchorRegistry: Record<string, AnchorRecord[]> = {
@@ -50,6 +62,20 @@ const MockAnchorRegistry: Record<string, AnchorRecord[]> = {
     {
       id: 'l5anchor2',
       content: '📌 L5 Anchor: Prototype zone touched by developer.',
+      createdAt: new Date().toISOString(),
+    },
+  ],
+  '/dashboard/biotech-lab': [
+    {
+      id: 'anchor-bio1',
+      content: '🔬 Anchor: Protein synthesis memory checkpoint.',
+      createdAt: new Date().toISOString(),
+    },
+  ],
+  '/dashboard/regops/interop': [
+    {
+      id: 'anchor-reg1',
+      content: '⚙️ Anchor: RegOps engine linked to EHR backbone.',
       createdAt: new Date().toISOString(),
     },
   ],
