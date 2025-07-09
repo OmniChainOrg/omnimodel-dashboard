@@ -1,13 +1,15 @@
+// pages/zonesubdashboard.tsx
 import React from 'react';
 import ZoneSubDashboard from '../components/ZoneSubDashboard';
 import { Zone } from '../hooks/useZoneArchetype';
 
-// Dummy or real root zone definition
-const rootZone: Zone = {
+// On définit la zone de test avec tous les champs requis
+const rootZone = {
   id: 'root',
-  name: 'Root Zone',
-  depth: 0,
-  children: [],
+  name: 'Root Zone Prototype',
+  path: '/dashboard/root',
+  approved: true,
+  depth: 1,
 };
 
 export default function ZoneSubDashboardPage() {
