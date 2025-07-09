@@ -14,6 +14,14 @@ interface ZoneSubDashboardProps {
   zone: Zone;
 }
 
+const rootZone = {
+  id: 'root',
+  name: 'Root Zone Prototype',
+  depth: 1,
+  path: '/dashboard/root',     // chemin associé
+  approved: true               // ou false selon ton choix
+};
+
 const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const [activeTab, setActiveTab] = useState<string>('Memory');
 
