@@ -32,12 +32,33 @@ const ZoneDashboardPage: React.FC = () => {
   const [recursionLevel, setRecursionLevel] = useState(4);
 
   // Hook to generate zone tree
-  const { tree, loading, error, refresh } = useZoneArchetype({
-    archetypeId: zoneDomain,
-    archetypeName: prototypeZoneName,
-    depth: recursionLevel,
-  });
+  const dummyTree: Zone = {
+    id: 'root',
+    name: prototypeZoneName,
+    path: '/dashboard/root',
+    approved: true,
+    depth: 1,
+    children: [
+      {
+        id: 'sub1',
+        name: 'SubZone A',
+        path: '/dashboard/root/sub1',
+        approved: true,
+        depth: 2,
+        children: [],
+      },
+      {
+        id: 'sub2',
+        name: 'SubZone B',
+        path: '/dashboard/root/sub2',
+        approved: true,
+        depth: 2,
+        children: [],
+      },
+    ],
+  };
 
+  const displayTree = tree || dummyTree;
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     refresh();
