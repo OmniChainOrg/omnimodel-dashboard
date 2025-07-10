@@ -1,71 +1,68 @@
-// components/ZoneSubDashboard.tsx
+// pages/zonesubdashboard.tsx
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import ZoneSubDashboard from '@/components/ZoneSubDashboard';
-import { ZoneRegistry, addZone, approveZone, declineZone, Zone } from '@/lib/zoneRegistry';
+import {
+  ZoneRegistry,
+  approveZone,
+  declineZone,
+  Zone
+} from '@/lib/zoneRegistry';
 
-export default function ZoneSubDashPage() {
+export default function ZoneSubDashboardPage() {
   const router = useRouter();
-  const rootZone: Zone = ZoneRegistry.find(z => z.id === 'root')!;
+  // always show root for approvals
+  const rootZone = ZoneRegistry.find(z => z.id === 'root')!;
 
-interface ZoneSubDashboardProps {
-  zone: Zone;    // ← now matches registry’s Zone (with children)
-}
-
-const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
-  const [activeTab, setActiveTab] = useState<'Memory' | 'Approve' | 'Decline'>('Memory');
-
-  // Pending sub-zones are those under this zone’s path and not yet approved
-  const pending = ZoneRegistry.filter(z =>
-    z.path.startsWith(zone.path + '/') && !z.approved
+  // any sub-zone under root that's not yet approved
+  const [pending, setPending] = useState<Zone[]>(
+    ZoneRegistry.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
   );
 
-  let panelContent: React.ReactNode;
-  switch (activeTab) {
-    case 'Memory':
-      panelContent = <MemoryPanel zone={zone} />;
-      break;
-    case 'Approve':
-      panelContent = (
-        <div>
-          <h3>Pending Sub-Zones</h3>
-          {pending.map(z => (
-            <div key={z.id} className="flex space-x-2">
-              <span>{z.name}</span>
-              <button onClick={() => approveZone(z.id)}>✅ Approve</button>
-              <button onClick={() => declineZone(z.id)}>❌ Decline</button>
-            </div>
-          ))}
-          {!pending.length && <p>No pending zones.</p>}
-        </div>
-      );
-      break;
-    case 'Decline':
-      panelContent = <p>Use the Approve tab to manage pending zones.</p>;
-      break;
-    default:
-      panelContent = null;
-  }
+  const handleApprove = (z: Zone) => {
+    approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
+    setPending(p => p.filter(x => x.id !== z.id));
+  };
+  const handleDecline = (z: Zone) => {
+    declineZone(z.id);
+    setPending(p => p.filter(x => x.id !== z.id));
+  };
 
   return (
-    <div className="bg-white rounded shadow p-4">
-      <h2 className="text-xl font-bold mb-4">🔹 SubZone Dashboard: {zone.name}</h2>
-      <div className="flex space-x-4 mb-4">
-        {['Memory', 'Approve', 'Decline'].map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab as any)}
-            className={`px-4 py-2 rounded ${
-              activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+    <div className="min-h-screen bg-gray-50 p-8">
+      {/* 1️⃣ Sub-zone dashboard with tabs including Memory etc. */}
+      <ZoneSubDashboard zone={rootZone} />
+
+      {/* 2️⃣ Pending approvals list */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">🔄 Zones en attente d’approbation</h2>
+
+        {pending.length === 0 ? (
+          <p className="text-gray-500">Aucune sous-zone en attente.</p>
+        ) : (
+          pending.map(z => (
+            <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
+              <h3 className="text-lg font-semibold">
+                {z.name} (niveau {z.depth})
+              </h3>
+              <div className="flex space-x-2 mt-3">
+                <button
+                  onClick={() => handleApprove(z)}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => handleDecline(z)}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Decline
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
-      <div className="mt-4">{panelContent}</div>
     </div>
   );
-};
-
-export default ZoneSubDashboard;
+}
