@@ -1,8 +1,8 @@
 // pages/zonesubdashboard.tsx
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { Zone } from '@/lib/zoneRegistry';
 import ZoneSubDashboard from '@/components/ZoneSubDashboard';
-import { ZoneRegistry, approveZone, declineZone, Zone } from '@/lib/zoneRegistry';
+import { ZoneRegistry, approveZone, declineZone } from '@/lib/zoneRegistry';
 
 export default function ZoneSubDashPage() {
   const router = useRouter();
