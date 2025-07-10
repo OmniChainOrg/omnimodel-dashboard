@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
+import { addZone } from '@/lib/zoneRegistry';
 
 // Settings type for each zone customization
 interface ZoneSettings {
