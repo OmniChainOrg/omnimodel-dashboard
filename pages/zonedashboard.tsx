@@ -10,6 +10,10 @@ interface ZoneSettings {
   confidentiality: 'Public' | 'Confidential' | 'Private';
 }
 
+interface ZoneSubDashboardProps {
+  zone: Zone;    // now imports the registry.Zone with children[]
+}
+
 // Recursive node with inline customization form
 const ZoneNode: React.FC<{
   zone: Zone;
