@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import MemoryPanel from './MemoryPanel';
 import { Zone, approveZone, declineZone } from '@/lib/zoneRegistry';
 
-
-// Zone type (should match your registry)
 interface ZoneSubDashboardProps {
   zone: Zone;
+}
 
 const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const [activeTab, setActiveTab] = useState<string>('Memory');
@@ -21,28 +20,19 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
     setIsApproved(false);
   };
 
-  // Choose which panel to render
   let panelContent: React.ReactNode;
   switch (activeTab) {
     case 'Memory':
       panelContent = <MemoryPanel zone={zone} />;
       break;
-    case 'PosteriorPilot':
-      panelContent = <div>PosteriorPilot content placeholder</div>;
-      break;
-    case 'OmniLog':
-      panelContent = <div>OmniLog content placeholder</div>;
-      break;
-    case 'NeuroBridge':
-      panelContent = <div>NeuroBridge content placeholder</div>;
-      break;
+    // Add other cases here if needed
     default:
-      panelContent = <div>Welcome to the subzone dashboard</div>;
+      panelContent = null;
   }
 
   return (
     <div className="bg-white rounded shadow p-6">
-      <h2 className="text-xl font-bold mb-4">🔹 SubZone Dashboard: {zone.name}</h2>
+      <h2 className="text-xl font-bold mb-2">🔹 SubZone Dashboard: {zone.name}</h2>
 
       {/* Approval Controls */}
       {!isApproved && (
@@ -64,17 +54,15 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
 
       {/* Tab Navigation */}
       <div className="flex space-x-2 border-b mb-4">
-        {['Memory', 'PosteriorPilot', 'OmniLog', 'NeuroBridge'].map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-t-lg transition ${
-              activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+        <button
+          onClick={() => setActiveTab('Memory')}
+          className={`px-4 py-2 rounded-t-lg ${
+            activeTab === 'Memory' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'
+          }`}
+        >
+          Memory
+        </button>
+        {/* Add buttons for more tabs if needed */}
       </div>
 
       {/* Active Panel */}
