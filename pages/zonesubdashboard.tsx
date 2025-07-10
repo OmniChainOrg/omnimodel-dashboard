@@ -1,7 +1,12 @@
 // components/ZoneSubDashboard.tsx
 import React, { useState } from 'react';
-import MemoryPanel from './MemoryPanel';
-import { Zone, addZone, approveZone, declineZone } from '@/lib/zoneRegistry';  // ← import shared Zone
+import { useRouter } from 'next/router';
+import ZoneSubDashboard from '@/components/ZoneSubDashboard';
+import { ZoneRegistry, addZone, approveZone, declineZone, Zone } from '@/lib/zoneRegistry';
+
+export default function ZoneSubDashPage() {
+  const router = useRouter();
+  const rootZone: Zone = ZoneRegistry.find(z => z.id === 'root')!;
 
 interface ZoneSubDashboardProps {
   zone: Zone;    // ← now matches registry’s Zone (with children)
