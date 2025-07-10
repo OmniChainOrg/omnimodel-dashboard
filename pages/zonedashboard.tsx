@@ -1,5 +1,5 @@
 // pages/zonedashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 import { addZone } from '@/lib/zoneRegistry';
@@ -110,6 +110,20 @@ const ZoneDashboardPage: React.FC = () => {
     archetypeName: prototypeZoneName,
     depth: recursionLevel,
   });
+  
+  React.useEffect(() => {
+  if (!tree) return;
+  // On aplatit l’arbre et on pousse chaque noeud dans le registry comme « pending »
+  const flatten = (node: Zone): Zone[] => [node, ...node.children.flatMap(flatten)];
+  flatten(tree).forEach(z => {
+    addZone({
+      id:    z.id,
+      name:  z.name,
+      path:  z.path,
+      depth: z.depth
+    });
+  });
+}, [tree]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
