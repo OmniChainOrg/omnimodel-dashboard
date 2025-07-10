@@ -123,7 +123,8 @@ const ZoneDashboardPage: React.FC = () => {
     addZone({
       id:    z.id,
       name:  z.name,
-      path:  z.path,
+      // Build the dashboard URL from the id directly:
+      path:  `/dashboard/${z.id}`,
       depth: z.depth
     });
   });
