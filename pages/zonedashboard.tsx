@@ -126,6 +126,10 @@ const ZoneDashboardPage: React.FC = () => {
       // Build the dashboard URL from the id directly:
       path:  `/dashboard/${z.id}`,
       depth: z.depth
+      approved: false,
+      createdAt: new Date().toISOString(),
+      twinCount: 0,
+      children: z.children || []
     });
   });
 }, [tree]);
