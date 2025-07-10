@@ -1,5 +1,5 @@
 // pages/zonesubdashboard.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import ZoneSubDashboard from '@/components/ZoneSubDashboard';
 import {
@@ -11,66 +11,40 @@ import {
 
 export default function ZoneSubDashboardPage() {
   const router = useRouter();
+  // always show root for approvals
   const rootZone = ZoneRegistry.find(z => z.id === 'root')!;
 
-  const [pendingZones, setPendingZones] = useState<Zone[]>([]);
-  const [pendingSubZones, setPendingSubZones] = useState<Zone[]>([]);
-
-  useEffect(() => {
-    setPendingZones(
-      ZoneRegistry.filter(z => z.depth === 1 && z.id !== 'root' && !z.approved)
-    );
-    setPendingSubZones(
-      ZoneRegistry.filter(z => z.depth > 1 && z.path.startsWith(rootZone.path + '/') && !z.approved)
-    );
-  }, [ZoneRegistry.length]);
+  // any sub-zone under root that's not yet approved
+  const [pending, setPending] = useState<Zone[]>(
+    ZoneRegistry.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
+  );
 
   const handleApprove = (z: Zone) => {
     approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
-    if (z.depth === 1) {
-      setPendingZones(p => p.filter(x => x.id !== z.id));
-    } else {
-      setPendingSubZones(p => p.filter(x => x.id !== z.id));
-    }
+    setPending(p => p.filter(x => x.id !== z.id));
   };
-
   const handleDecline = (z: Zone) => {
     declineZone(z.id);
-    if (z.depth === 1) {
-      setPendingZones(p => p.filter(x => x.id !== z.id));
-    } else {
-      setPendingSubZones(p => p.filter(x => x.id !== z.id));
-    }
+    setPending(p => p.filter(x => x.id !== z.id));
   };
-
-  const allPending = [...pendingZones, ...pendingSubZones];
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <h1 className="text-2xl font-bold mb-6">🔄 Zones en attente d’approbation</h1>
+      {/* 1️⃣ Sub-zone dashboard with tabs including Memory etc. */}
+      <ZoneSubDashboard zone={rootZone} />
 
-      {allPending.length === 0 ? (
-        <p className="text-gray-500 mb-4">Aucune zone en attente.</p>
-      ) : (
-        <>
-          <h2 className="text-xl font-semibold mt-2 mb-3">🧭 All Pending Zones (Merged View)</h2>
-          <p className="text-sm text-gray-500 mb-4">Includes all unapproved Zones and SubZones.</p>
+      {/* 2️⃣ Pending approvals list */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">🔄 Zones en attente d’approbation</h2>
 
-          {allPending.map(z => (
+        {pending.length === 0 ? (
+          <p className="text-gray-500">Aucune sous-zone en attente.</p>
+        ) : (
+          pending.map(z => (
             <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
               <h3 className="text-lg font-semibold">
-                {z.name}
-                <span className={`ml-2 text-xs text-white px-2 py-1 rounded ${z.depth === 1 ? 'bg-indigo-500' : 'bg-blue-600'}`}>
-                  {z.depth === 1 ? 'Zone' : 'SubZone'}
-                </span>
+                {z.name} (niveau {z.depth})
               </h3>
-              <p className="text-sm text-gray-500">Path: {z.path}</p>
-              {"createdAt" in z && z["createdAt"] && (
-                <p className="text-sm text-gray-400">🕓 Created: {new Date((z as any).createdAt).toLocaleString()}</p>
-              )}
-              {"twinCount" in z && z["twinCount"] && (
-                <p className="text-sm text-gray-400">🧬 Twins: {(z as any).twinCount}</p>
-              )}
               <div className="flex space-x-2 mt-3">
                 <button
                   onClick={() => handleApprove(z)}
@@ -86,12 +60,8 @@ export default function ZoneSubDashboardPage() {
                 </button>
               </div>
             </div>
-          ))}
-        </>
-      )}
-
-      <div className="mt-12">
-        <ZoneSubDashboard zone={rootZone} />
+          ))
+        )}
       </div>
     </div>
   );
