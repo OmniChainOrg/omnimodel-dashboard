@@ -40,6 +40,28 @@ export const ZoneRegistry: Zone[] = [
 ];
 
 /**
+ * Pushes a newly-generated zone into the registry as pending approval.
+ * Does nothing if an entry with the same id already exists.
+ */
+export function addZone(zoneData: {
+  id: string;
+  name: string;
+  path: string;
+  depth: number;
+}) {
+  // Avoid duplicates
+  if (!ZoneRegistry.some(z => z.id === zoneData.id)) {
+    ZoneRegistry.push({
+      id:       zoneData.id,
+      name:     zoneData.name,
+      path:     zoneData.path,
+      depth:    zoneData.depth,
+      approved: false,
+      children: []       // ensure you have this field in your Zone type
+    });
+  }
+
+/**
  * Approve (or re-approve) a zone.
  * If it already exists, flip its flag; otherwise push a new one—with an empty children array.
  */
