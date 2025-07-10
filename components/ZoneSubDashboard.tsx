@@ -3,17 +3,8 @@ import MemoryPanel from './MemoryPanel';
 import { approveZone, declineZone } from '@/lib/zoneRegistry';
 
 // Zone type (should match your registry)
-interface Zone {
-  id: string;
-  name: string;
-  path: string;
-  approved: boolean;
-  depth: number;
-}
-
 interface ZoneSubDashboardProps {
   zone: Zone;
-}
 
 const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const [activeTab, setActiveTab] = useState<string>('Memory');
