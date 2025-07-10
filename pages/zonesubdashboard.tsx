@@ -1,5 +1,5 @@
 // pages/zonesubdashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import ZoneSubDashboard from '@/components/ZoneSubDashboard';
 import {
@@ -13,12 +13,17 @@ export default function ZoneSubDashboardPage() {
   const router = useRouter();
   const rootZone = ZoneRegistry.find(z => z.id === 'root')!;
 
-  const [pendingZones, setPendingZones] = useState<Zone[]>(
-    ZoneRegistry.filter(z => z.depth === 1 && z.id !== 'root' && !z.approved)
-  );
-  const [pendingSubZones, setPendingSubZones] = useState<Zone[]>(
-    ZoneRegistry.filter(z => z.depth > 1 && z.path.startsWith(rootZone.path + '/') && !z.approved)
-  );
+  const [pendingZones, setPendingZones] = useState<Zone[]>([]);
+  const [pendingSubZones, setPendingSubZones] = useState<Zone[]>([]);
+
+  useEffect(() => {
+    setPendingZones(
+      ZoneRegistry.filter(z => z.depth === 1 && z.id !== 'root' && !z.approved)
+    );
+    setPendingSubZones(
+      ZoneRegistry.filter(z => z.depth > 1 && z.path.startsWith(rootZone.path + '/') && !z.approved)
+    );
+  }, [ZoneRegistry.length]);
 
   const handleApprove = (z: Zone) => {
     approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
@@ -60,7 +65,6 @@ export default function ZoneSubDashboardPage() {
                 </span>
               </h3>
               <p className="text-sm text-gray-500">Path: {z.path}</p>
-              {/* Metadata check safely guarded */}
               {"createdAt" in z && z["createdAt"] && (
                 <p className="text-sm text-gray-400">🕓 Created: {new Date((z as any).createdAt).toLocaleString()}</p>
               )}
