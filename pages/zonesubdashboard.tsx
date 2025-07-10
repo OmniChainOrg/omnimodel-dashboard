@@ -1,57 +1,66 @@
-// pages/zonesubdashboard.tsx
+// components/ZoneSubDashboard.tsx
 import React, { useState } from 'react';
-import { Zone } from '@/lib/zoneRegistry';
-import ZoneSubDashboard from '@/components/ZoneSubDashboard';
-import { ZoneRegistry, approveZone, declineZone } from '@/lib/zoneRegistry';
+import MemoryPanel from './MemoryPanel';
+import { Zone, addZone, approveZone, declineZone } from '@/lib/zoneRegistry';  // ← import shared Zone
 
-export default function ZoneSubDashPage() {
-  const router = useRouter();
+interface ZoneSubDashboardProps {
+  zone: Zone;    // ← now matches registry’s Zone (with children)
+}
 
-  // Always show the root zone dashboard
-  const rootZone: Zone = ZoneRegistry.find(z => z.id === 'root')!;
+const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
+  const [activeTab, setActiveTab] = useState<'Memory' | 'Approve' | 'Decline'>('Memory');
 
-  // Pending sub-zones are those under root path and not yet approved
-  const [pending, setPending] = useState<Zone[]>(
-    ZoneRegistry.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
+  // Pending sub-zones are those under this zone’s path and not yet approved
+  const pending = ZoneRegistry.filter(z =>
+    z.path.startsWith(zone.path + '/') && !z.approved
   );
 
-  const handleApprove = (zone: Zone) => {
-    approveZone({ id: zone.id, name: zone.name, path: zone.path, depth: zone.depth });
-    setPending(p => p.filter(z => z.id !== zone.id));
-  };
-  const handleDecline = (zone: Zone) => {
-    declineZone(zone.id);
-    setPending(p => p.filter(z => z.id !== zone.id));
-  };
+  let panelContent: React.ReactNode;
+  switch (activeTab) {
+    case 'Memory':
+      panelContent = <MemoryPanel zone={zone} />;
+      break;
+    case 'Approve':
+      panelContent = (
+        <div>
+          <h3>Pending Sub-Zones</h3>
+          {pending.map(z => (
+            <div key={z.id} className="flex space-x-2">
+              <span>{z.name}</span>
+              <button onClick={() => approveZone(z.id)}>✅ Approve</button>
+              <button onClick={() => declineZone(z.id)}>❌ Decline</button>
+            </div>
+          ))}
+          {!pending.length && <p>No pending zones.</p>}
+        </div>
+      );
+      break;
+    case 'Decline':
+      panelContent = <p>Use the Approve tab to manage pending zones.</p>;
+      break;
+    default:
+      panelContent = null;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      {/* Root Zone Memory */}
-      <ZoneSubDashboard zone={rootZone} />
-
-      {/* Pending Approvals */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">🔄 Zones en attente d’approbation</h2>
-        {pending.length === 0 ? (
-          <p className="text-gray-500">Aucune zone en attente.</p>
-        ) : (
-          pending.map(zone => (
-            <div key={zone.id} className="bg-white p-4 mb-4 rounded-lg shadow">
-              <h3 className="text-lg font-semibold">{zone.name} (level {zone.depth})</h3>
-              <div className="flex space-x-2 mt-3">
-                <button
-                  onClick={() => handleApprove(zone)}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                >Approver</button>
-                <button
-                  onClick={() => handleDecline(zone)}
-                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                >Refuser</button>
-              </div>
-            </div>
-          ))
-        )}
+    <div className="bg-white rounded shadow p-4">
+      <h2 className="text-xl font-bold mb-4">🔹 SubZone Dashboard: {zone.name}</h2>
+      <div className="flex space-x-4 mb-4">
+        {['Memory', 'Approve', 'Decline'].map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab as any)}
+            className={`px-4 py-2 rounded ${
+              activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-800'
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
       </div>
+      <div className="mt-4">{panelContent}</div>
     </div>
   );
-}
+};
+
+export default ZoneSubDashboard;
