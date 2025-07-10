@@ -118,7 +118,11 @@ const ZoneDashboardPage: React.FC = () => {
   React.useEffect(() => {
   if (!tree) return;
   // On aplatit l’arbre et on pousse chaque noeud dans le registry comme « pending »
-  const flatten = (node: Zone): Zone[] => [node, ...node.children.flatMap(flatten)];
+  const flatten = (node: Zone): Zone[] => {
+  // ensure children is always an array before flatMap
+  const kids = node.children ?? [];
+  return [node, ...kids.flatMap(flatten)];
+};
   flatten(tree).forEach(z => {
     addZone({
       id:    z.id,
