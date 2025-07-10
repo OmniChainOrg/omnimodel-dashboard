@@ -1,16 +1,16 @@
 // lib/zoneRegistry.ts
 
-// Definition of a Zone, now including its recursive children
+// Central Zone interface with recursive children
 export interface Zone {
   id: string;
   name: string;
   path: string;
   approved: boolean;
   depth: number;
-  children: Zone[];            // ← added so we can push and flatMap safely
+  children: Zone[];
 }
 
-// Initial registry of zones (modify/add to taste)
+// Initial registry: define your root and any pre-approved zones
 export const ZoneRegistry: Zone[] = [
   {
     id: 'root',
@@ -18,7 +18,7 @@ export const ZoneRegistry: Zone[] = [
     path: '/dashboard/root',
     approved: false,
     depth: 1,
-    children: [],              // ← every Zone must now declare its children array
+    children: []
   },
   {
     id: 'omnitwin',
@@ -26,7 +26,7 @@ export const ZoneRegistry: Zone[] = [
     path: '/dashboard/omnitwin',
     approved: true,
     depth: 1,
-    children: [],
+    children: []
   },
   {
     id: 'hopechain',
@@ -34,14 +34,14 @@ export const ZoneRegistry: Zone[] = [
     path: '/dashboard/hopechain',
     approved: true,
     depth: 1,
-    children: [],
-  },
-  // …add any other pre-approved “root” zones here…
+    children: []
+  }
+  // …autres zones prêtes à l’emploi
 ];
 
 /**
- * Pushes a newly-generated zone into the registry as pending approval.
- * Does nothing if an entry with the same id already exists.
+ * Add a new zone as pending approval (approved=false)
+ * If the id already exists, do nothing
  */
 export function addZone(zoneData: {
   id: string;
@@ -49,21 +49,20 @@ export function addZone(zoneData: {
   path: string;
   depth: number;
 }) {
-  // Avoid duplicates
   if (!ZoneRegistry.some(z => z.id === zoneData.id)) {
     ZoneRegistry.push({
       id:       zoneData.id,
       name:     zoneData.name,
       path:     zoneData.path,
-      depth:    zoneData.depth,
       approved: false,
-      children: []       // ensure you have this field in your Zone type
+      depth:    zoneData.depth,
+      children: []
     });
   }
+}
 
 /**
- * Approve (or re-approve) a zone.
- * If it already exists, flip its flag; otherwise push a new one—with an empty children array.
+ * Approve an existing zone (or add+approve if missing)
  */
 export function approveZone(zoneData: {
   id: string;
@@ -76,18 +75,18 @@ export function approveZone(zoneData: {
     existing.approved = true;
   } else {
     ZoneRegistry.push({
-      id: zoneData.id,
-      name: zoneData.name,
-      path: zoneData.path,
+      id:       zoneData.id,
+      name:     zoneData.name,
+      path:     zoneData.path,
       approved: true,
-      depth: zoneData.depth,
-      children: [],            // ← required by our updated interface
+      depth:    zoneData.depth,
+      children: []
     });
   }
 }
 
 /**
- * Decline (remove) a zone by its ID entirely.
+ * Remove a zone by id (decline)
  */
 export function declineZone(zoneId: string) {
   const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
