@@ -60,11 +60,12 @@ export default function ZoneSubDashboardPage() {
                 </span>
               </h3>
               <p className="text-sm text-gray-500">Path: {z.path}</p>
-              {z?.createdAt && (
-                <p className="text-sm text-gray-400">🕓 Created: {new Date(z.createdAt).toLocaleString()}</p>
+              {/* Metadata check safely guarded */}
+              {"createdAt" in z && z["createdAt"] && (
+                <p className="text-sm text-gray-400">🕓 Created: {new Date((z as any).createdAt).toLocaleString()}</p>
               )}
-              {z?.twinCount && (
-                <p className="text-sm text-gray-400">🧬 Twins: {z.twinCount}</p>
+              {"twinCount" in z && z["twinCount"] && (
+                <p className="text-sm text-gray-400">🧬 Twins: {(z as any).twinCount}</p>
               )}
               <div className="flex space-x-2 mt-3">
                 <button
