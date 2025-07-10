@@ -1,45 +1,32 @@
 // lib/zoneRegistry.ts
 
-export function addZone(zoneData: {
-  id: string;
-  name: string;
-  path: string;
-  depth: number;
-}) {
-  if (!ZoneRegistry.find(z => z.id === zoneData.id)) {
-    ZoneRegistry.push({
-      ...zoneData,
-      approved: false,
-      children: [],
-    });
-  }
-}
-
+// Definition of a Zone, now including its recursive children
 export interface Zone {
   id: string;
   name: string;
   path: string;
   approved: boolean;
   depth: number;
+  children: Zone[];            // ← added so we can push and flatMap safely
 }
 
+// Initial registry of zones (modify/add to taste)
 export const ZoneRegistry: Zone[] = [
-  // Root “Memory Panel” zone
   {
     id: 'root',
     name: 'Root Zone Prototype',
     path: '/dashboard/root',
-    approved: true,
+    approved: false,
     depth: 1,
+    children: [],              // ← every Zone must now declare its children array
   },
-
-  // Built-in zones
   {
     id: 'omnitwin',
     name: 'OmniTwin',
     path: '/dashboard/omnitwin',
     approved: true,
     depth: 1,
+    children: [],
   },
   {
     id: 'hopechain',
@@ -47,13 +34,14 @@ export const ZoneRegistry: Zone[] = [
     path: '/dashboard/hopechain',
     approved: true,
     depth: 1,
+    children: [],
   },
-
-  // … add more defaults here as needed …
+  // …add any other pre-approved “root” zones here…
 ];
 
 /**
- * Mark a zone as approved (or insert it if new)
+ * Approve (or re-approve) a zone.
+ * If it already exists, flip its flag; otherwise push a new one—with an empty children array.
  */
 export function approveZone(zoneData: {
   id: string;
@@ -65,12 +53,19 @@ export function approveZone(zoneData: {
   if (existing) {
     existing.approved = true;
   } else {
-    ZoneRegistry.push({ ...zoneData, approved: true });
+    ZoneRegistry.push({
+      id: zoneData.id,
+      name: zoneData.name,
+      path: zoneData.path,
+      approved: true,
+      depth: zoneData.depth,
+      children: [],            // ← required by our updated interface
+    });
   }
 }
 
 /**
- * Remove a zone by ID
+ * Decline (remove) a zone by its ID entirely.
  */
 export function declineZone(zoneId: string) {
   const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
