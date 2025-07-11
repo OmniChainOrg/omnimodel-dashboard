@@ -1,6 +1,5 @@
 // pages/zonesubdashboard.tsx
-// pages/zonesubdashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ZoneRegistry,
   approveZone,
@@ -11,6 +10,13 @@ import {
 export default function ZoneSubDashboardPage() {
   // force re-render on registry updates
   const [tick, setTick] = useState(0);
+
+  // subscribe to registry change events
+  useEffect(() => {
+    const onChange = () => setTick(t => t + 1);
+    window.addEventListener('zoneRegistryChange', onChange);
+    return () => window.removeEventListener('zoneRegistryChange', onChange);
+  }, []);
 
   // fetch latest pending zones each render
   const pending = ZoneRegistry.filter(
