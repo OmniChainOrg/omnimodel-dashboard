@@ -32,6 +32,7 @@ const ZoneDashboardPage: React.FC = () => {
         path:     currentPath,
         approved: false,
         depth:    node.depth,
+        children: [],  // ensure registry zone satisfies required children property
       };
       const kids = node.children ?? [];
       return [
