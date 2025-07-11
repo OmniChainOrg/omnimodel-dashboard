@@ -2,38 +2,27 @@
 import React, { useState, useEffect } from 'react';
 import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
-import { addZone } from '@/lib/zoneRegistry';
+import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 
-// Settings type for each zone customization
+// Settings for each zone customization
 interface ZoneSettings {
   info: string;
   confidentiality: 'Public' | 'Confidential' | 'Private';
 }
 
-interface ZoneSubDashboardProps {
-  zone: Zone;    // now imports the registry.Zone with children[]
-}
-
-// Recursive node with inline customization form
+// Recursive node component for displaying zones and settings form
 const ZoneNode: React.FC<{
   zone: Zone;
   settings: Record<string, ZoneSettings>;
   onUpdate: (zoneId: string, settings: ZoneSettings) => void;
 }> = ({ zone, settings, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
-  const currentSettings = settings[zone.id] || { info: '', confidentiality: 'Public' };
-  const [info, setInfo] = useState(currentSettings.info);
-  const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
+  const current = settings[zone.id] || { info: '', confidentiality: 'Public' };
+  const [info, setInfo] = useState(current.info);
+  const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(current.confidentiality);
 
-  const handleSave = () => {
-    onUpdate(zone.id, { info, confidentiality });
-    setExpanded(false);
-  };
-  const handleCancel = () => {
-    setInfo(currentSettings.info);
-    setConfidentiality(currentSettings.confidentiality);
-    setExpanded(false);
-  };
+  const handleSave = () => { onUpdate(zone.id, { info, confidentiality }); setExpanded(false); };
+  const handleCancel = () => { setInfo(current.info); setConfidentiality(current.confidentiality); setExpanded(false); };
 
   return (
     <motion.div
@@ -108,46 +97,39 @@ const ZoneDashboardPage: React.FC = () => {
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
   const [recursionLevel, setRecursionLevel] = useState(4);
   const [zoneSettings, setZoneSettings] = useState<Record<string, ZoneSettings>>({});
+  const [tick, setTick] = useState(0);
+
+  // On mount: load any saved registry and listen for changes
+  useEffect(() => {
+    loadRegistryFromStorage();
+    setTick(t => t + 1);
+    const onChange = () => setTick(t => t + 1);
+    window.addEventListener('zoneRegistryChange', onChange);
+    return () => window.removeEventListener('zoneRegistryChange', onChange);
+  }, []);
 
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: zoneDomain,
     archetypeName: prototypeZoneName,
     depth: recursionLevel,
   });
-  
-  React.useEffect(() => {
-  if (!tree) return;
-  // On aplatit l’arbre et on pousse chaque noeud dans le registry comme « pending »
-  const flatten = (node: Zone): Zone[] => {
-  // ensure children is always an array before flatMap
-  const kids = node.children ?? [];
-  return [node, ...kids.flatMap(flatten)];
-};
-  flatten(tree).forEach(z => {
-    addZone({
-      id:    z.id,
-      name:  z.name,
-      // Build the dashboard URL from the id directly:
-      path:  `/dashboard/${z.id}`,
-      depth: z.depth
-    });
-  });
-}, [tree]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    refresh();
-  };
+  // When tree updates, push into registry
+  useEffect(() => {
+    if (!tree) return;
+    const flatten = (node: Zone): Zone[] => [node, ...(node.children ?? []).flatMap(flatten)];
+    flatten(tree).forEach(z => addZone({ id: z.id, name: z.name, path: `/dashboard/${z.id}`, depth: z.depth }));
+  }, [tree]);
 
-  const handleUpdate = (zoneId: string, settings: ZoneSettings) => {
-    setZoneSettings(prev => ({ ...prev, [zoneId]: settings }));
-  };
+  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); refresh(); };
+  const handleUpdate = (zoneId: string, settings: ZoneSettings) => setZoneSettings(prev => ({ ...prev, [zoneId]: settings }));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">CE² Zone Prototype Generator</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+          {/* Domain selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
             <select
@@ -155,29 +137,12 @@ const ZoneDashboardPage: React.FC = () => {
               onChange={e => setZoneDomain(e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
-              <option>Biotech</option>
-              <option>MedTech</option>
-              <option>Pharma Formulation</option>
-              <option>Clinical Trials</option>
-              <option>RegOps</option>
-              <option>DeSci</option>
-              <option>DeTrade</option>
-              <option>DeInvest</option>
-              <option>Nonprofit</option>
-              <option>Philanthropy</option>
-              <option>Humanitarian</option>
-              <option>AI ethics</option>
-              <option>dApps DevOps</option>
-              <option>Investment</option>
-              <option>Granting</option>
-              <option>Other</option>
+              {/* various options */}
             </select>
           </div>
+          {/* Prototype name input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Prototype Zone Name
-              <span className="text-xs text-gray-500"> (shown in main dashboard)</span>
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Prototype Zone Name <span className="text-xs text-gray-500">(shown in main dashboard)</span></label>
             <input
               type="text"
               value={prototypeZoneName}
@@ -185,23 +150,18 @@ const ZoneDashboardPage: React.FC = () => {
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
+          {/* Recursion level input */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
             <input
               type="number"
-              min={1}
-              max={6}
+              min={1} max={6}
               value={recursionLevel}
               onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-          >
-            Generate Zones
-          </button>
+          <button type="submit" className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Generate Zones</button>
         </form>
 
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
