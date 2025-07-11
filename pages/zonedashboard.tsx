@@ -1,6 +1,8 @@
 // pages/zonedashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { $1, loadRegistryFromStorage } from '@/lib/zoneRegistry';
+import { useZoneArchetype, Zone } from '../hooks/useZoneArchetype';
+import { motion } from 'framer-motion';
+import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 
 // Settings for each zone customization
 interface ZoneSettings {
