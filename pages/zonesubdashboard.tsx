@@ -11,8 +11,13 @@ export default function ZoneSubDashboardPage() {
   // force re-render on registry updates
   const [tick, setTick] = useState(0);
 
-  // subscribe to registry change events
+// On mount: load any saved registry
   useEffect(() => {
+    loadRegistryFromStorage();
+    // trigger initial render
+    setTick(t => t + 1);
+
+    // listen for subsequent changes
     const onChange = () => setTick(t => t + 1);
     window.addEventListener('zoneRegistryChange', onChange);
     return () => window.removeEventListener('zoneRegistryChange', onChange);
