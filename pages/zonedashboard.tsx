@@ -1,133 +1,153 @@
-// pages/zonesubdashboard.tsx
+// pages/zonedashboard.tsx
 import React, { useState, useEffect } from 'react';
-import {
-  ZoneRegistry,
-  approveZone,
-  declineZone,
-  loadRegistryFromStorage,
-  Zone
-} from '@/lib/zoneRegistry';
+import { useZoneArchetype, Zone as ArchetypeZone } from '../hooks/useZoneArchetype';
+import { motion } from 'framer-motion';
+import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
+import { useRouter } from 'next/router';
 
-export default function ZoneSubDashboardPage() {
-  // tick to trigger updates
+// Extend the archetype hook’s Zone with registry fields:
+export type ZoneType = ArchetypeZone & {
+  path?: string;
+  approved?: boolean;
+};
+
+const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="mb-4"
+  >
+    <div className="p-4 bg-white rounded-lg shadow">
+      <h3 className="text-lg font-semibold text-gray-800">{zone.name}</h3>
+      <p className="text-sm text-gray-500">Level: {zone.depth}</p>
+    </div>
+    {zone.children && zone.children.length > 0 && (
+      <div className="ml-6 mt-2 border-l-2 border-gray-200 pl-4">
+        {zone.children.map(child => (
+          <ZoneNode key={child.id} zone={child as ZoneType} />
+        ))}
+      </div>
+    )}
+  </motion.div>
+);
+
+const ZoneDashboardPage: React.FC = () => {
+  const router = useRouter();
+
+  // Form state
+  const [zoneDomain, setZoneDomain] = useState('Biotech');
+  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
+  const [recursionLevel, setRecursionLevel] = useState(4);
   const [tick, setTick] = useState(0);
 
-  // On mount: load registry from storage and listen for changes
+  // On mount: load any saved registry and trigger initial render
   useEffect(() => {
     loadRegistryFromStorage();
-    // initial render
     setTick(t => t + 1);
     const onChange = () => setTick(t => t + 1);
     window.addEventListener('zoneRegistryChange', onChange);
     return () => window.removeEventListener('zoneRegistryChange', onChange);
   }, []);
 
-  // pending list, updated when tick changes
-  const [pending, setPending] = useState<Zone[]>([]);
+  // Generate or fetch zone tree
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: zoneDomain,
+    archetypeName: prototypeZoneName,
+    depth: recursionLevel,
+  });
+
+  // When a new tree is fetched, add zones and navigate
   useEffect(() => {
-    const rootPath = ZoneRegistry.find(r => r.id === 'root')?.path || '';
-    const latest = ZoneRegistry.filter(
-      z => z.path.startsWith(rootPath + '/') && !z.approved
-    );
-    setPending(latest);
-  }, [tick]);
+    if (!tree) return;
+    const traverse = (z: ZoneType) => {
+      if (z.path) {
+        addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
+      }
+      z.children?.forEach(child => traverse(child as ZoneType));
+    };
+    traverse(tree as ZoneType);
 
-  // split pending
-  const rootOnes = pending.filter(z => z.depth === 1);
-  const childOnes = pending.filter(z => z.depth > 1);
+    router.push('/zonesubdashboard').then(() => {
+      window.dispatchEvent(new Event('zoneRegistryChange'));
+    });
+  }, [tree, router]);
 
-  // handlers
-  const handleApprove = (z: Zone) => approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
-  const handleDecline = (z: Zone) => declineZone(z.id);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    refresh();
+  };
 
-  const handleApproveAllRoot = () => rootOnes.forEach(z => approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth }));
-  const handleDeclineAllRoot = () => rootOnes.forEach(z => declineZone(z.id));
-  const handleApproveAllChild = () => childOnes.forEach(z => approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth }));
-  const handleDeclineAllChild = () => childOnes.forEach(z => declineZone(z.id));
+  // Fallback dummy tree if `tree` is undefined
+  const dummyTree: ZoneType = {
+    id: 'root',
+    name: prototypeZoneName,
+    path: '/dashboard/root',
+    approved: true,
+    depth: 1,
+    children: [
+      { id: 'sub1', name: 'SubZone A', path: '/dashboard/root/sub1', approved: true, depth: 2, children: [] },
+      { id: 'sub2', name: 'SubZone B', path: '/dashboard/root/sub2', approved: true, depth: 2, children: [] },
+    ],
+  };
+
+  const displayTree = (tree as ZoneType) ?? dummyTree;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="space-y-8">
-        {/* Root zones section */}
-        <section>
-          <h2 className="text-2xl font-bold mb-2">🔹 Root Zones à valider</h2>
-          <div className="flex space-x-2 mb-4">
-            <button
-              onClick={handleApproveAllRoot}
-              disabled={rootOnes.length === 0}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
+      <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">CE² Zone Prototype Generator</h1>
+        <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+          {/* Domain selector */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
+            <select
+              value={zoneDomain}
+              onChange={e => setZoneDomain(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
-              Approve All
-            </button>
-            <button
-              onClick={handleDeclineAllRoot}
-              disabled={rootOnes.length === 0}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
-            >
-              Decline All
-            </button>
+              <option>Biotech</option>
+              <option>RegOps</option>
+            </select>
           </div>
-          <div className="bg-blue-50 p-4 rounded-lg">
-            {rootOnes.length === 0 ? (
-              <p className="text-gray-500">Aucun root zone en attente.</p>
-            ) : (
-              rootOnes.map(z => (
-                <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
-                  <h3 className="text-lg font-semibold">{z.name} (niveau {z.depth})</h3>
-                  <div className="flex space-x-2 mt-3">
-                    <button
-                      onClick={() => handleApprove(z)}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                    >Approve</button>
-                    <button
-                      onClick={() => handleDecline(z)}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >Decline</button>
-                  </div>
-                </div>
-              ))
-            )}
+          {/* Prototype name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Prototype Zone Name <span className="text-xs text-gray-500">(shown in main dashboard)</span>
+            </label>
+            <input
+              type="text"
+              value={prototypeZoneName}
+              onChange={e => setPrototypeZoneName(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
-        </section>
+          {/* Recursion level */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
+            <input
+              type="number"
+              min={1}
+              max={6}
+              value={recursionLevel}
+              onChange={e => setRecursionLevel(Number(e.target.value))}
+              className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >
+            Generate Zones
+          </button>
+        </form>
 
-        {/* Child zones section */}
-        <section>
-          <h2 className="text-2xl font-bold mb-2">🔸 Child Zones à valider</h2>
-          <div className="flex space-x-2 mb-4">
-            <button
-              onClick={handleApproveAllChild}
-              disabled={childOnes.length === 0}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-            >Approve All</button>
-            <button
-              onClick={handleDeclineAllChild}
-              disabled={childOnes.length === 0}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
-            >Decline All</button>
-          </div>
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            {childOnes.length === 0 ? (
-              <p className="text-gray-500">Aucune child zone en attente.</p>
-            ) : (
-              childOnes.map(z => (
-                <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
-                  <h3 className="text-lg font-semibold">{z.name} (niveau {z.depth})</h3>
-                  <div className="flex space-x-2 mt-3">
-                    <button
-                      onClick={() => handleApprove(z)}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                    >Approve</button>
-                    <button
-                      onClick={() => handleDecline(z)}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >Decline</button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
+        {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
+        {error && <p className="text-center text-red-600">Error: {error}</p>}
+        <ZoneNode zone={displayTree} />
       </div>
     </div>
   );
-}
+};
+
+export default ZoneDashboardPage;
