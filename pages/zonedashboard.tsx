@@ -62,12 +62,14 @@ const ZoneDashboardPage: React.FC = () => {
   useEffect(() => {
     if (!tree) return;
     const addAll = (z: ZoneType) => {
-      addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
+      // Add each zone as pending by default so the subdashboard can approve/decline
+      addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth, approved: false });
       z.children?.forEach(child => addAll(child as ZoneType));
     };
     addAll(tree as ZoneType);
 
     router.push('/zonesubdashboard').then(() => {
+      // Notify subdashboard to reload registry
       window.dispatchEvent(new Event('zoneRegistryChange'));
     });
   }, [tree, router]);
@@ -82,14 +84,14 @@ const ZoneDashboardPage: React.FC = () => {
     id: 'root',
     name: prototypeZoneName,
     path: '/dashboard/root',
-    approved: true,
+    approved: false,
     depth: 1,
     children: [
       {
         id: 'sub1',
         name: 'SubZone A',
         path: '/dashboard/root/sub1',
-        approved: true,
+        approved: false,
         depth: 2,
         children: []
       },
@@ -97,7 +99,7 @@ const ZoneDashboardPage: React.FC = () => {
         id: 'sub2',
         name: 'SubZone B',
         path: '/dashboard/root/sub2',
-        approved: true,
+        approved: false,
         depth: 2,
         children: []
       }
