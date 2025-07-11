@@ -25,7 +25,8 @@ export default function ZoneSubDashboardPage() {
   // pending list, updated when tick changes
   const [pending, setPending] = useState<Zone[]>([]);
   useEffect(() => {
-    const rootPath = ZoneRegistry.find(r => r.id === 'root')?.path || '';
+    const root = ZoneRegistry.find(z => z.depth === 1);
+    const rootPath = root?.path || '';
     const latest = ZoneRegistry.filter(
       z => z.path.startsWith(rootPath + '/') && !z.approved
     );
