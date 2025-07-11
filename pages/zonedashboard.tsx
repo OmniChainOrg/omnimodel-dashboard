@@ -58,16 +58,24 @@ const ZoneDashboardPage: React.FC = () => {
     depth: recursionLevel,
   });
 
-  // When a new tree arrives, add zones to registry then navigate
+  // When a new tree arrives, clear old registry, add new zones, then navigate
   useEffect(() => {
     if (!tree) return;
+
+    // Clear existing zones so we only show the new set
+    localStorage.removeItem('zoneRegistry');
+
+    // Recursively add zones as "pending"
     const addAll = (z: ZoneType) => {
-      // Add each zone as pending by default so the subdashboard can approve/decline
       addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
       z.children?.forEach(child => addAll(child as ZoneType));
     };
     addAll(tree as ZoneType);
 
+    // Log out the stored registry for verification
+    console.log('Zones added:', JSON.parse(localStorage.getItem('zoneRegistry') || '[]'));
+
+    // Navigate and notify subdashboard to reload
     router.push('/zonesubdashboard').then(() => {
       window.dispatchEvent(new Event('zoneRegistryChange'));
     });
