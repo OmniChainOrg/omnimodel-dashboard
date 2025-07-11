@@ -22,7 +22,7 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
     <div className="p-4 bg-white rounded-lg shadow">
       <h3 className="text-lg font-semibold text-gray-800">{zone.name}</h3>
       <p className="text-sm text-gray-500">Level: {zone.depth}</p>
-    </motion.div>
+    </div>
     {zone.children && zone.children.length > 0 && (
       <div className="ml-6 mt-2 border-l-2 border-gray-200 pl-4">
         {zone.children.map(child => (
