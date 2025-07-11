@@ -36,15 +36,38 @@ export const ZoneRegistry: Zone[] = [
     depth: 1,
     children: []
   }
-  // …autres zones prêtes à l’emploi
+  // …other pre-defined zones
 ];
 
 /**
- * Notify listeners that registry has changed.
+ * Persist the in-memory registry to localStorage and notify listeners
  */
-function notifyChange() {
+function persistRegistry() {
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new Event('zoneRegistryChange'));
+    try {
+      localStorage.setItem('ZoneRegistry', JSON.stringify(ZoneRegistry));
+      window.dispatchEvent(new Event('zoneRegistryChange'));
+    } catch (e) {
+      console.error('Failed to persist ZoneRegistry', e);
+    }
+  }
+}
+
+/**
+ * Load registry from localStorage into the in-memory array
+ */
+export function loadRegistryFromStorage() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('ZoneRegistry');
+    if (stored) {
+      try {
+        const parsed: Zone[] = JSON.parse(stored);
+        ZoneRegistry.length = 0;
+        ZoneRegistry.push(...parsed);
+      } catch (e) {
+        console.error('Failed to parse stored ZoneRegistry', e);
+      }
+    }
   }
 }
 
@@ -52,12 +75,7 @@ function notifyChange() {
  * Add a new zone as pending approval (approved=false).
  * If the id already exists, do nothing.
  */
-export function addZone(zoneData: {
-  id: string;
-  name: string;
-  path: string;
-  depth: number;
-}) {
+export function addZone(zoneData: { id: string; name: string; path: string; depth: number }) {
   if (!ZoneRegistry.some(z => z.id === zoneData.id)) {
     ZoneRegistry.push({
       id:       zoneData.id,
@@ -67,19 +85,14 @@ export function addZone(zoneData: {
       depth:    zoneData.depth,
       children: []
     });
-    notifyChange();
+    persistRegistry();
   }
 }
 
 /**
  * Approve an existing zone (or add+approve if missing).
  */
-export function approveZone(zoneData: {
-  id: string;
-  name: string;
-  path: string;
-  depth: number;
-}) {
+export function approveZone(zoneData: { id: string; name: string; path: string; depth: number }) {
   const existing = ZoneRegistry.find(z => z.id === zoneData.id);
   if (existing) {
     existing.approved = true;
@@ -93,7 +106,7 @@ export function approveZone(zoneData: {
       children: []
     });
   }
-  notifyChange();
+  persistRegistry();
 }
 
 /**
@@ -103,6 +116,6 @@ export function declineZone(zoneId: string) {
   const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
   if (idx !== -1) {
     ZoneRegistry.splice(idx, 1);
-    notifyChange();
+    persistRegistry();
   }
 }
