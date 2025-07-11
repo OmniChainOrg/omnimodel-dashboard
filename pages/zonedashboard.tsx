@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { useZoneArchetype } from '../hooks/useZoneArchetype';
+import { useZoneArchetype, Zone as ArchetypeZone } from '../hooks/useZoneArchetype';
 import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 import type { Zone } from '@/lib/zoneRegistry';
 // and just use Zone instead of ZoneType everywhere
