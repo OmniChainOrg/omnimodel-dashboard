@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { addZone } from '@/lib/zoneRegistry';
 import { useRouter } from 'next/router';
 
-// Zone type, now allowing optional path, approved and children
+// Zone type allows optional path, approved and children
 export type ZoneType = {
   id: string;
   name: string;
@@ -52,7 +52,34 @@ const ZoneDashboardPage: React.FC = () => {
     depth: recursionLevel,
   });
 
-  // Fallback dummy tree
+  // When a new tree is fetched, add zones to registry and navigate
+  useEffect(() => {
+    if (!tree) return;
+
+    // Traverse and add each node
+    const traverseAndAdd = (z: ZoneType) => {
+      if (z.path) {
+        addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
+      }
+      z.children?.forEach(child => traverseAndAdd(child));
+    };
+    traverseAndAdd(tree);
+
+    // Navigate to Sub-Dashboard, then notify
+    router.push('/zonesubdashboard').then(() => {
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('zoneRegistryChange'));
+      }
+    });
+  }, [tree, router]);
+
+  // Handle form submit: just trigger refresh
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    refresh();
+  };
+
+  // Fallback dummy tree for initial view
   const dummyTree: ZoneType = {
     id: 'root',
     name: prototypeZoneName,
@@ -65,29 +92,7 @@ const ZoneDashboardPage: React.FC = () => {
     ],
   };
 
-  // Use fetched tree or fallback
   const displayTree = tree ?? dummyTree;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Add zones to registry
-    const traverseAndAdd = (z: ZoneType) => {
-      if (z.path) {
-        addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
-      }
-      z.children?.forEach(child => traverseAndAdd(child));
-    };
-    traverseAndAdd(displayTree);
-
-    // Dispatch change event
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-    }
-
-    // Navigate to Sub-Dashboard
-    router.push('/zonesubdashboard');
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
