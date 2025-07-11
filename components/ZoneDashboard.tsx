@@ -1,5 +1,5 @@
 // pages/zonedashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 import { addZone } from '@/lib/zoneRegistry';
@@ -39,6 +39,7 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
 
 const ZoneDashboardPage: React.FC = () => {
   const router = useRouter();
+
   // Form state
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
@@ -69,6 +70,7 @@ const ZoneDashboardPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     // Add zones to registry
     const traverseAndAdd = (z: ZoneType) => {
       if (z.path) {
@@ -77,19 +79,13 @@ const ZoneDashboardPage: React.FC = () => {
       z.children?.forEach(child => traverseAndAdd(child));
     };
     traverseAndAdd(displayTree);
-    // Force notify in case addZone didn't fire
+
+    // Dispatch change event
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('zoneRegistryChange'));
-      console.debug('zoneRegistryChange event dispatched from generator');
     }
-    // Navigate to sub-dashboard to view pending approvals
-    router.push('/zonesubdashboard');
-  };
 
-      z.children?.forEach(child => traverseAndAdd(child));
-    };
-    traverseAndAdd(displayTree);
-    // Navigate to sub-dashboard to view pending approvals
+    // Navigate to Sub-Dashboard
     router.push('/zonesubdashboard');
   };
 
@@ -110,6 +106,7 @@ const ZoneDashboardPage: React.FC = () => {
               <option>RegOps</option>
             </select>
           </div>
+
           {/* Prototype name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -123,6 +120,7 @@ const ZoneDashboardPage: React.FC = () => {
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
+
           {/* Recursion level */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
@@ -135,7 +133,11 @@ const ZoneDashboardPage: React.FC = () => {
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <button type="submit" className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >
             Generate Zones
           </button>
         </form>
