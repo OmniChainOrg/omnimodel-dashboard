@@ -1,107 +1,137 @@
 // pages/zonesubdashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import ZoneSubDashboard from '@/components/ZoneSubDashboard';
-import {
-  useZoneRegistry,
-  Zone
-} from '@/lib/zoneRegistry';
+import { useZoneArchetype } from '../hooks/useZoneArchetype';
+import { addZone, Zone } from '@/lib/zoneRegistry';
+import { motion } from 'framer-motion';
 
-export default function ZoneSubDashboardPage() {
-  const router = useRouter();
-  const { approveZone, declineZone, zones } = useZoneRegistry();
+const ZoneDashboardPage: React.FC = () => {
+  // Generator form state
+  const [zoneDomain, setZoneDomain] = useState('Biotech');
+  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
+  const [recursionLevel, setRecursionLevel] = useState(4);
 
-  // always show root for approvals
-  const rootZone = zones.find(z => z.id === 'root')!;
+  // Hook to build the zone tree archetype
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: zoneDomain,
+    archetypeName: prototypeZoneName,
+    depth: recursionLevel,
+  });
 
-  // any sub-zone under root that's not yet approved
-  const [pending, setPending] = useState<Zone[]>(
-    zones.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
-  );
+  // Whenever the tree updates, flatten and add every node into the registry as "pending"
+  useEffect(() => {
+    if (!tree) return;
+    const flatten = (node: Zone): Zone[] => {
+      const kids = node.children ?? [];
+      return [node, ...kids.flatMap(flatten)];
+    };
 
-  // split pending into root vs child zones
-  const rootOnes  = pending.filter(z => z.depth === 1);
-  const childOnes = pending.filter(z => z.depth >  1);
+    flatten(tree).forEach(z => {
+      addZone({
+        id:       z.id,
+        name:     z.name,
+        path:     z.path,
+        approved: false,
+        depth:    z.depth,
+      });
+    });
+  }, [tree]);
 
-  const handleApprove = (z: Zone) => {
-    approveZone(z.id);
-    setPending(p => p.filter(x => x.id !== z.id));
-  };
-
-  const handleDecline = (z: Zone) => {
-    declineZone(z.id);
-    setPending(p => p.filter(x => x.id !== z.id));
+  // Form submit to (re)generate
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    refresh();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      {/* 1️⃣ Sub-zone dashboard with tabs including Memory etc. */}
-      <ZoneSubDashboard zone={rootZone} />
-
-      {/* 2️⃣ Pending approvals list */}
-      <div className="mt-8 space-y-8">
-        <section>
-          <h2 className="text-2xl font-bold mb-4">🔹 Root Zones à valider</h2>
-          <div className="bg-blue-50 p-4 rounded-lg">
-            {rootOnes.length === 0 ? (
-              <p className="text-gray-500">Aucun root zone en attente.</p>
-            ) : (
-              rootOnes.map(z => (
-                <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
-                  <h3 className="text-lg font-semibold">
-                    {z.name} (niveau {z.depth})
-                  </h3>
-                  <div className="flex space-x-2 mt-3">
-                    <button
-                      onClick={() => handleApprove(z)}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleDecline(z)}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
+      <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          CE² Zone Prototype Generator
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+          {/* Domain selector */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
+            <select
+              value={zoneDomain}
+              onChange={e => setZoneDomain(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Biotech</option>
+              <option>MedTech</option>
+              <option>RegOps</option>
+              {/* …other domains… */}
+            </select>
           </div>
-        </section>
 
-        <section>
-          <h2 className="text-2xl font-bold mb-4">🔸 Child Zones à valider</h2>
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            {childOnes.length === 0 ? (
-              <p className="text-gray-500">Aucune child zone en attente.</p>
-            ) : (
-              childOnes.map(z => (
-                <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
-                  <h3 className="text-lg font-semibold">
-                    {z.name} (niveau {z.depth})
-                  </h3>
-                  <div className="flex space-x-2 mt-3">
-                    <button
-                      onClick={() => handleApprove(z)}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleDecline(z)}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+          {/* Prototype name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Prototype Zone Name
+              <span className="text-xs text-gray-500"> (displayed as root)</span>
+            </label>
+            <input
+              type="text"
+              value={prototypeZoneName}
+              onChange={e => setPrototypeZoneName(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
-        </section>
+
+          {/* Recursion level */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
+            <input
+              type="number"
+              min={1}
+              max={6}
+              value={recursionLevel}
+              onChange={e => setRecursionLevel(Number(e.target.value))}
+              className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >
+            Generate Zones
+          </button>
+        </form>
+
+        {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
+        {error   && <p className="text-center text-red-600">Error: {error}</p>}
+
+        {/* Display the resulting tree */}
+        {tree && <ZoneNode zone={tree} />}
       </div>
     </div>
   );
-}
+};
+
+export default ZoneDashboardPage;
+
+
+// Recursive node display (can be extracted)
+const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="mb-4"
+  >
+    <div className="p-4 bg-white rounded-lg shadow">
+      <h3 className="text-lg font-semibold text-gray-800">{zone.name}</h3>
+      <p className="text-sm text-gray-500">Level: {zone.depth}</p>
+    </div>
+    {zone.children && (
+      <div className="ml-6 mt-2 border-l-2 border-gray-200 pl-4">
+        {zone.children.map(child => (
+          <ZoneNode key={child.id} zone={child} />
+        ))}
+      </div>
+    )}
+  </motion.div>
+);
+
