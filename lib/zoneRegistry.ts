@@ -40,8 +40,17 @@ export const ZoneRegistry: Zone[] = [
 ];
 
 /**
- * Add a new zone as pending approval (approved=false)
- * If the id already exists, do nothing
+ * Notify listeners that registry has changed.
+ */
+function notifyChange() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('zoneRegistryChange'));
+  }
+}
+
+/**
+ * Add a new zone as pending approval (approved=false).
+ * If the id already exists, do nothing.
  */
 export function addZone(zoneData: {
   id: string;
@@ -58,11 +67,12 @@ export function addZone(zoneData: {
       depth:    zoneData.depth,
       children: []
     });
+    notifyChange();
   }
 }
 
 /**
- * Approve an existing zone (or add+approve if missing)
+ * Approve an existing zone (or add+approve if missing).
  */
 export function approveZone(zoneData: {
   id: string;
@@ -83,14 +93,16 @@ export function approveZone(zoneData: {
       children: []
     });
   }
+  notifyChange();
 }
 
 /**
- * Remove a zone by id (decline)
+ * Remove a zone by id (decline).
  */
 export function declineZone(zoneId: string) {
   const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
   if (idx !== -1) {
     ZoneRegistry.splice(idx, 1);
+    notifyChange();
   }
 }
