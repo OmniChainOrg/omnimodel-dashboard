@@ -1,8 +1,6 @@
-// pages/zonesubdashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { addZone, Zone } from '@/lib/zoneRegistry';
+import { useZoneArchetype, Zone as HookZone } from '../hooks/useZoneArchetype';
+import { addZone, Zone as RegZone } from '@/lib/zoneRegistry';
 import { motion } from 'framer-motion';
 
 const ZoneDashboardPage: React.FC = () => {
@@ -21,20 +19,29 @@ const ZoneDashboardPage: React.FC = () => {
   // Whenever the tree updates, flatten and add every node into the registry as "pending"
   useEffect(() => {
     if (!tree) return;
-    const flatten = (node: Zone): Zone[] => {
+
+    // Flatten the HookZone tree into entries with explicit paths
+    const flattenWithPaths = (
+      node: HookZone,
+      basePath: string = '/dashboard'
+    ): Array<RegZone> => {
+      const currentPath = `${basePath}/${node.id}`;
+      const me: RegZone = {
+        id:       node.id,
+        name:     node.name,
+        path:     currentPath,
+        approved: false,
+        depth:    node.depth,
+      };
       const kids = node.children ?? [];
-      return [node, ...kids.flatMap(flatten)];
+      return [
+        me,
+        ...kids.flatMap(child => flattenWithPaths(child, currentPath)),
+      ];
     };
 
-    flatten(tree).forEach(z => {
-      addZone({
-        id:       z.id,
-        name:     z.name,
-        path:     z.path,
-        approved: false,
-        depth:    z.depth,
-      });
-    });
+    // Push all flattened nodes into registry
+    flattenWithPaths(tree).forEach(z => addZone(z));
   }, [tree]);
 
   // Form submit to (re)generate
@@ -112,9 +119,8 @@ const ZoneDashboardPage: React.FC = () => {
 
 export default ZoneDashboardPage;
 
-
-// Recursive node display (can be extracted)
-const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
+// Recursive node display (reactive to HookZone)
+const ZoneNode: React.FC<{ zone: HookZone }> = ({ zone }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -134,4 +140,3 @@ const ZoneNode: React.FC<{ zone: Zone }> = ({ zone }) => (
     )}
   </motion.div>
 );
-
