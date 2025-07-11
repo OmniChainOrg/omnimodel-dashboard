@@ -3,20 +3,21 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import ZoneSubDashboard from '@/components/ZoneSubDashboard';
 import {
-  useZoneRegistry,
+  ZoneRegistry,
+  approveZone,
+  declineZone,
   Zone
 } from '@/lib/zoneRegistry';
 
 export default function ZoneSubDashboardPage() {
   const router = useRouter();
-  const { approveZone, declineZone, zones } = useZoneRegistry();
 
   // always show root for approvals
-  const rootZone = zones.find(z => z.id === 'root')!;
+  const rootZone = ZoneRegistry.find(z => z.id === 'root')!;
 
   // any sub-zone under root that's not yet approved
   const [pending, setPending] = useState<Zone[]>(
-    zones.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
+    ZoneRegistry.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
   );
 
   // split pending into root vs child zones
@@ -24,7 +25,7 @@ export default function ZoneSubDashboardPage() {
   const childOnes = pending.filter(z => z.depth >  1);
 
   const handleApprove = (z: Zone) => {
-    approveZone(z.id);
+    approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
     setPending(p => p.filter(x => x.id !== z.id));
   };
 
