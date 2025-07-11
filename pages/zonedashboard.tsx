@@ -22,7 +22,7 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
     <div className="p-4 bg-white rounded-lg shadow">
       <h3 className="text-lg font-semibold text-gray-800">{zone.name}</h3>
       <p className="text-sm text-gray-500">Level: {zone.depth}</p>
-    </div>
+    </motion.div>
     {zone.children && zone.children.length > 0 && (
       <div className="ml-6 mt-2 border-l-2 border-gray-200 pl-4">
         {zone.children.map(child => (
@@ -63,13 +63,12 @@ const ZoneDashboardPage: React.FC = () => {
     if (!tree) return;
     const addAll = (z: ZoneType) => {
       // Add each zone as pending by default so the subdashboard can approve/decline
-      addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth, approved: false });
+      addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
       z.children?.forEach(child => addAll(child as ZoneType));
     };
     addAll(tree as ZoneType);
 
     router.push('/zonesubdashboard').then(() => {
-      // Notify subdashboard to reload registry
       window.dispatchEvent(new Event('zoneRegistryChange'));
     });
   }, [tree, router]);
