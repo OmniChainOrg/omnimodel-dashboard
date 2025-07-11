@@ -9,6 +9,7 @@ import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 export type ZoneType = ArchetypeZone & {
   path: string;
   approved?: boolean;
+  children: ZoneType[];
 };
 
 // Recursive node component for displaying zones
