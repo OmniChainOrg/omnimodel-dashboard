@@ -85,9 +85,23 @@ const ZoneDashboardPage: React.FC = () => {
     approved: true,
     depth: 1,
     children: [
-      { id: 'sub1', name: 'SubZone A', path: '/dashboard/root/sub1', approved: true, depth: 2, children: [] },
-      { id: 'sub2', name: 'SubZone B', path: '/dashboard/root/sub2', approved: true, depth: 2, children: [] },
-    ],
+      {
+        id: 'sub1',
+        name: 'SubZone A',
+        path: '/dashboard/root/sub1',
+        approved: true,
+        depth: 2,
+        children: []
+      },
+      {
+        id: 'sub2',
+        name: 'SubZone B',
+        path: '/dashboard/root/sub2',
+        approved: true,
+        depth: 2,
+        children: []
+      }
+    ] as ZoneType[],
   };
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
