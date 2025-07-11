@@ -1,22 +1,21 @@
 // pages/zonedashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
-import { ZoneRegistry, approveZone, declineZone } from '@/lib/zoneRegistry';
+import { addZone } from '@/lib/zoneRegistry';
 
 // Zone type, now allowing optional path, approved and children
-type Zone = {
+export type ZoneType = {
   id: string;
   name: string;
   path?: string;
   approved?: boolean;
   depth: number;
-  children?: Zone[];
+  children?: ZoneType[];
 };
 
 // Recursive node component for displaying zones
-type ZoneNodeProps = { zone: Zone };
-const ZoneNode: React.FC<ZoneNodeProps> = ({ zone }) => (
+const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -50,8 +49,21 @@ const ZoneDashboardPage: React.FC = () => {
     depth: recursionLevel,
   });
 
+  // When a new tree is fetched, push each node into the registry
+  useEffect(() => {
+    if (tree) {
+      const traverse = (z: ZoneType) => {
+        if (z.path) {
+          addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
+        }
+        z.children?.forEach(child => traverse(child));
+      };
+      traverse(tree);
+    }
+  }, [tree]);
+
   // Fallback dummy tree
-  const dummyTree: Zone = {
+  const dummyTree: ZoneType = {
     id: 'root',
     name: prototypeZoneName,
     path: '/dashboard/root',
