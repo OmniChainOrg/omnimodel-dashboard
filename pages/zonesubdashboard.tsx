@@ -1,7 +1,6 @@
 // pages/zonesubdashboard.tsx
+// pages/zonesubdashboard.tsx
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import ZoneSubDashboard from '@/components/ZoneSubDashboard';
 import {
   ZoneRegistry,
   approveZone,
@@ -10,39 +9,72 @@ import {
 } from '@/lib/zoneRegistry';
 
 export default function ZoneSubDashboardPage() {
-  const router = useRouter();
+  // force re-render on registry updates
+  const [tick, setTick] = useState(0);
 
-  // always show root for approvals
-  const rootZone = ZoneRegistry.find(z => z.id === 'root')!;
-
-  // any sub-zone under root that's not yet approved
-  const [pending, setPending] = useState<Zone[]>(
-    ZoneRegistry.filter(z => z.path.startsWith(rootZone.path + '/') && !z.approved)
+  // fetch latest pending zones each render
+  const pending = ZoneRegistry.filter(
+    z => z.path.startsWith(ZoneRegistry.find(r => r.id === 'root')!.path + '/') && !z.approved
   );
 
   // split pending into root vs child zones
   const rootOnes  = pending.filter(z => z.depth === 1);
   const childOnes = pending.filter(z => z.depth >  1);
 
+  const refresh = () => setTick(t => t + 1);
+
   const handleApprove = (z: Zone) => {
     approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
-    setPending(p => p.filter(x => x.id !== z.id));
+    refresh();
   };
 
   const handleDecline = (z: Zone) => {
     declineZone(z.id);
-    setPending(p => p.filter(x => x.id !== z.id));
+    refresh();
+  };
+
+  const handleApproveAllRoot = () => {
+    rootOnes.forEach(z => approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth }));
+    refresh();
+  };
+
+  const handleDeclineAllRoot = () => {
+    rootOnes.forEach(z => declineZone(z.id));
+    refresh();
+  };
+
+  const handleApproveAllChild = () => {
+    childOnes.forEach(z => approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth }));
+    refresh();
+  };
+
+  const handleDeclineAllChild = () => {
+    childOnes.forEach(z => declineZone(z.id));
+    refresh();
   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      {/* 1️⃣ Sub-zone dashboard with tabs including Memory etc. */}
-      <ZoneSubDashboard zone={rootZone} />
-
-      {/* 2️⃣ Pending approvals list */}
-      <div className="mt-8 space-y-8">
+      {/* Pending approvals list per section */}
+      <div className="space-y-8">
         <section>
-          <h2 className="text-2xl font-bold mb-4">🔹 Root Zones à valider</h2>
+          <h2 className="text-2xl font-bold mb-2">🔹 Root Zones à valider</h2>
+          <div className="flex space-x-2 mb-4">
+            <button
+              onClick={handleApproveAllRoot}
+              disabled={rootOnes.length === 0}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+            >
+              Approve All
+            </button>
+            <button
+              onClick={handleDeclineAllRoot}
+              disabled={rootOnes.length === 0}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+            >
+              Decline All
+            </button>
+          </div>
           <div className="bg-blue-50 p-4 rounded-lg">
             {rootOnes.length === 0 ? (
               <p className="text-gray-500">Aucun root zone en attente.</p>
@@ -73,7 +105,23 @@ export default function ZoneSubDashboardPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold mb-4">🔸 Child Zones à valider</h2>
+          <h2 className="text-2xl font-bold mb-2">🔸 Child Zones à valider</h2>
+          <div className="flex space-x-2 mb-4">
+            <button
+              onClick={handleApproveAllChild}
+              disabled={childOnes.length === 0}
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+            >
+              Approve All
+            </button>
+            <button
+              onClick={handleDeclineAllChild}
+              disabled={childOnes.length === 0}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+            >
+              Decline All
+            </button>
+          </div>
           <div className="bg-yellow-50 p-4 rounded-lg">
             {childOnes.length === 0 ? (
               <p className="text-gray-500">Aucune child zone en attente.</p>
