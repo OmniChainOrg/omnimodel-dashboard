@@ -78,20 +78,18 @@ const ZoneDashboardPage: React.FC = () => {
     refresh();
   };
 
-  // Fallback dummy tree if `tree` is undefined
-  const dummyTree: ZoneType = {
-    id: 'root',
-    name: prototypeZoneName,
-    path: '/dashboard/root',
-    approved: true,
-    depth: 1,
-    children: [
-      { id: 'sub1', name: 'SubZone A', path: '/dashboard/root/sub1', approved: true, depth: 2, children: [] },
-      { id: 'sub2', name: 'SubZone B', path: '/dashboard/root/sub2', approved: true, depth: 2, children: [] },
-    ],
-  };
+ // Fallback dummy tree if `tree` is undefined
+const dummyTree: ZoneType = {
+  id: 'root',
+  name: prototypeZoneName,
+  depth: 1,
+  children: [
+    { id: 'sub1', name: 'SubZone A', depth: 2, children: [] },
+    { id: 'sub2', name: 'SubZone B', depth: 2, children: [] },
+  ],
+};
 
-  const displayTree = (tree as ZoneType) ?? dummyTree;
+const displayTree = (tree as ZoneType) ?? dummyTree;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
