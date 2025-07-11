@@ -1,16 +1,17 @@
 // pages/zonedashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { useZoneArchetype, Zone as ArchetypeZone } from '../hooks/useZoneArchetype';
-import { motion } from 'framer-motion';
-import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
+import { useZoneArchetype, Zone as ArchetypeZone } from '../hooks/useZoneArchetype';
+import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 
-// Extend the archetype hook’s Zone with registry fields:
+// Merge the archetype hook's Zone with registry-specific fields
 export type ZoneType = ArchetypeZone & {
-  path?: string;
+  path: string;
   approved?: boolean;
 };
 
+// Recursive node component for displaying zones
 const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
@@ -41,7 +42,7 @@ const ZoneDashboardPage: React.FC = () => {
   const [recursionLevel, setRecursionLevel] = useState(4);
   const [tick, setTick] = useState(0);
 
-  // On mount: load any saved registry and trigger initial render
+  // On mount: load saved registry and listen for updates
   useEffect(() => {
     loadRegistryFromStorage();
     setTick(t => t + 1);
@@ -50,23 +51,21 @@ const ZoneDashboardPage: React.FC = () => {
     return () => window.removeEventListener('zoneRegistryChange', onChange);
   }, []);
 
-  // Generate or fetch zone tree
+  // Fetch or generate the zone tree
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: zoneDomain,
     archetypeName: prototypeZoneName,
     depth: recursionLevel,
   });
 
-  // When a new tree is fetched, add zones and navigate
+  // When a new tree arrives, add zones to registry then navigate
   useEffect(() => {
     if (!tree) return;
-    const traverse = (z: ZoneType) => {
-      if (z.path) {
-        addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
-      }
-      z.children?.forEach(child => traverse(child as ZoneType));
+    const addAll = (z: ZoneType) => {
+      addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
+      z.children?.forEach(child => addAll(child as ZoneType));
     };
-    traverse(tree as ZoneType);
+    addAll(tree as ZoneType);
 
     router.push('/zonesubdashboard').then(() => {
       window.dispatchEvent(new Event('zoneRegistryChange'));
@@ -78,25 +77,26 @@ const ZoneDashboardPage: React.FC = () => {
     refresh();
   };
 
- // Fallback dummy tree if `tree` is undefined
-const dummyTree: ZoneType = {
-  id: 'root',
-  name: prototypeZoneName,
-  depth: 1,
-  children: [
-    { id: 'sub1', name: 'SubZone A', depth: 2, children: [] },
-    { id: 'sub2', name: 'SubZone B', depth: 2, children: [] },
-  ],
-};
+  // Fallback dummy tree including path and approved
+  const dummyTree: ZoneType = {
+    id: 'root',
+    name: prototypeZoneName,
+    path: '/dashboard/root',
+    approved: true,
+    depth: 1,
+    children: [
+      { id: 'sub1', name: 'SubZone A', path: '/dashboard/root/sub1', approved: true, depth: 2, children: [] },
+      { id: 'sub2', name: 'SubZone B', path: '/dashboard/root/sub2', approved: true, depth: 2, children: [] },
+    ],
+  };
 
-const displayTree = (tree as ZoneType) ?? dummyTree;
+  const displayTree = (tree as ZoneType) ?? dummyTree;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">CE² Zone Prototype Generator</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-          {/* Domain selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
             <select
@@ -108,7 +108,6 @@ const displayTree = (tree as ZoneType) ?? dummyTree;
               <option>RegOps</option>
             </select>
           </div>
-          {/* Prototype name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Prototype Zone Name <span className="text-xs text-gray-500">(shown in main dashboard)</span>
@@ -120,7 +119,6 @@ const displayTree = (tree as ZoneType) ?? dummyTree;
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          {/* Recursion level */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
             <input
