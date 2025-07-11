@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { motion } from 'framer-motion';
 import { addZone } from '@/lib/zoneRegistry';
+import { useRouter } from 'next/router';
 
 // Zone type, now allowing optional path, approved and children
 export type ZoneType = {
@@ -37,6 +38,7 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
 );
 
 const ZoneDashboardPage: React.FC = () => {
+  const router = useRouter();
   // Form state
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
@@ -49,7 +51,7 @@ const ZoneDashboardPage: React.FC = () => {
     depth: recursionLevel,
   });
 
-  // When a new tree is fetched, push each node into the registry
+  // When a new tree is fetched, push each node into the registry and navigate to sub-dashboard
   useEffect(() => {
     if (tree) {
       const traverse = (z: ZoneType) => {
@@ -59,8 +61,10 @@ const ZoneDashboardPage: React.FC = () => {
         z.children?.forEach(child => traverse(child));
       };
       traverse(tree);
+      // Navigate to sub-dashboard to view pending approvals
+      router.push('/zonesubdashboard');
     }
-  }, [tree]);
+  }, [tree, router]);
 
   // Fallback dummy tree
   const dummyTree: ZoneType = {
@@ -96,10 +100,8 @@ const ZoneDashboardPage: React.FC = () => {
               onChange={e => setZoneDomain(e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
-              {/* options... */}
               <option>Biotech</option>
               <option>RegOps</option>
-              {/* ...other options */}
             </select>
           </div>
           {/* Prototype name */}
