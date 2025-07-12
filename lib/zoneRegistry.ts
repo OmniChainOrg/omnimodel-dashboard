@@ -75,7 +75,7 @@ export function loadRegistryFromStorage() {
  * Add a new zone as pending approval (approved=false).
  * If the id already exists, do nothing.
  */
-export function addZone(zoneData: { id: string; name: string; path: string; depth: number }) {
+export function addZone(zone: Zone) {
   if (!ZoneRegistry.some(z => z.id === zoneData.id)) {
     ZoneRegistry.push({
       id:       zoneData.id,
