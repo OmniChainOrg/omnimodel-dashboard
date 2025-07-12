@@ -76,14 +76,14 @@ export function loadRegistryFromStorage() {
  * If the id already exists, do nothing.
  */
 export function addZone(zone: Zone) {
-  if (!ZoneRegistry.some(z => z.id === zoneData.id)) {
+  if (!ZoneRegistry.some(z => z.id === zone.id)) {
     ZoneRegistry.push({
-      id:       zoneData.id,
-      name:     zoneData.name,
-      path:     zoneData.path,
-      approved: false,
-      depth:    zoneData.depth,
-      children: []
+      id:       zone.id,
+      name:     zone.name,
+      path:     zone.path,
+      approved: zone.approved,
+      depth:    zone.depth,
+      children: zone.children,
     });
     persistRegistry();
   }
