@@ -38,12 +38,12 @@ export default function ZoneSubDashboardPage() {
   const childOnes = pending.filter(z => z.depth > 1);
 
   // handlers
-  const handleApprove = (z: Zone) => approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
+  const handleApprove = (z: Zone) => approveZone(z);
   const handleDecline = (z: Zone) => declineZone(z.id);
 
-  const handleApproveAllRoot = () => rootOnes.forEach(z => approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth }));
+  const handleApproveAllRoot = () => rootOnes.forEach(z => approveZone(z));
   const handleDeclineAllRoot = () => rootOnes.forEach(z => declineZone(z.id));
-  const handleApproveAllChild = () => childOnes.forEach(z => approveZone({ id: z.id, name: z.name, path: z.path, depth: z.depth }));
+  const handleApproveAllChild = () => childOnes.forEach(z => approveZone(z));
   const handleDeclineAllChild = () => childOnes.forEach(z => declineZone(z.id));
 
   return (
