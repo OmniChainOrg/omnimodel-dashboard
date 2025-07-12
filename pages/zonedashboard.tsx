@@ -70,7 +70,7 @@ const ZoneDashboardPage: React.FC = () => {
 
     // Recursively add zones as "pending"
     const addAll = (z: ZoneType) => {
-      addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth, approved: false });
+      addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth, approved: false, children: [] });
       z.children?.forEach(child => addAll(child as ZoneType));
     };
     addAll(tree as ZoneType);
