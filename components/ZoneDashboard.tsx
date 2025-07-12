@@ -59,7 +59,7 @@ const ZoneDashboardPage: React.FC = () => {
     // Traverse and add each node
     const traverseAndAdd = (z: ZoneType) => {
       if (z.path) {
-        addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth });
+        addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth, approved: false, children: [] });
       }
       z.children?.forEach(child => traverseAndAdd(child));
     };
