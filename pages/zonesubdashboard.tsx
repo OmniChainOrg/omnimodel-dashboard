@@ -28,7 +28,7 @@ export default function ZoneSubDashboardPage() {
     const root = ZoneRegistry.find(z => z.depth === 1);
     const rootPath = root?.path || '';
     const latest = ZoneRegistry.filter(
-      z => z.path.startsWith(rootPath + '/') && !z.approved
+      z => z.path && z.path.startsWith(rootPath + '/') && !z.approved
     );
     setPending(latest);
   }, [tick]);
