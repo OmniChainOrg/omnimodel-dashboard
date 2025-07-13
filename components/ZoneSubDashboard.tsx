@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { getAllZones } from '@/lib/zoneRegistry';
-
-const zones = getAllZones();
-const rootOnes = zones.filter(z => z.depth === 1 && !z.approved);
-const childOnes = zones.filter(z => z.depth > 1 && !z.approved);
-
+import { Zone, approveZone, declineZone, getAllZones } from '@/lib/zoneRegistry';
 
 interface ZoneSubDashboardProps {
   zone: Zone;
@@ -13,6 +8,10 @@ interface ZoneSubDashboardProps {
 const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const [activeTab, setActiveTab] = useState<string>('Memory');
   const [isApproved, setIsApproved] = useState<boolean>(zone.approved);
+
+  const zones = getAllZones();
+  const rootOnes = zones.filter(z => z.depth === 1 && !z.approved);
+  const childOnes = zones.filter(z => z.depth > 1 && !z.approved);
 
   const handleApprove = () => {
     approveZone(zone);
