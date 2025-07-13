@@ -39,9 +39,6 @@ export default function ZoneSubDashboardPage() {
 
   // handlers
   const handleApprove = (z: Zone) => approveZone(z);
-  const handleApprove = () => {
-  approveZone(zone);
-  setIsApproved(true);
   const handleDecline = (z: Zone) => declineZone(z.id);
 
   const handleApproveAllRoot = () => rootOnes.forEach(z => approveZone(z));
