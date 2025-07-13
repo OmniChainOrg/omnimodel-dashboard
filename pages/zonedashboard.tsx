@@ -37,6 +37,30 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
 );
 
 const ZoneDashboardPage: React.FC = () => {
+  const router = useRouter(); // 🍓 Fruit of the gods
+  
+  useEffect(() => {
+    if (!tree) return;
+
+    localStorage.removeItem('zoneRegistry');
+    const addAll = (z: ZoneType) => {
+      addZone({
+        id: z.id,
+        name: z.name,
+        path: z.path,
+        depth: z.depth,
+        approved: false,
+        children: [],
+      });
+      z.children?.forEach(child => addAll(child as ZoneType));
+    };
+    addAll(tree as ZoneType);
+
+    router.push('/zonesubdashboard').then(() => {
+      window.dispatchEvent(new Event('zoneRegistryChange'));
+    });
+  }, [tree]);
+  
   return (
     <div className="min-h-screen flex items-center justify-center">
       <h1 className="text-2xl font-bold text-gray-800">
@@ -91,12 +115,6 @@ const ZoneDashboardPage: React.FC = () => {
 
     // Log what's been stored
     console.log('Zones added:', JSON.parse(localStorage.getItem('zoneRegistry') || '[]'));
-
-    // Secret internal warp
-    router.push('/zonesubdashboard').then(() => {
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-    });
-  }, [tree]);
 
     // Clear existing zones so we only show the new set
     localStorage.removeItem('zoneRegistry');
