@@ -35,17 +35,11 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
     childOnes.forEach(z => declineZone(z.id));
   };
 
-  const handleDecline = () => {
-    declineZone(zone.id);
-    setIsApproved(false);
-  };
-
   let panelContent: React.ReactNode;
   switch (activeTab) {
     case 'Memory':
       // panelContent = <MemoryPanel zone={zone} />;
       break;
-    // Add other cases here if needed
     default:
       panelContent = null;
   }
@@ -54,7 +48,6 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
     <div className="bg-white rounded shadow p-6">
       <h2 className="text-xl font-bold mb-2">🔹 SubZone Dashboard: {zone.name}</h2>
 
-      {/* Approval Controls */}
       {!isApproved && (
         <div className="mb-4 flex space-x-2">
           <button
@@ -72,7 +65,6 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
         </div>
       )}
 
-      {/* Tab Navigation */}
       <div className="flex space-x-2 border-b mb-4">
         <button
           onClick={() => setActiveTab('Memory')}
@@ -82,10 +74,8 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
         >
           Memory
         </button>
-        {/* Add buttons for more tabs if needed */}
       </div>
 
-      {/* Active Panel */}
       <div>{panelContent}</div>
     </div>
   );
