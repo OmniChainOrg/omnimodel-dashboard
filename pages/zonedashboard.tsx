@@ -59,7 +59,7 @@ const ZoneDashboardPage: React.FC = () => {
     router.push('/zonesubdashboard').then(() => {
       window.dispatchEvent(new Event('zoneRegistryChange'));
     });
-  }, [tree]);
+  }, [tree, router]);
   
   return (
     <div className="min-h-screen flex items-center justify-center">
