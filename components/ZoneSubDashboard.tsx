@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zone, approveZone, declineZone, getAllZones } from '@/lib/zoneRegistry';
+import { Zone, approveZone, declineZone } from '@/lib/zoneRegistry';
 
 interface ZoneSubDashboardProps {
   zone: Zone;
@@ -9,10 +9,6 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const [activeTab, setActiveTab] = useState<string>('Memory');
   const [isApproved, setIsApproved] = useState<boolean>(zone.approved);
 
-  const zones = getAllZones();
-  const rootOnes = zones.filter(z => z.depth === 1 && !z.approved);
-  const childOnes = zones.filter(z => z.depth > 1 && !z.approved);
-
   const handleApprove = () => {
     approveZone(zone);
     setIsApproved(true);
@@ -21,22 +17,6 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const handleDecline = () => {
     declineZone(zone.id);
     setIsApproved(false);
-  };
-
-  const handleApproveAllRoot = () => {
-    rootOnes.forEach(z => approveZone(z));
-  };
-
-  const handleDeclineAllRoot = () => {
-    rootOnes.forEach(z => declineZone(z.id));
-  };
-
-  const handleApproveAllChild = () => {
-    childOnes.forEach(z => approveZone(z));
-  };
-
-  const handleDeclineAllChild = () => {
-    childOnes.forEach(z => declineZone(z.id));
   };
 
   let panelContent: React.ReactNode;
