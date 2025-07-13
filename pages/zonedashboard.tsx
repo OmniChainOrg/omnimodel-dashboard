@@ -55,31 +55,31 @@ const ZoneDashboardPage: React.FC = () => {
     depth: recursionLevel,
   });
 
-  useEffect(() => {
-    if (!tree) return;
-
-    localStorage.removeItem('zoneRegistry');
-    const addAll = (z: ZoneType) => {
-      addZone({
-        id: z.id,
-        name: z.name,
-        path: z.path,
-        depth: z.depth,
-        approved: false,
-        children: [],
-      });
-      z.children?.forEach(child => addAll(child as ZoneType));
-    };
-    addAll(tree as ZoneType);
-
-    router.push('/zonesubdashboard').then(() => {
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-    });
-  }, [tree, router]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     refresh();
+
+    setTimeout(() => {
+      if (!tree) return;
+
+      localStorage.removeItem('zoneRegistry');
+      const addAll = (z: ZoneType) => {
+        addZone({
+          id: z.id,
+          name: z.name,
+          path: z.path,
+          depth: z.depth,
+          approved: false,
+          children: [],
+        });
+        z.children?.forEach(child => addAll(child as ZoneType));
+      };
+      addAll(tree as ZoneType);
+
+      router.push('/zonesubdashboard').then(() => {
+        window.dispatchEvent(new Event('zoneRegistryChange'));
+      });
+    }, 100);
   };
 
   const dummyTree: ZoneType = {
