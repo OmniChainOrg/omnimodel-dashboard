@@ -24,7 +24,7 @@ export default function MemoryPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-bold mb-4">Memory Panel</h1>
-      <MemoryPanel zone={rootZone} />
+      // <MemoryPanel zone={rootZone} />
 
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-2">🔄 Zones en attente d’approbation</h2>
