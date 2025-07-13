@@ -10,8 +10,29 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const [isApproved, setIsApproved] = useState<boolean>(zone.approved);
 
   const handleApprove = () => {
-    approveZone({ id: zone.id, name: zone.name, path: zone.path, depth: zone.depth });
+    approveZone(zone); // Full zone object — includes approved and children
     setIsApproved(true);
+  };
+
+  const handleDecline = () => {
+    declineZone(zone.id);
+    setIsApproved(false);
+  };
+
+  const handleApproveAllRoot = () => {
+    rootOnes.forEach(z => approveZone(z));
+  };
+
+  const handleDeclineAllRoot = () => {
+    rootOnes.forEach(z => declineZone(z.id));
+  };
+
+  const handleApproveAllChild = () => {
+    childOnes.forEach(z => approveZone(z));
+  };
+
+  const handleDeclineAllChild = () => {
+    childOnes.forEach(z => declineZone(z.id));
   };
 
   const handleDecline = () => {
