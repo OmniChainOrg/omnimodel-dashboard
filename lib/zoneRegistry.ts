@@ -75,17 +75,12 @@ export function loadRegistryFromStorage() {
  * Add a new zone as pending approval (approved=false).
  * If the id already exists, do nothing.
  */
-export function addZone(zone: Zone) {
-  if (!ZoneRegistry.some(z => z.id === zone.id)) {
-    ZoneRegistry.push({
-      id:       zone.id,
-      name:     zone.name,
-      path:     zone.path,
-      approved: zone.approved,
-      depth:    zone.depth,
-      children: zone.children,
-    });
-    persistRegistry();
+export function approveZone(zone: Zone) {
+  const target = ZoneRegistry.find(z => z.id === zone.id);
+  if (target) {
+    target.approved = true;
+    localStorage.setItem('zoneRegistry', JSON.stringify(ZoneRegistry));
+    window.dispatchEvent(new Event('zoneRegistryChange'));
   }
 }
 
