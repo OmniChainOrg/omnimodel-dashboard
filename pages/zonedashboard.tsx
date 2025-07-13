@@ -5,16 +5,13 @@ import { motion } from 'framer-motion';
 import { useZoneArchetype, Zone as ArchetypeZone } from '../hooks/useZoneArchetype';
 import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 import type { Zone } from '@/lib/zoneRegistry';
-// and just use Zone instead of ZoneType everywhere
 
-// Merge the archetype hook's Zone with registry-specific fields
 export type ZoneType = ArchetypeZone & {
   path: string;
   approved?: boolean;
   children: ZoneType[];
 };
 
-// Recursive node component for displaying zones
 const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
@@ -38,7 +35,26 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
 
 const ZoneDashboardPage: React.FC = () => {
   const router = useRouter();
-  
+
+  const [zoneDomain, setZoneDomain] = useState('Biotech');
+  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
+  const [recursionLevel, setRecursionLevel] = useState(4);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    loadRegistryFromStorage();
+    setTick(t => t + 1);
+    const onChange = () => setTick(t => t + 1);
+    window.addEventListener('zoneRegistryChange', onChange);
+    return () => window.removeEventListener('zoneRegistryChange', onChange);
+  }, []);
+
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: zoneDomain,
+    archetypeName: prototypeZoneName,
+    depth: recursionLevel,
+  });
+
   useEffect(() => {
     if (!tree) return;
 
@@ -60,60 +76,12 @@ const ZoneDashboardPage: React.FC = () => {
       window.dispatchEvent(new Event('zoneRegistryChange'));
     });
   }, [tree, router]);
-  
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-2xl font-bold text-gray-800">
-        Zone Dashboard is chillin’ — no logic needed for now.
-      </h1>
-    </div>
-  );
-};
-
-  // Form state
-  const [zoneDomain, setZoneDomain] = useState('Biotech');
-  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
-  const [recursionLevel, setRecursionLevel] = useState(4);
-  const [tick, setTick] = useState(0);
-
-  // On mount: load saved registry and listen for updates
-  useEffect(() => {
-    loadRegistryFromStorage();
-    setTick(t => t + 1);
-    const onChange = () => setTick(t => t + 1);
-    window.addEventListener('zoneRegistryChange', onChange);
-    return () => window.removeEventListener('zoneRegistryChange', onChange);
-  }, []);
-
-  // Fetch or generate the zone tree
-  const { tree, loading, error, refresh } = useZoneArchetype({
-    archetypeId: zoneDomain,
-    archetypeName: prototypeZoneName,
-    depth: recursionLevel,
-  });
-
-    // Log what's been stored
-    console.log('Zones added:', JSON.parse(localStorage.getItem('zoneRegistry') || '[]'));
-
-    // Clear existing zones so we only show the new set
-    localStorage.removeItem('zoneRegistry');
-
-    // Recursively add zones as "pending"
-    const addAll = (z: ZoneType) => {
-      addZone({ id: z.id, name: z.name, path: z.path, depth: z.depth, approved: false, children: [] });
-      z.children?.forEach(child => addAll(child as ZoneType));
-    };
-    addAll(tree as ZoneType);
-
-    // Log out the stored registry for verification
-    console.log('Zones added:', JSON.parse(localStorage.getItem('zoneRegistry') || '[]'));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     refresh();
   };
 
-  // Fallback dummy tree including path and approved
   const dummyTree: ZoneType = {
     id: 'root',
     name: prototypeZoneName,
@@ -195,4 +163,5 @@ const ZoneDashboardPage: React.FC = () => {
     </div>
   );
 };
+
 export default ZoneDashboardPage;
