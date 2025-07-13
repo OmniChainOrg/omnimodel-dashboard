@@ -27,8 +27,8 @@ export default function ZoneSubDashboardPage() {
   useEffect(() => {
     const root = ZoneRegistry.find(z => z.depth === 1);
     const rootPath = root?.path || '';
-    const latest = ZoneRegistry.filter(
-      z => z.path && z.path.startsWith(rootPath + '/') && !z.approved
+    const safeZones = ZoneRegistry.filter(
+      z => typeof z.path === 'string' && z.path.startsWith(rootPath + '/') && !z.approved
     );
     setPending(latest);
   }, [tick]);
@@ -39,6 +39,9 @@ export default function ZoneSubDashboardPage() {
 
   // handlers
   const handleApprove = (z: Zone) => approveZone(z);
+  const handleApprove = () => {
+  approveZone(zone);
+  setIsApproved(true);
   const handleDecline = (z: Zone) => declineZone(z.id);
 
   const handleApproveAllRoot = () => rootOnes.forEach(z => approveZone(z));
