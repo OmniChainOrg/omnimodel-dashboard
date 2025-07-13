@@ -1,6 +1,5 @@
 // lib/zoneRegistry.ts
 
-// Central Zone interface with recursive children
 export interface Zone {
   id: string;
   name: string;
@@ -10,39 +9,19 @@ export interface Zone {
   children: Zone[];
 }
 
-// Initial registry: define your root and any pre-approved zones
+// 🧠 Declare once. Export once. Do not re-declare later.
 export const ZoneRegistry: Zone[] = [
   {
     id: 'root',
     name: 'Root Zone Prototype',
-    path: '/dashboard/root',
+    path: '',
     approved: false,
-    depth: 1,
-    children: []
-  },
-  {
-    id: 'omnitwin',
-    name: 'OmniTwin',
-    path: '/dashboard/omnitwin',
-    approved: true,
-    depth: 1,
-    children: []
-  },
-  {
-    id: 'hopechain',
-    name: 'HOPEChain',
-    path: '/dashboard/hopechain',
-    approved: true,
-    depth: 1,
-    children: []
+    depth: 0,
+    children: [],
   }
-  // …other pre-defined zones
 ];
 
-// Your in-memory registry
-let ZoneRegistry: Zone[] = [];
-
-// ✅ Your brand new addZone function
+// ✅ Add zone if it doesn't exist
 export function addZone(zone: Zone) {
   const exists = ZoneRegistry.find(z => z.id === zone.id);
   if (!exists) {
@@ -54,78 +33,40 @@ export function addZone(zone: Zone) {
   }
 }
 
-/**
- * Persist the in-memory registry to localStorage and notify listeners
- */
-function persistRegistry() {
-  if (typeof window !== 'undefined') {
-    try {
-      localStorage.setItem('ZoneRegistry', JSON.stringify(ZoneRegistry));
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-    } catch (e) {
-      console.error('Failed to persist ZoneRegistry', e);
-    }
-  }
-}
-
-/**
- * Load registry from localStorage into the in-memory array
- */
-export function loadRegistryFromStorage() {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('ZoneRegistry');
-    if (stored) {
-      try {
-        const parsed: Zone[] = JSON.parse(stored);
-        ZoneRegistry.length = 0;
-        ZoneRegistry.push(...parsed);
-      } catch (e) {
-        console.error('Failed to parse stored ZoneRegistry', e);
-      }
-    }
-  }
-}
-
-/**
- * Add a new zone as pending approval (approved=false).
- * If the id already exists, do nothing.
- */
+// ✅ Approve zone in-place
 export function approveZone(zone: Zone) {
   const target = ZoneRegistry.find(z => z.id === zone.id);
   if (target) {
     target.approved = true;
-    localStorage.setItem('zoneRegistry', JSON.stringify(ZoneRegistry));
-    window.dispatchEvent(new Event('zoneRegistryChange'));
-  }
-}
-
-/**
- * Approve an existing zone (or add+approve if missing).
- */
-export function approveZone(zoneData: { id: string; name: string; path: string; depth: number }) {
-  const existing = ZoneRegistry.find(z => z.id === zoneData.id);
-  if (existing) {
-    existing.approved = true;
-  } else {
-    ZoneRegistry.push({
-      id:       zoneData.id,
-      name:     zoneData.name,
-      path:     zoneData.path,
-      approved: true,
-      depth:    zoneData.depth,
-      children: []
-    });
-  }
-  persistRegistry();
-}
-
-/**
- * Remove a zone by id (decline).
- */
-export function declineZone(zoneId: string) {
-  const idx = ZoneRegistry.findIndex(z => z.id === zoneId);
-  if (idx !== -1) {
-    ZoneRegistry.splice(idx, 1);
     persistRegistry();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('zoneRegistryChange'));
+    }
+  }
+}
+
+// ✅ Decline = remove
+export function declineZone(zoneId: string) {
+  const index = ZoneRegistry.findIndex(z => z.id === zoneId);
+  if (index !== -1) {
+    ZoneRegistry.splice(index, 1);
+    persistRegistry();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('zoneRegistryChange'));
+    }
+  }
+}
+
+// ✅ Save to localStorage
+function persistRegistry() {
+  localStorage.setItem('zoneRegistry', JSON.stringify(ZoneRegistry));
+}
+
+// ⛽ Optional: load from localStorage (up to you)
+export function loadRegistryFromStorage() {
+  const data = localStorage.getItem('zoneRegistry');
+  if (data) {
+    const parsed: Zone[] = JSON.parse(data);
+    ZoneRegistry.splice(0, ZoneRegistry.length, ...parsed);
   }
 }
