@@ -37,7 +37,8 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
 );
 
 const ZoneDashboardPage: React.FC = () => {
-  const router = useRouter();
+    // no return at all!
+};
 
   // Form state
   const [zoneDomain, setZoneDomain] = useState('Biotech');
