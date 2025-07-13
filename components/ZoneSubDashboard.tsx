@@ -10,7 +10,7 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   const [isApproved, setIsApproved] = useState<boolean>(zone.approved);
 
   const handleApprove = () => {
-    approveZone(zone); // Full zone object — includes approved and children
+    approveZone(zone);
     setIsApproved(true);
   };
 
