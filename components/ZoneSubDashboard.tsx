@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Zone, approveZone, declineZone } from '@/lib/zoneRegistry';
+const rootOnes = zones.filter(z => z.depth === 1 && !z.approved);
+const childOnes = zones.filter(z => z.depth > 1 && !z.approved);
 
 interface ZoneSubDashboardProps {
   zone: Zone;
