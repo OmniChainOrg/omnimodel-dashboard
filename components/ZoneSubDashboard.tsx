@@ -22,7 +22,7 @@ const ZoneSubDashboard: React.FC<ZoneSubDashboardProps> = ({ zone }) => {
   let panelContent: React.ReactNode;
   switch (activeTab) {
     case 'Memory':
-      panelContent = <MemoryPanel zone={zone} />;
+      // panelContent = <MemoryPanel zone={zone} />;
       break;
     // Add other cases here if needed
     default:
