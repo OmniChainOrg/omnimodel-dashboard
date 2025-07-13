@@ -37,6 +37,9 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
 );
 
 const ZoneDashboardPage: React.FC = () => {
+  const router = useRouter();
+
+const ZoneDashboardPage: React.FC = () => {
   return (
     <div>
       {/* Your beautiful, semi-chaotic JSX tree goes here */}
