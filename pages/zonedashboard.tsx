@@ -65,6 +65,32 @@ const ZoneDashboardPage: React.FC = () => {
   useEffect(() => {
     if (!tree) return;
 
+    // Clear existing registry
+    localStorage.removeItem('zoneRegistry');
+
+    // Recursively add zones
+    const addAll = (z: ZoneType) => {
+      addZone({
+        id: z.id,
+        name: z.name,
+        path: z.path,
+        depth: z.depth,
+        approved: false,
+        children: [],
+      });
+      z.children?.forEach(child => addAll(child as ZoneType));
+    };
+    addAll(tree as ZoneType);
+
+    // Log what's been stored
+    console.log('Zones added:', JSON.parse(localStorage.getItem('zoneRegistry') || '[]'));
+
+    // Secret internal warp
+    router.push('/zonesubdashboard').then(() => {
+      window.dispatchEvent(new Event('zoneRegistryChange'));
+    });
+  }, [tree]);
+
     // Clear existing zones so we only show the new set
     localStorage.removeItem('zoneRegistry');
 
