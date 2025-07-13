@@ -108,12 +108,6 @@ const ZoneDashboardPage: React.FC = () => {
     // Log out the stored registry for verification
     console.log('Zones added:', JSON.parse(localStorage.getItem('zoneRegistry') || '[]'));
 
-    // Navigate and notify subdashboard to reload
-    router.push('/zonesubdashboard').then(() => {
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-    });
-  }, [tree, router]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     refresh();
