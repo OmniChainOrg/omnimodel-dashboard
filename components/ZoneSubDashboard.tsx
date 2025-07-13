@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import MemoryPanel from './MemoryPanel';
 import { Zone, approveZone, declineZone } from '@/lib/zoneRegistry';
 
 interface ZoneSubDashboardProps {
