@@ -1,5 +1,4 @@
 // pages/memory/index.tsx
-
 import React, { useState, useEffect } from 'react';
 import { ZoneRegistry, approveZone, declineZone, Zone } from '../../lib/zoneRegistry';
 
