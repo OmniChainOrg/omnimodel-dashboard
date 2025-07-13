@@ -39,6 +39,21 @@ export const ZoneRegistry: Zone[] = [
   // …other pre-defined zones
 ];
 
+// Your in-memory registry
+let ZoneRegistry: Zone[] = [];
+
+// ✅ Your brand new addZone function
+export function addZone(zone: Zone) {
+  const exists = ZoneRegistry.find(z => z.id === zone.id);
+  if (!exists) {
+    ZoneRegistry.push(zone);
+    persistRegistry();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('zoneRegistryChange'));
+    }
+  }
+}
+
 /**
  * Persist the in-memory registry to localStorage and notify listeners
  */
