@@ -30,7 +30,7 @@ export default function ZoneSubDashboardPage() {
     const safeZones = ZoneRegistry.filter(
       z => typeof z.path === 'string' && z.path.startsWith(rootPath + '/') && !z.approved
     );
-    setPending(latest);
+    setPending(safeZones);
   }, [tick]);
 
   // split pending
