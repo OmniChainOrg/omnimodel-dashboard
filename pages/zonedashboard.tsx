@@ -37,7 +37,7 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
 );
 
 const ZoneDashboardPage: React.FC = () => {
-  const router = useRouter(); // 🍓 Fruit of the gods
+  const router = useRouter();
   
   useEffect(() => {
     if (!tree) return;
@@ -91,27 +91,6 @@ const ZoneDashboardPage: React.FC = () => {
     archetypeName: prototypeZoneName,
     depth: recursionLevel,
   });
-
-  // When a new tree arrives, clear old registry, add new zones, then navigate
-  useEffect(() => {
-    if (!tree) return;
-
-    // Clear existing registry
-    localStorage.removeItem('zoneRegistry');
-
-    // Recursively add zones
-    const addAll = (z: ZoneType) => {
-      addZone({
-        id: z.id,
-        name: z.name,
-        path: z.path,
-        depth: z.depth,
-        approved: false,
-        children: [],
-      });
-      z.children?.forEach(child => addAll(child as ZoneType));
-    };
-    addAll(tree as ZoneType);
 
     // Log what's been stored
     console.log('Zones added:', JSON.parse(localStorage.getItem('zoneRegistry') || '[]'));
