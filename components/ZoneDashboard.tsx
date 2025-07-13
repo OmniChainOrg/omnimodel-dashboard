@@ -37,8 +37,8 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
   </motion.div>
 );
 
-const ZoneDashboardPage: React.FC = () => {
-  const router = useRouter();
+const FancyZoneDashboard: React.FC = () => { ... }
+export default FancyZoneDashboard;
 
   // Form state
   const [zoneDomain, setZoneDomain] = useState('Biotech');
