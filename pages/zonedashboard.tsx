@@ -37,12 +37,11 @@ const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
 );
 
 const ZoneDashboardPage: React.FC = () => {
-  const router = useRouter();
-
-const ZoneDashboardPage: React.FC = () => {
   return (
-    <div>
-      {/* Your beautiful, semi-chaotic JSX tree goes here */}
+    <div className="min-h-screen flex items-center justify-center">
+      <h1 className="text-2xl font-bold text-gray-800">
+        Zone Dashboard is chillin’ — no logic needed for now.
+      </h1>
     </div>
   );
 };
