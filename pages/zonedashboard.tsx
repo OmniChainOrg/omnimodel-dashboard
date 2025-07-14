@@ -1,45 +1,24 @@
-// pages/zonedashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
-import { useZoneArchetype, Zone as ArchetypeZone } from '../hooks/useZoneArchetype';
+import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 import type { Zone } from '@/lib/zoneRegistry';
+import { motion } from 'framer-motion';
 
-export type ZoneType = ArchetypeZone & {
-  path: string;
-  approved?: boolean;
-  children: ZoneType[];
-};
-
-const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3 }}
-    className="mb-4"
-  >
-    <div className="p-4 bg-white rounded-lg shadow">
-      <h3 className="text-lg font-semibold text-gray-800">{zone.name}</h3>
-      <p className="text-sm text-gray-500">Level: {zone.depth}</p>
-    </div>
-    {zone.children && zone.children.length > 0 && (
-      <div className="ml-6 mt-2 border-l-2 border-gray-200 pl-4">
-        {zone.children.map(child => (
-          <ZoneNode key={child.id} zone={child as ZoneType} />
-        ))}
-      </div>
-    )}
-  </motion.div>
-);
+type ZoneType = Zone & { children?: ZoneType[] };
 
 const ZoneDashboardPage: React.FC = () => {
   const router = useRouter();
-
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
   const [recursionLevel, setRecursionLevel] = useState(4);
   const [tick, setTick] = useState(0);
+
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: zoneDomain,
+    archetypeName: prototypeZoneName,
+    depth: recursionLevel,
+  });
 
   useEffect(() => {
     loadRegistryFromStorage();
@@ -49,36 +28,30 @@ const ZoneDashboardPage: React.FC = () => {
     return () => window.removeEventListener('zoneRegistryChange', onChange);
   }, []);
 
-  const { tree, loading, error, refresh } = useZoneArchetype({
-    archetypeId: zoneDomain,
-    archetypeName: prototypeZoneName,
-    depth: recursionLevel,
-  });
+  useEffect(() => {
+    if (!tree) return;
+
+    localStorage.removeItem('zoneRegistry');
+
+    const addAll = (z: ZoneType) => {
+      addZone({
+        id: z.id,
+        name: z.name,
+        path: z.path,
+        depth: z.depth,
+        approved: false,
+        children: [],
+      });
+      z.children?.forEach(child => addAll(child as ZoneType));
+    };
+    addAll(tree as ZoneType);
+
+    window.dispatchEvent(new Event('zoneRegistryChange'));
+  }, [tree]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     refresh();
-
-    setTimeout(() => {
-      if (!tree) return;
-
-      localStorage.removeItem('zoneRegistry');
-      const addAll = (z: ZoneType) => {
-        addZone({
-          id: z.id,
-          name: z.name,
-          path: z.path,
-          depth: z.depth,
-          approved: false,
-          children: [],
-        });
-        z.children?.forEach(child => addAll(child as ZoneType));
-      };
-      addAll(tree as ZoneType);
-
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-      });
-    }, 100);
   };
 
   const dummyTree: ZoneType = {
@@ -104,10 +77,31 @@ const ZoneDashboardPage: React.FC = () => {
         depth: 2,
         children: []
       }
-    ] as ZoneType[],
+    ]
   };
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
+
+  const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="mb-4"
+    >
+      <div className="p-4 bg-white rounded-lg shadow">
+        <h3 className="text-lg font-semibold text-gray-800">{zone.name}</h3>
+        <p className="text-sm text-gray-500">Level: {zone.depth}</p>
+      </div>
+      {zone.children && zone.children.length > 0 && (
+        <div className="ml-6 mt-2 border-l-2 border-gray-200 pl-4">
+          {zone.children.map(child => (
+            <ZoneNode key={child.id} zone={child as ZoneType} />
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
