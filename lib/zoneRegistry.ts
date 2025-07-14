@@ -9,7 +9,7 @@ export interface Zone {
   children: Zone[];
 }
 
-// 🧠 Declare once. Export once. Do not re-declare later.
+// In-memory registry seeded with a root prototype
 export const ZoneRegistry: Zone[] = [
   {
     id: 'root',
@@ -18,60 +18,90 @@ export const ZoneRegistry: Zone[] = [
     approved: false,
     depth: 0,
     children: [],
-  }
+  },
 ];
 
-// ✅ Add zone if it doesn't exist
-export function addZone(zone: Zone) {
-  const exists = ZoneRegistry.find(z => z.id === zone.id);
-  if (!exists) {
-    ZoneRegistry.push(zone);
-    persistRegistry();
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-    }
+/**
+ * Persist the in-memory registry to localStorage.
+ * Internal helper used by registry operations.
+ */
+function persistRegistry(): void {
+  try {
+    localStorage.setItem('zoneRegistry', JSON.stringify(ZoneRegistry));
+  } catch (e) {
+    console.error('Failed to persist registry:', e);
   }
 }
 
-// ✅ Approve zone in-place
-export function approveZone(zone: Zone) {
-  const target = ZoneRegistry.find(z => z.id === zone.id);
+/**
+ * Add a new zone to the registry.
+ * Skips if a zone with the same id already exists.
+ * Persists the updated registry and notifies listeners.
+ */
+export function addZone(zone: Zone): void {
+  // Prevent duplicate zones
+  if (ZoneRegistry.some((z) => z.id === zone.id)) {
+    return;
+  }
+
+  // Append and persist
+  ZoneRegistry.push(zone);
+  persistRegistry();
+
+  // Dispatch change event for subscribers
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('zoneRegistryChange'));
+  }
+}
+
+/**
+ * Mark an existing zone as approved.
+ * Updates the registry in-place, persists, and notifies listeners.
+ */
+export function approveZone(zone: Zone): void {
+  const target = ZoneRegistry.find((z) => z.id === zone.id);
   if (target) {
     target.approved = true;
     persistRegistry();
+
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('zoneRegistryChange'));
     }
   }
 }
 
-// ✅ Decline = remove
-export function declineZone(zoneId: string) {
-  const index = ZoneRegistry.findIndex(z => z.id === zoneId);
+/**
+ * Remove a zone by its identifier.
+ * Persists the updated registry and notifies listeners.
+ */
+export function declineZone(zoneId: string): void {
+  const index = ZoneRegistry.findIndex((z) => z.id === zoneId);
   if (index !== -1) {
     ZoneRegistry.splice(index, 1);
     persistRegistry();
+
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('zoneRegistryChange'));
     }
   }
 }
 
-// ✅ Save to localStorage
-function persistRegistry() {
-  localStorage.setItem('zoneRegistry', JSON.stringify(ZoneRegistry));
-}
-
-// ⛽ Optional: load from localStorage (up to you)
+/**
+ * Load and initialize the registry from localStorage.
+ * Returns the loaded array or an empty array on errors.
+ * Also seeds the in-memory registry for further operations.
+ */
 export function loadRegistryFromStorage(): Zone[] {
-  // SSR / non-browser guard
-  if (typeof window === 'undefined') return [];
+  // SSR / non-browser safety
+  if (typeof window === 'undefined') {
+    return [];
+  }
 
   try {
     const stored = localStorage.getItem('zoneRegistry');
     const parsed: Zone[] = stored ? JSON.parse(stored) : [];
 
-    // Update the in-memory registry
+    // Replace in-memory contents
     ZoneRegistry.splice(0, ZoneRegistry.length, ...parsed);
 
     return parsed;
