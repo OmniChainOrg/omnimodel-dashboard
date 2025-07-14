@@ -63,10 +63,23 @@ function persistRegistry() {
 }
 
 // ⛽ Optional: load from localStorage (up to you)
-export function loadRegistryFromStorage() {
-  const data = localStorage.getItem('zoneRegistry');
-  if (data) {
-    const parsed: Zone[] = JSON.parse(data);
-    ZoneRegistry.splice(0, ZoneRegistry.length, ...parsed);
+export function loadRegistryFromStorage(): Zone[] {
+  // SSR / non-browser guard
+  if (typeof window === 'undefined') {
+    return [];
   }
+
+  try {
+    const stored = localStorage.getItem('zoneRegistry');
+    const parsed: Zone[] = stored ? JSON.parse(stored) : [];
+
+    // Update the in-memory registry
+    ZoneRegistry.splice(0, ZoneRegistry.length, ...parsed);
+
+    return parsed;
+  } catch (e) {
+    console.error('Failed to load registry from storage:', e);
+    return [];
+  }
+}
 }
