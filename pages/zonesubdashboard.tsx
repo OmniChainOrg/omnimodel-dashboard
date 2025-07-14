@@ -1,4 +1,3 @@
-// pages/zonesubdashboard.tsx
 import React, { useState, useEffect } from 'react';
 import {
   ZoneRegistry,
@@ -9,10 +8,25 @@ import {
 } from '@/lib/zoneRegistry';
 
 export default function ZoneSubDashboardPage() {
+  // local zones state, initialized from storage
+  const [zones, setZones] = useState<Zone[]>(() => loadRegistryFromStorage());
+
+  // listen for registry updates and reload zones
+  useEffect(() => {
+    const handleChange = () => {
+      const updated = loadRegistryFromStorage();
+      console.log('[SubDashboard] Registry updated:', updated);
+      setZones(updated);
+    };
+
+    window.addEventListener('zoneRegistryChange', handleChange);
+    return () => window.removeEventListener('zoneRegistryChange', handleChange);
+  }, []);
+
   // tick to trigger updates
   const [tick, setTick] = useState(0);
 
-  // On mount: load registry from storage and listen for changes
+  // On mount: load registry from storage and listen for generic changes
   useEffect(() => {
     loadRegistryFromStorage();
     // initial render
