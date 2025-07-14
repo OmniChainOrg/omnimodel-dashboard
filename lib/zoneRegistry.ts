@@ -65,9 +65,7 @@ function persistRegistry() {
 // ⛽ Optional: load from localStorage (up to you)
 export function loadRegistryFromStorage(): Zone[] {
   // SSR / non-browser guard
-  if (typeof window === 'undefined') {
-    return [];
-  }
+  if (typeof window === 'undefined') return [];
 
   try {
     const stored = localStorage.getItem('zoneRegistry');
@@ -81,5 +79,4 @@ export function loadRegistryFromStorage(): Zone[] {
     console.error('Failed to load registry from storage:', e);
     return [];
   }
-}
 }
