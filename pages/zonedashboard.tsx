@@ -5,6 +5,10 @@ import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 import type { Zone } from '@/lib/zoneRegistry';
 import { motion } from 'framer-motion';
 
+// Keep your custom sub zone creation and customization components
+import CustomizationPanel from '../components/CustomizationPanel';
+import SubZoneCreator from '../components/SubZoneCreator';
+
 type ZoneType = Zone & { children?: ZoneType[] };
 
 const ZoneDashboardPage: React.FC = () => {
@@ -148,6 +152,10 @@ const ZoneDashboardPage: React.FC = () => {
             Generate Zones
           </button>
         </form>
+
+        {/* Restore your custom buttons and tools */}
+        <CustomizationPanel />
+        <SubZoneCreator />
 
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
