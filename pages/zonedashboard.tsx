@@ -5,11 +5,102 @@ import { addZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 import type { Zone } from '@/lib/zoneRegistry';
 import { motion } from 'framer-motion';
 
-// Keep your custom sub zone creation and customization components
-import CustomizationPanel from '../components/CustomizationPanel';
-import SubZoneCreator from '../components/SubZoneCreator';
-
 type ZoneType = Zone & { children?: ZoneType[] };
+
+// Settings type for each zone customization
+interface ZoneSettings {
+  info: string;
+  confidentiality: 'Public' | 'Confidential' | 'Private';
+}
+
+// Recursive node with inline customization form
+const ZoneNode: React.FC<{
+  zone: Zone;
+  settings: Record<string, ZoneSettings>;
+  onUpdate: (zoneId: string, settings: ZoneSettings) => void;
+}> = ({ zone, settings, onUpdate }) => {
+  const [expanded, setExpanded] = useState(false);
+  const currentSettings = settings[zone.id] || { info: '', confidentiality: 'Public' };
+  const [info, setInfo] = useState(currentSettings.info);
+  const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
+
+  const handleSave = () => {
+    onUpdate(zone.id, { info, confidentiality });
+    setExpanded(false);
+  };
+  const handleCancel = () => {
+    setInfo(currentSettings.info);
+    setConfidentiality(currentSettings.confidentiality);
+    setExpanded(false);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.3 }}
+      className="mb-6"
+    >
+      <div className="p-6 bg-white rounded-2xl shadow-lg">
+        <div className="flex justify-between items-center">
+          <div>
+            <h3 className="text-xl font-semibold text-blue-600">{zone.name.replace(/SubZone/g, 'Zone')}</h3>
+            <p className="text-sm text-gray-500">Level: {zone.depth}</p>
+          </div>
+          <button
+            onClick={() => setExpanded(prev => !prev)}
+            className="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition"
+          >
+            {expanded ? 'Close' : 'Customize'}
+          </button>
+        </div>
+        {expanded && (
+          <div className="mt-3 p-4 bg-gray-50 rounded-lg">
+            <label className="block text-sm font-medium text-gray-700">Info to Share</label>
+            <textarea
+              placeholder="Enter information to share..."
+              value={info}
+              onChange={e => setInfo(e.target.value)}
+              className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              rows={3}
+            />
+            <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
+            <select
+              value={confidentiality}
+              onChange={e => setConfidentiality(e.target.value as ZoneSettings['confidentiality'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Public</option>
+              <option>Confidential</option>
+              <option>Private</option>
+            </select>
+            <div className="mt-4 flex space-x-2">
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+              >
+                Save
+              </button>
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+      {zone.children && zone.children.length > 0 && (
+        <div className="ml-10 mt-4 border-l-2 border-blue-200 pl-8">
+          {zone.children.map(child => (
+            <ZoneNode key={child.id} zone={child} settings={settings} onUpdate={onUpdate} />
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+};
 
 const ZoneDashboardPage: React.FC = () => {
   const router = useRouter();
@@ -86,27 +177,6 @@ const ZoneDashboardPage: React.FC = () => {
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
 
-  const ZoneNode: React.FC<{ zone: ZoneType }> = ({ zone }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="mb-4"
-    >
-      <div className="p-4 bg-white rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-800">{zone.name}</h3>
-        <p className="text-sm text-gray-500">Level: {zone.depth}</p>
-      </div>
-      {zone.children && zone.children.length > 0 && (
-        <div className="ml-6 mt-2 border-l-2 border-gray-200 pl-4">
-          {zone.children.map(child => (
-            <ZoneNode key={child.id} zone={child as ZoneType} />
-          ))}
-        </div>
-      )}
-    </motion.div>
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
@@ -120,7 +190,21 @@ const ZoneDashboardPage: React.FC = () => {
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
               <option>Biotech</option>
+              <option>MedTech</option>
+              <option>Pharma Formulation</option>
+              <option>Clinical Trials</option>
               <option>RegOps</option>
+              <option>DeSci</option>
+              <option>DeTrade</option>
+              <option>DeInvest</option>
+              <option>Nonprofit</option>
+              <option>Philanthropy</option>
+              <option>Humanitarian</option>
+              <option>AI ethics</option>
+              <option>dApps DevOps</option>
+              <option>Investment</option>
+              <option>Granting</option>
+              <option>Other</option>
             </select>
           </div>
           <div>
@@ -153,13 +237,9 @@ const ZoneDashboardPage: React.FC = () => {
           </button>
         </form>
 
-        {/* Restore your custom buttons and tools */}
-        <CustomizationPanel />
-        <SubZoneCreator />
-
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
-        <ZoneNode zone={displayTree} />
+        <ZoneNode zone={displayTree} settings={{}} onUpdate={() => {}} />
       </div>
     </div>
   );
