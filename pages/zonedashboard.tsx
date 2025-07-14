@@ -76,8 +76,7 @@ const ZoneDashboardPage: React.FC = () => {
       };
       addAll(tree as ZoneType);
 
-      router.push('/zonesubdashboard').then(() => {
-        window.dispatchEvent(new Event('zoneRegistryChange'));
+      window.dispatchEvent(new Event('zoneRegistryChange'));
       });
     }, 100);
   };
