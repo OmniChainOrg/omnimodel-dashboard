@@ -13,13 +13,14 @@ export default function ZoneSubDashboardPage() {
 
   // listen for registry updates across tabs via the browser storage event
   useEffect(() => {
+    console.log('Adding storage event listener');
     const handleStorage = (e: StorageEvent) => {
       if (e.key === 'zoneRegistry') {
         setZones(loadRegistryFromStorage());
         setTick(t => t + 1);
+        console.log('Storage event triggered:', updatedZones);
       }
     };
-    console.log('Adding storage event listener');
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
     }, []);
