@@ -119,6 +119,7 @@ const ZoneDashboardPage: React.FC = () => {
     loadRegistryFromStorage();
     setTick(t => t + 1);
     const onChange = () => setTick(t => t + 1);
+    console.log('Adding zoneRegistryChange event listener');
     window.addEventListener('zoneRegistryChange', onChange);
     return () => window.removeEventListener('zoneRegistryChange', onChange);
   }, []);
@@ -145,6 +146,7 @@ const collectZones = (z: ZoneType) => {
 collectZones(tree as ZoneType);
 
 // 💥 Atomic update
+console.log('Persisting zoneRegistry to localStorage', allZones);
 localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
 
   }, [tree]);
