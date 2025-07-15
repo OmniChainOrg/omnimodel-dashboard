@@ -128,20 +128,25 @@ const ZoneDashboardPage: React.FC = () => {
 
     localStorage.removeItem('zoneRegistry');
 
-    const addAll = (z: ZoneType) => {
-      addZone({
-        id: z.id,
-        name: z.name,
-        path: z.path,
-        depth: z.depth,
-        approved: false,
-        children: [],
-      });
-      z.children?.forEach(child => addAll(child as ZoneType));
-    };
-    addAll(tree as ZoneType);
+    const allZones: Zone[] = [];
 
-    window.dispatchEvent(new Event('zoneRegistryChange'));
+const collectZones = (z: ZoneType) => {
+  allZones.push({
+    id: z.id,
+    name: z.name,
+    path: z.path,
+    depth: z.depth,
+    approved: false,
+    children: [],
+  });
+  z.children?.forEach(child => collectZones(child as ZoneType));
+};
+
+collectZones(tree as ZoneType);
+
+// 💥 Atomic update
+localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
+window.dispatchEvent(new Event('zoneRegistryChange'));
   }, [tree]);
 
   const handleSubmit = (e: React.FormEvent) => {
