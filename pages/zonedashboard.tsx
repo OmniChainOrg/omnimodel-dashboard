@@ -148,6 +148,10 @@ collectZones(tree as ZoneType);
 // 💥 Atomic update
 console.log('Persisting zoneRegistry to localStorage', allZones);
 localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
+// Sync in-memory registry and notify listeners
+  loadRegistryFromStorage();
+  console.log('Dispatching zoneRegistryChange event');
+  window.dispatchEvent(new Event('zoneRegistryChange'));
 
   }, [tree]);
 
