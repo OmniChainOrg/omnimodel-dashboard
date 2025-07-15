@@ -19,12 +19,16 @@ The OmniModel Dashboard is a real-time UI layer for **OmniChain DevNet-2** — s
 
 ```
 omnimodel-dashboard/
-├── app/                       # React components (e.g., SimulationAnchorFeed)
+├── components/               # React components
+├── hooks/                    # Shared hooks
+├── lib/                      # Utility modules
+├── pages/                    # Next.js pages and API routes
 ├── public/
 │   └── data/
 │       └── anchors/          # Live simulation anchor .json files
+├── styles/                   # Global stylesheets
 ├── tailwind.config.js        # UI theming and layout
-├── package.json              # React + Tailwind dependencies
+├── package.json              # Project dependencies
 └── README.md                 # This file
 ```
 
@@ -68,15 +72,24 @@ fetch('/data/anchors/chrono-liraglutide.json')
     "start": "next start"
   },
   "dependencies": {
-    "next": "13.4.12",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "tailwindcss": "^3.3.0",
-    "clsx": "^1.2.1"
+    "framer-motion": "latest",
+    "lucide-react": "latest",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "recharts": "latest",
+    "sass": "latest",
+    "chart.js": "^4.4.1",
+    "react-chartjs-2": "^5.2.0"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.0",
-    "postcss": "^8.4.0"
+    "@types/node": "22.15.3",
+    "@types/react": "19.1.2",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.24",
+    "tailwindcss": "^3.3.2",
+    "typescript": "^5.0.4",
+    "react-icons": "^4.12.0"
   }
 }
 ```
