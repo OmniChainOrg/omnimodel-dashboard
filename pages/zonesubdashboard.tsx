@@ -11,17 +11,16 @@ export default function ZoneSubDashboardPage() {
   // local zones state, initialized from storage
   const [zones, setZones] = useState<Zone[]>(() => loadRegistryFromStorage());
 
-  // listen for registry updates and reload zones
+  // listen for registry updates across tabs via the storage event
   useEffect(() => {
-    const handleChange = () => {
-      const updated = loadRegistryFromStorage();
-      console.log('[SubDashboard] Registry updated:', updated);
-      setZones(updated);
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'zoneRegistry') {
+        setZones(loadRegistryFromStorage());
+      }
     };
-
-    window.addEventListener('zoneRegistryChange', handleChange);
-    return () => window.removeEventListener('zoneRegistryChange', handleChange);
-  }, []);
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+    }, []);
 
   // tick to trigger updates
   const [tick, setTick] = useState(0);
