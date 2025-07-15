@@ -146,7 +146,6 @@ collectZones(tree as ZoneType);
 
 // 💥 Atomic update
 localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
-console.log('Updated zoneRegistry in localStorage:', allZones);
 
   }, [tree]);
 
