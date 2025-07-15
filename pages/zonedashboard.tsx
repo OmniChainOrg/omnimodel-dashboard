@@ -146,7 +146,7 @@ collectZones(tree as ZoneType);
 
 // 💥 Atomic update
 localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
-window.dispatchEvent(new Event('zoneRegistryChange'));
+
   }, [tree]);
 
   const handleSubmit = (e: React.FormEvent) => {
