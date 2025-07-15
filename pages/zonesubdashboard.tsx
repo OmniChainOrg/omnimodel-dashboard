@@ -19,6 +19,7 @@ export default function ZoneSubDashboardPage() {
         setTick(t => t + 1);
       }
     };
+    console.log('Adding storage event listener');
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
     }, []);
@@ -32,6 +33,7 @@ export default function ZoneSubDashboardPage() {
       setZones(loadRegistryFromStorage());
       setTick(t => t + 1);
     };
+    console.log('Adding zoneRegistryChange event listener');
     window.addEventListener('zoneRegistryChange', onChange);
     // initial pending computation
     onChange();
