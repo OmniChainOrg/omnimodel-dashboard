@@ -10,13 +10,14 @@ export interface Zone {
 }
 
 // In-memory registry seeded with a root prototype
+// Default root zone used when no registry is persisted yet
 export const ZoneRegistry: Zone[] = [
   {
     id: 'root',
     name: 'Root Zone Prototype',
-    path: '',
+    path: '/dashboard/root',
     approved: false,
-    depth: 0,
+    depth: 1,
     children: [],
   },
 ];
