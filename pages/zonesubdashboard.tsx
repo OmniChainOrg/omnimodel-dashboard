@@ -44,7 +44,7 @@ export default function ZoneSubDashboardPage() {
     const root = ZoneRegistry.find(z => z.depth === 1);
     const rootPath = root?.path || '';
     const safeZones = ZoneRegistry.filter(
-      z => typeof z.path === 'string' && z.path.startsWith(rootPath + '/') && !z.approved
+      z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
     );
     setPending(safeZones);
   }, [tick]);
