@@ -16,6 +16,7 @@ export default function ZoneSubDashboardPage() {
     const handleStorage = (e: StorageEvent) => {
       if (e.key === 'zoneRegistry') {
         setZones(loadRegistryFromStorage());
+        setTick(t => t + 1);
       }
     };
     window.addEventListener('storage', handleStorage);
