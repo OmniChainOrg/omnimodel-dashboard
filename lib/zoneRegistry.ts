@@ -100,6 +100,7 @@ export function loadRegistryFromStorage(): Zone[] {
 
   try {
     const stored = localStorage.getItem('zoneRegistry');
+    console.log('Loading from localStorage:', stored);
     const parsed: Zone[] = stored ? JSON.parse(stored) : [];
 
     // Replace in-memory contents
