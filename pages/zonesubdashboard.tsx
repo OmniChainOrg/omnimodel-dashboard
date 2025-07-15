@@ -11,7 +11,7 @@ export default function ZoneSubDashboardPage() {
   // local zones state, initialized from storage
   const [zones, setZones] = useState<Zone[]>(() => loadRegistryFromStorage());
 
-  // listen for registry updates across tabs via the storage event
+  // listen for registry updates across tabs via the browser storage event
   useEffect(() => {
     const handleStorage = (e: StorageEvent) => {
       if (e.key === 'zoneRegistry') {
@@ -26,13 +26,15 @@ export default function ZoneSubDashboardPage() {
   // tick to trigger updates
   const [tick, setTick] = useState(0);
 
-  // On mount: load registry from storage and listen for generic changes
+  // On mount: listen for registry changes within the current tab
   useEffect(() => {
-    loadRegistryFromStorage();
-    // initial render
-    setTick(t => t + 1);
-    const onChange = () => setTick(t => t + 1);
+    const onChange = () => {
+      setZones(loadRegistryFromStorage());
+      setTick(t => t + 1);
+    };
     window.addEventListener('zoneRegistryChange', onChange);
+    // initial pending computation
+    onChange();
     return () => window.removeEventListener('zoneRegistryChange', onChange);
   }, []);
 
