@@ -18,7 +18,6 @@ export default function ZoneSubDashboardPage() {
       if (e.key === 'zoneRegistry') {
         const updatedZones = loadRegistryFromStorage();
         setZones(updatedZones);
-        setTick(t => t + 1);
         console.log('Storage event triggered:', updatedZones);
       }
     };
@@ -26,24 +25,21 @@ export default function ZoneSubDashboardPage() {
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
-  // tick to trigger updates
-  const [tick, setTick] = useState(0);
-
   // On mount: listen for registry changes within the current tab
   useEffect(() => {
+    console.log('Adding zoneRegistryChange event listener');
     const onChange = () => {
       const updatedZones = loadRegistryFromStorage();
       setZones(updatedZones);
-      setTick(t => t + 1);
+      console.log('Custom event triggered:', updatedZones);
     };
-    console.log('Adding zoneRegistryChange event listener');
     window.addEventListener('zoneRegistryChange', onChange);
     // initial pending computation
     onChange();
     return () => window.removeEventListener('zoneRegistryChange', onChange);
   }, []);
 
-  // pending list, updated when tick changes
+  // pending list, updated when zones change
   const [pending, setPending] = useState<Zone[]>([]);
   useEffect(() => {
     const root = zones.find(z => z.depth === 1);
@@ -52,7 +48,8 @@ export default function ZoneSubDashboardPage() {
       z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
     );
     setPending(safeZones);
-  }, [zones, tick]); // Depend on zones to ensure it updates when zones change
+    console.log('Pending zones updated:', safeZones);
+  }, [zones]);
 
   // split pending
   const rootOnes = pending.filter(z => z.depth === 1);
