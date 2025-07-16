@@ -1,7 +1,7 @@
 // components/MemoryPanel.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Zone } from '../lib/zoneRegistry';
+import type { Zone } from '../lib/zoneRegistry';
 
 interface MemoryRecord {
   timestamp: string;
