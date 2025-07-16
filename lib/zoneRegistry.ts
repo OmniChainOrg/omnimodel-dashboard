@@ -11,7 +11,7 @@ export interface Zone {
 
 // In-memory registry seeded with a root prototype
 // Default root zone used when no registry is persisted yet
-export const ZoneRegistry: Zone[] = [
+let ZoneRegistry: Zone[] = [
   {
     id: 'root',
     name: 'Root Zone Prototype',
@@ -29,8 +29,35 @@ export const ZoneRegistry: Zone[] = [
 function persistRegistry(): void {
   try {
     localStorage.setItem('zoneRegistry', JSON.stringify(ZoneRegistry));
+    console.log('Registry persisted to localStorage:', ZoneRegistry);
   } catch (e) {
     console.error('Failed to persist registry:', e);
+  }
+}
+
+/**
+ * Load and initialize the registry from localStorage.
+ * Returns the loaded array or an empty array on errors.
+ * Also seeds the in-memory registry for further operations.
+ */
+export function loadRegistryFromStorage(): Zone[] {
+  // SSR / non-browser safety
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const stored = localStorage.getItem('zoneRegistry');
+    console.log('Loading from localStorage:', stored);
+    const parsed: Zone[] = stored ? JSON.parse(stored) : [];
+
+    // Replace in-memory contents
+    ZoneRegistry = parsed;
+
+    return parsed;
+  } catch (e) {
+    console.error('Failed to load registry from storage:', e);
+    return [];
   }
 }
 
@@ -87,28 +114,7 @@ export function declineZone(zoneId: string): void {
   }
 }
 
-/**
- * Load and initialize the registry from localStorage.
- * Returns the loaded array or an empty array on errors.
- * Also seeds the in-memory registry for further operations.
- */
-export function loadRegistryFromStorage(): Zone[] {
-  // SSR / non-browser safety
-  if (typeof window === 'undefined') {
-    return [];
-  }
-
-  try {
-    const stored = localStorage.getItem('zoneRegistry');
-    console.log('Loading from localStorage:', stored);
-    const parsed: Zone[] = stored ? JSON.parse(stored) : [];
-
-    // Replace in-memory contents
-    ZoneRegistry.splice(0, ZoneRegistry.length, ...parsed);
-
-    return parsed;
-  } catch (e) {
-    console.error('Failed to load registry from storage:', e);
-    return [];
-  }
+// Export the current state of ZoneRegistry
+export function getZoneRegistry(): Zone[] {
+  return ZoneRegistry;
 }
