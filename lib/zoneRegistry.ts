@@ -21,7 +21,7 @@ let ZoneRegistry: Zone[] = [
   },
 ];
 
-/** 
+/**
  * Persist the in-memory registry to localStorage.
  * Internal helper used by registry operations.
  */
@@ -34,7 +34,7 @@ function persistRegistry(): void {
   }
 }
 
-/** 
+/**
  * Load and initialize the registry from localStorage.
  * Returns the loaded array or an empty array on errors.
  * Also seeds the in-memory registry for further operations.
@@ -58,7 +58,7 @@ export function loadRegistryFromStorage(): Zone[] {
   }
 }
 
-/** 
+/**
  * Add a new zone to the registry.
  * Skips if a zone with the same id already exists.
  * Persists the updated registry and notifies listeners.
@@ -73,7 +73,10 @@ export function addZone(zone: Zone): void {
   window.dispatchEvent(new Event('zoneRegistryChange'));
 }
 
-/** 
+// Import UseZoneArchetypeProps from useZoneArchetype.ts
+import { UseZoneArchetypeProps } from '../hooks/useZoneArchetype';
+
+/**
  * Get the zone registry based on the provided parameters.
  * This is a placeholder implementation. Replace with actual logic to fetch zones.
  */
