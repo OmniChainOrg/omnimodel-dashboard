@@ -102,17 +102,15 @@ const ZoneNode: React.FC<{
   );
 };
 
-const ZoneDashboardPage: React.FC = () => {
+export default function ZoneDashboardPage() {
   const router = useRouter();
-  const [zoneDomain, setZoneDomain] = useState('Biotech');
-  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
-  const [recursionLevel, setRecursionLevel] = useState(4);
+  const { archetypeId, archetypeName, depth } = router.query;
 
-  const { tree, loading, error, refresh } = useZoneArchetype({
-    archetypeId: zoneDomain,
-    archetypeName: prototypeZoneName,
-    depth: recursionLevel,
-  });
+  const { tree, loading, error, refresh } = useZoneArchetype(
+    archetypeId as string,
+    archetypeName as string,
+    Number(depth)
+  );
 
   useEffect(() => {
     if (!tree) return;
@@ -123,7 +121,7 @@ const ZoneDashboardPage: React.FC = () => {
       allZones.push({
         id: z.id,
         name: z.name,
-        path: z.path || '/default/path', // Provide a default path if necessary
+        path: z.path || `/default/path/${z.id}`, // Provide a default path if necessary
         depth: z.depth,
         approved: false,
         children: [],
