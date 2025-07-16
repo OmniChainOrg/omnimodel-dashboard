@@ -103,19 +103,15 @@ const ZoneNode: React.FC<{
   );
 };
 
-function ZoneDashboardPage() {
+export default function ZoneDashboardPage() {
   const router = useRouter();
   const { archetypeId, archetypeName, depth } = router.query;
 
-  const [zoneDomain, setZoneDomain] = useState('Biotech');
-  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
-  const [recursionLevel, setRecursionLevel] = useState(4);
-
-  const { tree, loading, error, refresh } = useZoneArchetype(
-    archetypeId as string,
-    archetypeName as string,
-    Number(depth)
-  );
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: archetypeId as string,
+    archetypeName: archetypeName as string,
+    depth: Number(depth),
+  });
 
   useEffect(() => {
     if (!tree) return;
@@ -150,7 +146,7 @@ function ZoneDashboardPage() {
 
   const dummyTree: ZoneType = {
     id: 'root',
-    name: prototypeZoneName,
+    name: 'Root Zone Prototype',
     path: '/dashboard/root',
     approved: false,
     depth: 1,
@@ -184,8 +180,8 @@ function ZoneDashboardPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
             <select
-              value={zoneDomain}
-              onChange={e => setZoneDomain(e.target.value)}
+              value={archetypeId as string}
+              onChange={e => router.push(`/zonedashboard?archetypeId=${e.target.value}&archetypeName=${archetypeName}&depth=${depth}`)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
               <option>Biotech</option>
@@ -212,8 +208,8 @@ function ZoneDashboardPage() {
             </label>
             <input
               type="text"
-              value={prototypeZoneName}
-              onChange={e => setPrototypeZoneName(e.target.value)}
+              value={archetypeName as string}
+              onChange={e => router.push(`/zonedashboard?archetypeId=${archetypeId}&archetypeName=${e.target.value}&depth=${depth}`)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -223,8 +219,8 @@ function ZoneDashboardPage() {
               type="number"
               min={1}
               max={6}
-              value={recursionLevel}
-              onChange={e => setRecursionLevel(Number(e.target.value))}
+              value={depth as string}
+              onChange={e => router.push(`/zonedashboard?archetypeId=${archetypeId}&archetypeName=${archetypeName}&depth=${e.target.value}`)}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -237,11 +233,9 @@ function ZoneDashboardPage() {
         </form>
 
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
-        {error && <p className="text-center text-red-600">Error: {error}</p>}
+        {error && <p className="text-center text-red-600">Error: {error.message}</p>}
         <ZoneNode zone={displayTree} settings={{}} onUpdate={() => {}} />
       </div>
     </div>
   );
 }
-
-export default ZoneDashboardPage;
