@@ -1,25 +1,41 @@
 // pages/memory/index.tsx
 import React, { useState, useEffect } from 'react';
-import { ZoneRegistry, approveZone, declineZone, Zone } from '../../lib/zoneRegistry';
+import { getZoneRegistry, approveZone, declineZone, Zone } from '../../lib/zoneRegistry';
 
 export default function MemoryPage() {
   const [pendingZones, setPendingZones] = useState<Zone[]>([]);
 
   useEffect(() => {
-    setPendingZones(ZoneRegistry.filter(z => !z.approved));
+    console.log('Adding zoneRegistryChange event listener');
+    const handleZoneRegistryChange = () => {
+      const zones = getZoneRegistry();
+      const safeZones = zones.filter(z => !z.approved);
+      setPendingZones(safeZones);
+      console.log('ZoneRegistryChange event triggered:', safeZones);
+    };
+
+    // Initial load
+    handleZoneRegistryChange();
+
+    window.addEventListener('zoneRegistryChange', handleZoneRegistryChange);
+
+    return () => {
+      window.removeEventListener('zoneRegistryChange', handleZoneRegistryChange);
+    };
   }, []);
 
   const handleApprove = (zone: Zone) => {
     approveZone(zone);
     setPendingZones(prev => prev.filter(z => z.id !== zone.id));
   };
+
   const handleDecline = (zone: Zone) => {
     declineZone(zone.id);
     setPendingZones(prev => prev.filter(z => z.id !== zone.id));
   };
 
   // Always show root in the MemoryPanel
-  const rootZone = ZoneRegistry.find(z => z.id === 'root');
+  const rootZone = getZoneRegistry().find(z => z.id === 'root');
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -28,7 +44,6 @@ export default function MemoryPage() {
   Temporarily removing MemoryPanel for debugging.
   <MemoryPanel zone={rootZone} />
 */}
-
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-2">🔄 Zones en attente d’approbation</h2>
         {!pendingZones.length ? (
