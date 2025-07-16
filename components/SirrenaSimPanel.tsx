@@ -20,7 +20,13 @@ type SirrenaSimPanelProps = {
 
 export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
   // Fallback default for SirrenaSim zone
-  const defaultZone: Zone = { id: "sirrenasim", name: "SirrenaSim", depth: 1 };
+  const defaultZone: Zone = {
+    id: "sirrenasim",
+    name: "SirrenaSim",
+    path: "/sirrenasim",
+    depth: 1,
+    approved: false,
+  };
   const activeZone = zone || defaultZone;
 
   const [events, setEvents] = useState<Event[] | null>(null);
