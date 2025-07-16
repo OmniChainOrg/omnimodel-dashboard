@@ -48,7 +48,7 @@ export default function ZoneSubDashboardPage() {
       z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
     );
     setPending(safeZones);
-    console.log('Pending zones updated:', safeZones);
+    console.log('Pending zones calculated:', safeZones);
   }, [zones]);
 
   // split pending
