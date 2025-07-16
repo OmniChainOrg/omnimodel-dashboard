@@ -118,12 +118,11 @@ useEffect(() => {
   if (!tree) return;
 
   const allZones: Zone[] = [];
-
   const collectZones = (z: ZoneType) => {
     allZones.push({
       id: z.id,
       name: z.name,
-      path: z.path,
+      path: z.path || '/default/path', // Provide a default path if necessary
       depth: z.depth,
       approved: false,
       children: [],
