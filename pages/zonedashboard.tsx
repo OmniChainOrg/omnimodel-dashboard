@@ -28,6 +28,7 @@ const ZoneNode: React.FC<{
     onUpdate(zone.id, { info, confidentiality });
     setExpanded(false);
   };
+
   const handleCancel = () => {
     setInfo(currentSettings.info);
     setConfidentiality(currentSettings.confidentiality);
@@ -102,9 +103,13 @@ const ZoneNode: React.FC<{
   );
 };
 
-export default function ZoneDashboardPage() {
+function ZoneDashboardPage() {
   const router = useRouter();
   const { archetypeId, archetypeName, depth } = router.query;
+
+  const [zoneDomain, setZoneDomain] = useState('Biotech');
+  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
+  const [recursionLevel, setRecursionLevel] = useState(4);
 
   const { tree, loading, error, refresh } = useZoneArchetype(
     archetypeId as string,
@@ -131,7 +136,7 @@ export default function ZoneDashboardPage() {
 
     collectZones(tree as ZoneType);
 
-    // 💥 Atomic update
+    // Atomic update
     console.log('Persisting zoneRegistry to localStorage:', allZones);
     localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
     console.log('Dispatching zoneRegistryChange event');
@@ -237,6 +242,6 @@ export default function ZoneDashboardPage() {
       </div>
     </div>
   );
-};
+}
 
 export default ZoneDashboardPage;
