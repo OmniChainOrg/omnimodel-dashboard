@@ -1,26 +1,14 @@
 // hooks/useZoneArchetype.ts
 import { useEffect, useState, useCallback } from 'react';
+import { getZoneRegistry, Zone } from '@/lib/zoneRegistry';
 
-export type Zone = {
-  id: string;
-  name: string;
-  path: string;
-  depth: number;
-  approved: boolean;
-  children?: Zone[];
-};
-
-interface UseZoneArchetypeOptions {
+export interface UseZoneArchetypeProps {
   archetypeId: string;
   archetypeName: string;
   depth?: number;
 }
 
-export function useZoneArchetype({
-  archetypeId,
-  archetypeName,
-  depth = 3,
-}: UseZoneArchetypeOptions) {
+export function useZoneArchetype({ archetypeId, archetypeName, depth = 3 }: UseZoneArchetypeProps) {
   const [tree, setTree] = useState<Zone | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +24,7 @@ export function useZoneArchetype({
         body: JSON.stringify({ archetypeId, archetypeName, depth }),
       });
       if (!res.ok) throw new Error(`Status ${res.status}`);
-      const data: Zone = await res.json();
+      const data = await res.json();
       console.log('Zone tree fetched successfully:', data);
 
       // Ensure path is set for all zones
