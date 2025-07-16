@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  approveZone,
-  declineZone,
-  loadRegistryFromStorage,
-  Zone
-} from '@/lib/zoneRegistry';
+import { approveZone, declineZone, loadRegistryFromStorage, Zone } from '@/lib/zoneRegistry';
 
 export default function ZoneSubDashboardPage() {
   // local zones state, initialized from storage
@@ -95,7 +90,7 @@ export default function ZoneSubDashboardPage() {
       <div className="space-y-8">
         {/* Root zones section */}
         <section>
-          <h2 className="text-2xl font-bold mb-2">🔹 Root Zones à valider</h2>
+          <h2 className="text-2xl font-bold mb-2">Root Zones à valider</h2>
           <div className="flex space-x-2 mb-4">
             <button
               onClick={handleApproveAllRoot}
@@ -145,7 +140,7 @@ export default function ZoneSubDashboardPage() {
 
         {/* Child zones section */}
         <section>
-          <h2 className="text-2xl font-bold mb-2">🔸 Child Zones à valider</h2>
+          <h2 className="text-2xl font-bold mb-2">Child Zones à valider</h2>
           <div className="flex space-x-2 mb-4">
             <button
               onClick={handleApproveAllChild}
