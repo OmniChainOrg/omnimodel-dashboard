@@ -1,242 +1,204 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { loadRegistryFromStorage } from '@/lib/zoneRegistry';
-import type { Zone } from '@/lib/zoneRegistry';
-import { motion } from 'framer-motion';
+import { approveZone, declineZone, loadRegistryFromStorage, getZoneRegistry, Zone } from '@/lib/zoneRegistry';
 
-type ZoneType = Zone & { children?: ZoneType[] };
+export default function ZoneSubDashboardPage() {
+  // local zones state, initialized from storage
+  const [zones, setZones] = useState<Zone[]>(() => loadRegistryFromStorage());
 
-// Settings type for each zone customization
-interface ZoneSettings {
-  info: string;
-  confidentiality: 'Public' | 'Confidential' | 'Private';
-}
-
-// Recursive node with inline customization form
-const ZoneNode: React.FC<{
-  zone: Zone;
-  settings: Record<string, ZoneSettings>;
-  onUpdate: (zoneId: string, settings: ZoneSettings) => void;
-}> = ({ zone, settings, onUpdate }) => {
-  const [expanded, setExpanded] = useState(false);
-  const currentSettings = settings[zone.id] || { info: '', confidentiality: 'Public' };
-  const [info, setInfo] = useState(currentSettings.info);
-  const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
-
-  const handleSave = () => {
-    onUpdate(zone.id, { info, confidentiality });
-    setExpanded(false);
-  };
-  const handleCancel = () => {
-    setInfo(currentSettings.info);
-    setConfidentiality(currentSettings.confidentiality);
-    setExpanded(false);
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.3 }}
-      className="mb-6"
-    >
-      <div className="p-6 bg-white rounded-2xl shadow-lg">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-xl font-semibold text-blue-600">{zone.name.replace(/SubZone/g, 'Zone')}</h3>
-            <p className="text-sm text-gray-500">Level: {zone.depth}</p>
-          </div>
-          <button
-            onClick={() => setExpanded(prev => !prev)}
-            className="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition"
-          >
-            {expanded ? 'Close' : 'Customize'}
-          </button>
-        </div>
-        {expanded && (
-          <div className="mt-3 p-4 bg-gray-50 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700">Info to Share</label>
-            <textarea
-              placeholder="Enter information to share..."
-              value={info}
-              onChange={e => setInfo(e.target.value)}
-              className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              rows={3}
-            />
-            <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
-            <select
-              value={confidentiality}
-              onChange={e => setConfidentiality(e.target.value as ZoneSettings['confidentiality'])}
-              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option>Public</option>
-              <option>Confidential</option>
-              <option>Private</option>
-            </select>
-            <div className="mt-4 flex space-x-2">
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-      {zone.children && zone.children.length > 0 && (
-        <div className="ml-10 mt-4 border-l-2 border-blue-200 pl-8">
-          {zone.children.map(child => (
-            <ZoneNode key={child.id} zone={child} settings={settings} onUpdate={onUpdate} />
-          ))}
-        </div>
-      )}
-    </motion.div>
-  );
-};
-
-const ZoneDashboardPage: React.FC = () => {
-  const router = useRouter();
-  const [zoneDomain, setZoneDomain] = useState('Biotech');
-  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
-  const [recursionLevel, setRecursionLevel] = useState(4);
-
-  const { tree, loading, error, refresh } = useZoneArchetype({
-    archetypeId: zoneDomain,
-    archetypeName: prototypeZoneName,
-    depth: recursionLevel,
-  });
-
-useEffect(() => {
-  if (!tree) return;
-
-  const allZones: Zone[] = [];
-  const collectZones = (z: ZoneType) => {
-    allZones.push({
-      id: z.id,
-      name: z.name,
-      path: z.path || '/default/path', // Provide a default path if necessary
-      depth: z.depth,
-      approved: false,
-      children: [],
-    });
-    z.children?.forEach(child => collectZones(child as ZoneType));
-  };
-  collectZones(tree as ZoneType);
-
-  // 💥 Atomic update
-  console.log('Persisting zoneRegistry to localStorage:', allZones);
-  localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
-  console.log('Dispatching zoneRegistryChange event');
-  window.dispatchEvent(new Event('zoneRegistryChange'));
-}, [tree]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    refresh();
-  };
-
-  const dummyTree: ZoneType = {
-    id: 'root',
-    name: prototypeZoneName,
-    path: '/dashboard/root',
-    approved: false,
-    depth: 1,
-    children: [
-      {
-        id: 'sub1',
-        name: 'SubZone A',
-        path: '/dashboard/root/sub1',
-        approved: false,
-        depth: 2,
-        children: []
-      },
-      {
-        id: 'sub2',
-        name: 'SubZone B',
-        path: '/dashboard/root/sub2',
-        approved: false,
-        depth: 2,
-        children: []
+  // listen for registry updates across tabs via the browser storage event
+  useEffect(() => {
+    console.log('Adding storage event listener');
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'zoneRegistry') {
+        const updatedZones = loadRegistryFromStorage();
+        setZones(updatedZones);
+        console.log('Storage event triggered:', updatedZones);
       }
-    ]
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  // On mount: listen for registry changes within the current tab
+  useEffect(() => {
+    console.log('Adding zoneRegistryChange event listener');
+    const onChange = () => {
+      const updatedZones = loadRegistryFromStorage();
+      setZones(updatedZones);
+      console.log('Custom event triggered:', updatedZones);
+    };
+    window.addEventListener('zoneRegistryChange', onChange);
+    // initial pending computation
+    onChange();
+    return () => window.removeEventListener('zoneRegistryChange', onChange);
+  }, []);
+
+  // pending list, updated when zones change
+  const [pending, setPending] = useState<Zone[]>([]);
+  useEffect(() => {
+    const root = zones.find(z => z.depth === 1);
+    console.log('Root zone found:', root);
+    const rootPath = root?.path || '/default/path'; // Provide a default path
+    console.log('Root path:', rootPath);
+    const safeZones = zones.filter(
+      z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
+    );
+    setPending(safeZones);
+    console.log('Pending zones calculated:', safeZones);
+
+    // Debug logs for rootOnes and childOnes
+    const rootOnes = pending.filter(z => z.depth === 1);
+    const childOnes = pending.filter(z => z.depth > 1);
+    console.log('Root zones:', rootOnes);
+    console.log('Child zones:', childOnes);
+  }, [zones]);
+
+  // split pending
+  // const rootOnes = pending.filter(z => z.depth === 1);
+  // const childOnes = pending.filter(z => z.depth > 1);
+
+  // handlers
+  const handleApprove = (z: Zone) => {
+    approveZone(z);
+    setPending(prev => prev.filter(zone => zone.id !== z.id));
   };
 
-  const displayTree = (tree as ZoneType) ?? dummyTree;
+  const handleDecline = (z: Zone) => {
+    declineZone(z.id);
+    setPending(prev => prev.filter(zone => zone.id !== z.id));
+  };
+
+  const handleApproveAllRoot = () => {
+    const rootOnes = pending.filter(z => z.depth === 1);
+    rootOnes.forEach(z => approveZone(z));
+    setPending(prev => prev.filter(zone => !rootOnes.includes(zone)));
+  };
+
+  const handleDeclineAllRoot = () => {
+    const rootOnes = pending.filter(z => z.depth === 1);
+    rootOnes.forEach(z => declineZone(z.id));
+    setPending(prev => prev.filter(zone => !rootOnes.includes(zone)));
+  };
+
+  const handleApproveAllChild = () => {
+    const childOnes = pending.filter(z => z.depth > 1);
+    childOnes.forEach(z => approveZone(z));
+    setPending(prev => prev.filter(zone => !childOnes.includes(zone)));
+  };
+
+  const handleDeclineAllChild = () => {
+    const childOnes = pending.filter(z => z.depth > 1);
+    childOnes.forEach(z => declineZone(z.id));
+    setPending(prev => prev.filter(zone => !childOnes.includes(zone)));
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
-      <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">CE² Zone Prototype Generator</h1>
-        <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
-            <select
-              value={zoneDomain}
-              onChange={e => setZoneDomain(e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="space-y-8">
+        {/* Root zones section */}
+        <section>
+          <h2 className="text-2xl font-bold mb-2">Root Zones à valider</h2>
+          <div className="flex space-x-2 mb-4">
+            <button
+              onClick={handleApproveAllRoot}
+              disabled={pending.filter(z => z.depth === 1).length === 0}
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="approve-all-root"
             >
-              <option>Biotech</option>
-              <option>MedTech</option>
-              <option>Pharma Formulation</option>
-              <option>Clinical Trials</option>
-              <option>RegOps</option>
-              <option>DeSci</option>
-              <option>DeTrade</option>
-              <option>DeInvest</option>
-              <option>Nonprofit</option>
-              <option>Philanthropy</option>
-              <option>Humanitarian</option>
-              <option>AI ethics</option>
-              <option>dApps DevOps</option>
-              <option>Investment</option>
-              <option>Granting</option>
-              <option>Other</option>
-            </select>
+              Approve All
+            </button>
+            <button
+              onClick={handleDeclineAllRoot}
+              disabled={pending.filter(z => z.depth === 1).length === 0}
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="decline-all-root"
+            >
+              Decline All
+            </button>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Prototype Zone Name <span className="text-xs text-gray-500">(shown in main dashboard)</span>
-            </label>
-            <input
-              type="text"
-              value={prototypeZoneName}
-              onChange={e => setPrototypeZoneName(e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
-            <input
-              type="number"
-              min={1}
-              max={6}
-              value={recursionLevel}
-              onChange={e => setRecursionLevel(Number(e.target.value))}
-              className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-          >
-            Generate Zones
-          </button>
-        </form>
+          {pending.filter(z => z.depth === 1).length === 0 ? (
+            <p className="text-gray-500">Aucun root zone en attente.</p>
+          ) : (
+            pending
+              .filter(z => z.depth === 1)
+              .map(z => (
+                <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold">
+                    {z.name} (niveau {z.depth})
+                  </h3>
+                  <div className="flex space-x-2 mt-3">
+                    <button
+                      onClick={() => handleApprove(z)}
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`approve-${z.id}`}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleDecline(z)}
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`decline-${z.id}`}
+                    >
+                      Decline
+                    </button>
+                  </div>
+                </div>
+              ))
+          )}
+        </section>
 
-        {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
-        {error && <p className="text-center text-red-600">Error: {error}</p>}
-        <ZoneNode zone={displayTree} settings={{}} onUpdate={() => {}} />
+        {/* Child zones section */}
+        <section>
+          <h2 className="text-2xl font-bold mb-2">Child Zones à valider</h2>
+          <div className="flex space-x-2 mb-4">
+            <button
+              onClick={handleApproveAllChild}
+              disabled={pending.filter(z => z.depth > 1).length === 0}
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="approve-all-child"
+            >
+              Approve All
+            </button>
+            <button
+              onClick={handleDeclineAllChild}
+              disabled={pending.filter(z => z.depth > 1).length === 0}
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="decline-all-child"
+            >
+              Decline All
+            </button>
+          </div>
+          {pending.filter(z => z.depth > 1).length === 0 ? (
+            <p className="text-gray-500">Aucune child zone en attente.</p>
+          ) : (
+            pending
+              .filter(z => z.depth > 1)
+              .map(z => (
+                <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold">
+                    {z.name} (niveau {z.depth})
+                  </h3>
+                  <div className="flex space-x-2 mt-3">
+                    <button
+                      onClick={() => handleApprove(z)}
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`approve-${z.id}`}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleDecline(z)}
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`decline-${z.id}`}
+                    >
+                      Decline
+                    </button>
+                  </div>
+                </div>
+              ))
+          )}
+        </section>
       </div>
     </div>
   );
-};
-
-export default ZoneDashboardPage;
+}
