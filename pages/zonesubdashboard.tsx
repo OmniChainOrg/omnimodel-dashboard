@@ -52,6 +52,8 @@ export default function ZoneSubDashboardPage() {
     setPending(safeZones);
     console.log('Pending zones calculated:', safeZones);
   }, [zones]);
+  console.log('Root zones:', rootOnes);
+  console.log('Child zones:', childOnes);
 
   // split pending
   const rootOnes = pending.filter(z => z.depth === 1);
