@@ -107,20 +107,12 @@ const ZoneDashboardPage: React.FC = () => {
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
   const [recursionLevel, setRecursionLevel] = useState(4);
-  const [tick, setTick] = useState(0);
 
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: zoneDomain,
     archetypeName: prototypeZoneName,
     depth: recursionLevel,
   });
-
-  useEffect(() => {
-    console.log('Adding zoneRegistryChange event listener');
-    const onChange = () => setTick(t => t + 1);
-    window.addEventListener('zoneRegistryChange', onChange);
-    return () => window.removeEventListener('zoneRegistryChange', onChange);
-  }, []);
 
   useEffect(() => {
     if (!tree) return;
