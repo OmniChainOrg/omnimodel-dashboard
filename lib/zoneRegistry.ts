@@ -73,14 +73,19 @@ export function addZone(zone: Zone): void {
   window.dispatchEvent(new Event('zoneRegistryChange'));
 }
 
-// Import UseZoneArchetypeProps from useZoneArchetype.ts
-import { UseZoneArchetypeProps } from '../hooks/useZoneArchetype';
-
 /**
  * Get the zone registry based on the provided parameters.
  * This is a placeholder implementation. Replace with actual logic to fetch zones.
  */
-export async function getZoneRegistry({ archetypeId, archetypeName, depth }: UseZoneArchetypeProps): Promise<Zone | null> {
+export async function getZoneRegistry({
+  archetypeId,
+  archetypeName,
+  depth,
+}: {
+  archetypeId: string;
+  archetypeName: string;
+  depth: number;
+}): Promise<Zone | null> {
   try {
     // Placeholder logic to simulate fetching zones
     // Replace with actual API call or data fetching logic
@@ -98,7 +103,16 @@ export async function getZoneRegistry({ archetypeId, archetypeName, depth }: Use
 
     const data = await response.json();
     console.log('Fetched zone tree:', data);
-    return data;
+
+    // Ensure path is set for all zones
+    const ensurePath = (z: Zone): Zone => ({
+      ...z,
+      path: z.path || `/default/path/${z.id}`,
+      children: z.children?.map(child => ensurePath(child)),
+    });
+
+    const treeWithPaths = ensurePath(data);
+    return treeWithPaths;
   } catch (error) {
     console.error('Failed to fetch zone tree:', error);
     return null;
