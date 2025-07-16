@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ZoneRegistry,
   approveZone,
   declineZone,
   loadRegistryFromStorage,
+  getZoneRegistry,
   Zone
 } from '@/lib/zoneRegistry';
 
@@ -16,14 +16,15 @@ export default function ZoneSubDashboardPage() {
     console.log('Adding storage event listener');
     const handleStorage = (e: StorageEvent) => {
       if (e.key === 'zoneRegistry') {
-        setZones(loadRegistryFromStorage());
+        const updatedZones = loadRegistryFromStorage();
+        setZones(updatedZones);
         setTick(t => t + 1);
         console.log('Storage event triggered:', updatedZones);
       }
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-    }, []);
+  }, []);
 
   // tick to trigger updates
   const [tick, setTick] = useState(0);
@@ -31,7 +32,8 @@ export default function ZoneSubDashboardPage() {
   // On mount: listen for registry changes within the current tab
   useEffect(() => {
     const onChange = () => {
-      setZones(loadRegistryFromStorage());
+      const updatedZones = loadRegistryFromStorage();
+      setZones(updatedZones);
       setTick(t => t + 1);
     };
     console.log('Adding zoneRegistryChange event listener');
@@ -44,13 +46,13 @@ export default function ZoneSubDashboardPage() {
   // pending list, updated when tick changes
   const [pending, setPending] = useState<Zone[]>([]);
   useEffect(() => {
-    const root = ZoneRegistry.find(z => z.depth === 1);
+    const root = zones.find(z => z.depth === 1);
     const rootPath = root?.path || '';
-    const safeZones = ZoneRegistry.filter(
+    const safeZones = zones.filter(
       z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
     );
     setPending(safeZones);
-  }, [tick]);
+  }, [zones, tick]); // Depend on zones to ensure it updates when zones change
 
   // split pending
   const rootOnes = pending.filter(z => z.depth === 1);
@@ -98,11 +100,15 @@ export default function ZoneSubDashboardPage() {
                     <button
                       onClick={() => handleApprove(z)}
                       className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                    >Approve</button>
+                    >
+                      Approve
+                    </button>
                     <button
                       onClick={() => handleDecline(z)}
                       className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >Decline</button>
+                    >
+                      Decline
+                    </button>
                   </div>
                 </div>
               ))
@@ -118,12 +124,16 @@ export default function ZoneSubDashboardPage() {
               onClick={handleApproveAllChild}
               disabled={childOnes.length === 0}
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-            >Approve All</button>
+            >
+              Approve All
+            </button>
             <button
               onClick={handleDeclineAllChild}
               disabled={childOnes.length === 0}
               className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
-            >Decline All</button>
+            >
+              Decline All
+            </button>
           </div>
           <div className="bg-yellow-50 p-4 rounded-lg">
             {childOnes.length === 0 ? (
@@ -136,11 +146,15 @@ export default function ZoneSubDashboardPage() {
                     <button
                       onClick={() => handleApprove(z)}
                       className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                    >Approve</button>
+                    >
+                      Approve
+                    </button>
                     <button
                       onClick={() => handleDecline(z)}
                       className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                    >Decline</button>
+                    >
+                      Decline
+                    </button>
                   </div>
                 </div>
               ))
