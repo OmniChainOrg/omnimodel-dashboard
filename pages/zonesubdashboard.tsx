@@ -42,14 +42,18 @@ export default function ZoneSubDashboardPage() {
   // pending list, updated when zones change
   const [pending, setPending] = useState<Zone[]>([]);
   useEffect(() => {
-    const root = zones.find(z => z.depth === 1);
-    const rootPath = root?.path || '';
-    const safeZones = zones.filter(
-      z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
-    );
-    setPending(safeZones);
-    console.log('Pending zones calculated:', safeZones);
-  }, [zones]);
+  console.log('Updated zones state:', zones);
+}, [zones]);
+
+useEffect(() => {
+  const root = zones.find(z => z.depth === 1);
+  const rootPath = root?.path || '';
+  const safeZones = zones.filter(
+    z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
+  );
+  setPending(safeZones);
+  console.log('Pending zones calculated:', safeZones);
+}, [zones]);
 
   // split pending
   const rootOnes = pending.filter(z => z.depth === 1);
