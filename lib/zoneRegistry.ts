@@ -1,5 +1,4 @@
 // lib/zoneRegistry.ts
-
 export interface Zone {
   id: string;
   name: string;
@@ -22,7 +21,7 @@ let ZoneRegistry: Zone[] = [
   },
 ];
 
-/**
+/** 
  * Persist the in-memory registry to localStorage.
  * Internal helper used by registry operations.
  */
@@ -35,13 +34,13 @@ function persistRegistry(): void {
   }
 }
 
-/**
+/** 
  * Load and initialize the registry from localStorage.
  * Returns the loaded array or an empty array on errors.
  * Also seeds the in-memory registry for further operations.
  */
 export function loadRegistryFromStorage(): Zone[] {
-  // SSR / non-browser safety
+  // SSR/ non-browser safety
   if (typeof window === 'undefined') {
     return [];
   }
@@ -50,10 +49,8 @@ export function loadRegistryFromStorage(): Zone[] {
     const stored = localStorage.getItem('zoneRegistry');
     console.log('Loading from localStorage:', stored);
     const parsed: Zone[] = stored ? JSON.parse(stored) : [];
-
     // Replace in-memory contents
     ZoneRegistry = parsed;
-
     return parsed;
   } catch (e) {
     console.error('Failed to load registry from storage:', e);
@@ -61,7 +58,7 @@ export function loadRegistryFromStorage(): Zone[] {
   }
 }
 
-/**
+/** 
  * Add a new zone to the registry.
  * Skips if a zone with the same id already exists.
  * Persists the updated registry and notifies listeners.
@@ -71,50 +68,55 @@ export function addZone(zone: Zone): void {
   if (ZoneRegistry.some((z) => z.id === zone.id)) {
     return;
   }
-
-  // Append and persist
   ZoneRegistry.push(zone);
   persistRegistry();
+  window.dispatchEvent(new Event('zoneRegistryChange'));
+}
 
-  // Dispatch change event for subscribers
-  if (typeof window !== 'undefined') {
+/** 
+ * Get the zone registry based on the provided parameters.
+ * This is a placeholder implementation. Replace with actual logic to fetch zones.
+ */
+export async function getZoneRegistry({ archetypeId, archetypeName, depth }: UseZoneArchetypeProps): Promise<Zone | null> {
+  try {
+    // Placeholder logic to simulate fetching zones
+    // Replace with actual API call or data fetching logic
+    const response = await fetch(`/api/ce2/zoneGen`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ archetypeId, archetypeName, depth }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Fetched zone tree:', data);
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch zone tree:', error);
+    return null;
+  }
+}
+
+// Other functions like approveZone, declineZone, etc.
+export function approveZone(zone: Zone): void {
+  const index = ZoneRegistry.findIndex((z) => z.id === zone.id);
+  if (index !== -1) {
+    ZoneRegistry[index].approved = true;
+    persistRegistry();
     window.dispatchEvent(new Event('zoneRegistryChange'));
   }
 }
 
-/**
- * Mark an existing zone as approved.
- * Updates the registry in-place, persists, and notifies listeners.
- */
-export function approveZone(zone: Zone): void {
-  const target = ZoneRegistry.find((z) => z.id === zone.id);
-  if (target) {
-    target.approved = true;
-    persistRegistry();
-
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-    }
-  }
-}
-
-/**
- * Remove a zone by its identifier.
- * Persists the updated registry and notifies listeners.
- */
 export function declineZone(zoneId: string): void {
   const index = ZoneRegistry.findIndex((z) => z.id === zoneId);
   if (index !== -1) {
     ZoneRegistry.splice(index, 1);
     persistRegistry();
-
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('zoneRegistryChange'));
-    }
+    window.dispatchEvent(new Event('zoneRegistryChange'));
   }
-}
-
-// Export the current state of ZoneRegistry
-export function getZoneRegistry(): Zone[] {
-  return ZoneRegistry;
 }
