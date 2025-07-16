@@ -42,33 +42,54 @@ export default function ZoneSubDashboardPage() {
   // pending list, updated when zones change
   const [pending, setPending] = useState<Zone[]>([]);
   useEffect(() => {
-  console.log('Updated zones state:', zones);
-}, [zones]);
-
-useEffect(() => {
-  const root = zones.find(z => z.depth === 1);
-  console.log('Root zone found:', root);
-  const rootPath = root?.path || '';
-  console.log('Root path:', rootPath);
-  const safeZones = zones.filter(
-    z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
-  );
-  setPending(safeZones);
-  console.log('Pending zones calculated:', safeZones);
-}, [zones]);
+    const root = zones.find(z => z.depth === 1);
+    console.log('Root zone found:', root);
+    const rootPath = root?.path || '/default/path'; // Provide a default path
+    console.log('Root path:', rootPath);
+    const safeZones = zones.filter(
+      z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
+    );
+    setPending(safeZones);
+    console.log('Pending zones calculated:', safeZones);
+  }, [zones]);
 
   // split pending
   const rootOnes = pending.filter(z => z.depth === 1);
   const childOnes = pending.filter(z => z.depth > 1);
 
   // handlers
-  const handleApprove = (z: Zone) => approveZone(z);
-  const handleDecline = (z: Zone) => declineZone(z.id);
+  const handleApprove = (z: Zone) => {
+    approveZone(z);
+    setPending(prev => prev.filter(zone => zone.id !== z.id));
+  };
 
-  const handleApproveAllRoot = () => rootOnes.forEach(z => approveZone(z));
-  const handleDeclineAllRoot = () => rootOnes.forEach(z => declineZone(z.id));
-  const handleApproveAllChild = () => childOnes.forEach(z => approveZone(z));
-  const handleDeclineAllChild = () => childOnes.forEach(z => declineZone(z.id));
+  const handleDecline = (z: Zone) => {
+    declineZone(z.id);
+    setPending(prev => prev.filter(zone => zone.id !== z.id));
+  };
+
+  const handleApproveAllRoot = () => {
+    rootOnes.forEach(z => approveZone(z));
+    setPending(prev => prev.filter(zone => !rootOnes.includes(zone)));
+  };
+
+  const handleDeclineAllRoot = () => {
+    rootOnes.forEach(z => declineZone(z.id));
+    setPending(prev => prev.filter(zone => !rootOnes.includes(zone)));
+  };
+
+  const handleApproveAllChild = () => {
+    childOnes.forEach(z => approveZone(z));
+    setPending(prev => prev.filter(zone => !childOnes.includes(zone)));
+  };
+
+  const handleDeclineAllChild = () => {
+    childOnes.forEach(z => declineZone(z.id));
+    setPending(prev => prev.filter(zone => !childOnes.includes(zone)));
+  };
+
+  console.log('Root zones:', rootOnes);
+  console.log('Child zones:', childOnes);
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -80,14 +101,16 @@ useEffect(() => {
             <button
               onClick={handleApproveAllRoot}
               disabled={rootOnes.length === 0}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="approve-all-root"
             >
               Approve All
             </button>
             <button
               onClick={handleDeclineAllRoot}
               disabled={rootOnes.length === 0}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="decline-all-root"
             >
               Decline All
             </button>
@@ -102,13 +125,15 @@ useEffect(() => {
                   <div className="flex space-x-2 mt-3">
                     <button
                       onClick={() => handleApprove(z)}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`approve-${z.id}`}
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleDecline(z)}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`decline-${z.id}`}
                     >
                       Decline
                     </button>
@@ -126,14 +151,16 @@ useEffect(() => {
             <button
               onClick={handleApproveAllChild}
               disabled={childOnes.length === 0}
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="approve-all-child"
             >
               Approve All
             </button>
             <button
               onClick={handleDeclineAllChild}
               disabled={childOnes.length === 0}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50"
+              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="decline-all-child"
             >
               Decline All
             </button>
@@ -148,13 +175,15 @@ useEffect(() => {
                   <div className="flex space-x-2 mt-3">
                     <button
                       onClick={() => handleApprove(z)}
-                      className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`approve-${z.id}`}
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleDecline(z)}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`decline-${z.id}`}
                     >
                       Decline
                     </button>
