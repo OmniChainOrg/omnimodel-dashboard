@@ -1,8 +1,8 @@
+// pages/zonedashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { loadRegistryFromStorage } from '@/lib/zoneRegistry';
-import type { Zone } from '@/lib/zoneRegistry';
+import { loadRegistryFromStorage, addZone, Zone } from '@/lib/zoneRegistry';
 import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
@@ -110,7 +110,7 @@ export default function ZoneDashboardPage() {
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
-    depth: Number(depth),
+    depth: Number(depth) || 3,
   });
 
   useEffect(() => {
@@ -219,7 +219,7 @@ export default function ZoneDashboardPage() {
               type="number"
               min={1}
               max={6}
-              value={depth as string}
+              value={Number(depth) || 3}
               onChange={e => router.push(`/zonedashboard?archetypeId=${archetypeId}&archetypeName=${archetypeName}&depth=${e.target.value}`)}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
@@ -233,7 +233,7 @@ export default function ZoneDashboardPage() {
         </form>
 
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
-        {error && <p className="text-center text-red-600">Error: {error.message}</p>}
+        {error && <p className="text-center text-red-600">Error: {error}</p>}
         <ZoneNode zone={displayTree} settings={{}} onUpdate={() => {}} />
       </div>
     </div>
