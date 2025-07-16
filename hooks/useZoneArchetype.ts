@@ -4,7 +4,9 @@ import { useEffect, useState, useCallback } from 'react';
 export type Zone = {
   id: string;
   name: string;
+  path: string;
   depth: number;
+  approved: boolean;
   children?: Zone[];
 };
 
@@ -27,6 +29,7 @@ export function useZoneArchetype({
     setLoading(true);
     setError(null);
     try {
+      console.log('Fetching zone tree with parameters:', { archetypeId, archetypeName, depth });
       const res = await fetch('/api/ce2/zoneGen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,8 +37,19 @@ export function useZoneArchetype({
       });
       if (!res.ok) throw new Error(`Status ${res.status}`);
       const data: Zone = await res.json();
-      setTree(data);
+      console.log('Zone tree fetched successfully:', data);
+
+      // Ensure path is set for all zones
+      const ensurePath = (z: Zone): Zone => ({
+        ...z,
+        path: z.path || `/default/path/${z.id}`,
+        children: z.children?.map(child => ensurePath(child)),
+      });
+
+      const treeWithPaths = ensurePath(data);
+      setTree(treeWithPaths);
     } catch (e) {
+      console.error('Error fetching zone tree:', e);
       setError((e as Error).message);
     } finally {
       setLoading(false);
