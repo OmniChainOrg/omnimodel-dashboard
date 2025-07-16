@@ -116,10 +116,8 @@ const ZoneDashboardPage: React.FC = () => {
   });
 
   useEffect(() => {
-    loadRegistryFromStorage();
-    setTick(t => t + 1);
-    const onChange = () => setTick(t => t + 1);
     console.log('Adding zoneRegistryChange event listener');
+    const onChange = () => setTick(t => t + 1);
     window.addEventListener('zoneRegistryChange', onChange);
     return () => window.removeEventListener('zoneRegistryChange', onChange);
   }, []);
@@ -127,32 +125,27 @@ const ZoneDashboardPage: React.FC = () => {
   useEffect(() => {
     if (!tree) return;
 
-    localStorage.removeItem('zoneRegistry');
-
     const allZones: Zone[] = [];
 
-const collectZones = (z: ZoneType) => {
-  allZones.push({
-    id: z.id,
-    name: z.name,
-    path: z.path,
-    depth: z.depth,
-    approved: false,
-    children: [],
-  });
-  z.children?.forEach(child => collectZones(child as ZoneType));
-};
+    const collectZones = (z: ZoneType) => {
+      allZones.push({
+        id: z.id,
+        name: z.name,
+        path: z.path,
+        depth: z.depth,
+        approved: false,
+        children: [],
+      });
+      z.children?.forEach(child => collectZones(child as ZoneType));
+    };
 
-collectZones(tree as ZoneType);
+    collectZones(tree as ZoneType);
 
-// 💥 Atomic update
-console.log('Persisting zoneRegistry to localStorage', allZones);
-localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
-// Sync in-memory registry and notify listeners
-  loadRegistryFromStorage();
-  console.log('Dispatching zoneRegistryChange event');
-  window.dispatchEvent(new Event('zoneRegistryChange'));
-
+    // 💥 Atomic update
+    console.log('Persisting zoneRegistry to localStorage:', allZones);
+    localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
+    console.log('Dispatching zoneRegistryChange event');
+    window.dispatchEvent(new Event('zoneRegistryChange'));
   }, [tree]);
 
   const handleSubmit = (e: React.FormEvent) => {
