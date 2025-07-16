@@ -88,6 +88,9 @@ export default function ZoneSubDashboardPage() {
     setPending(prev => prev.filter(zone => !childOnes.includes(zone)));
   };
 
+  console.log('Root zones:', rootOnes);
+  console.log('Child zones:', childOnes);
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="space-y-8">
@@ -99,6 +102,7 @@ export default function ZoneSubDashboardPage() {
               onClick={handleApproveAllRoot}
               disabled={rootOnes.length === 0}
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="approve-all-root"
             >
               Approve All
             </button>
@@ -106,6 +110,7 @@ export default function ZoneSubDashboardPage() {
               onClick={handleDeclineAllRoot}
               disabled={rootOnes.length === 0}
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="decline-all-root"
             >
               Decline All
             </button>
@@ -121,12 +126,14 @@ export default function ZoneSubDashboardPage() {
                     <button
                       onClick={() => handleApprove(z)}
                       className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`approve-${z.id}`}
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleDecline(z)}
                       className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`decline-${z.id}`}
                     >
                       Decline
                     </button>
@@ -145,6 +152,7 @@ export default function ZoneSubDashboardPage() {
               onClick={handleApproveAllChild}
               disabled={childOnes.length === 0}
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="approve-all-child"
             >
               Approve All
             </button>
@@ -152,6 +160,7 @@ export default function ZoneSubDashboardPage() {
               onClick={handleDeclineAllChild}
               disabled={childOnes.length === 0}
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
+              data-id="decline-all-child"
             >
               Decline All
             </button>
@@ -167,12 +176,14 @@ export default function ZoneSubDashboardPage() {
                     <button
                       onClick={() => handleApprove(z)}
                       className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`approve-${z.id}`}
                     >
                       Approve
                     </button>
                     <button
                       onClick={() => handleDecline(z)}
                       className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                      data-id={`decline-${z.id}`}
                     >
                       Decline
                     </button>
