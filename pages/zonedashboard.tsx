@@ -123,7 +123,7 @@ const ZoneDashboardPage: React.FC = () => {
       allZones.push({
         id: z.id,
         name: z.name,
-        path: z.path, // Ensure path is correctly set
+        path: z.path || '/default/path', // Provide a default path if necessary
         depth: z.depth,
         approved: false,
         children: [],
