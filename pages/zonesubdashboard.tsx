@@ -47,7 +47,9 @@ export default function ZoneSubDashboardPage() {
 
 useEffect(() => {
   const root = zones.find(z => z.depth === 1);
+  console.log('Root zone found:', root);
   const rootPath = root?.path || '';
+  console.log('Root path:', rootPath);
   const safeZones = zones.filter(
     z => typeof z.path === 'string' && z.path.startsWith(rootPath) && !z.approved
   );
