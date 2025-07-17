@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { loadRegistryFromStorage, addZone } from '@/lib/zoneRegistry';
+import { loadRegistryFromStorage, addZone, Zone } from '@/lib/zoneRegistry';
 import type { Zone } from '@/types/Zone';
 import { motion } from 'framer-motion';
 
@@ -12,6 +12,18 @@ type ZoneType = Zone & { children?: ZoneType[] };
 interface ZoneSettings {
   info: string;
   confidentiality: 'Public' | 'Confidential' | 'Private';
+  simAgentProfile: 'Exploratory' | 'Defensive' | 'Predictive' | 'Ethical Validator' | 'Custom';
+  autoSimFrequency: 'Manual' | 'Threshold-based' | 'On Parent Drift' | 'Weekly';
+  impactDomain: 'Local Policy' | 'Regional Healthcare' | 'Global BioStrategy' | 'Ethical';
+  epistemicIntent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
+  ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
+  createdBy: 'user' | 'system';
+  guardianId: string;
+  guardianTrigger: {
+    drift: number;
+    entropy: number;
+    ethicalFlag: boolean;
+  };
 }
 
 // Recursive node with inline customization form
@@ -21,18 +33,81 @@ const ZoneNode: React.FC<{
   onUpdate: (zoneId: string, settings: ZoneSettings) => void;
 }> = ({ zone, settings, onUpdate }) => {
   const [expanded, setExpanded] = useState(false);
-  const currentSettings = settings[zone.id] || { info: '', confidentiality: 'Public' };
+  const currentSettings = settings[zone.id] || {
+    info: '',
+    confidentiality: 'Public',
+    simAgentProfile: 'Exploratory',
+    autoSimFrequency: 'Manual',
+    impactDomain: 'Local Policy',
+    epistemicIntent: 'Diagnostic',
+    ethicalSensitivity: 'Low',
+    createdBy: 'user',
+    guardianId: '',
+    guardianTrigger: {
+      drift: 0.5,
+      entropy: 0.7,
+      ethicalFlag: false,
+    },
+  };
   const [info, setInfo] = useState(currentSettings.info);
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
+  const [simAgentProfile, setSimAgentProfile] = useState<ZoneSettings['simAgentProfile']>(currentSettings.simAgentProfile);
+  const [autoSimFrequency, setAutoSimFrequency] = useState<ZoneSettings['autoSimFrequency']>(currentSettings.autoSimFrequency);
+  const [impactDomain, setImpactDomain] = useState<ZoneSettings['impactDomain']>(currentSettings.impactDomain);
+  const [epistemicIntent, setEpistemicIntent] = useState<ZoneSettings['epistemicIntent']>(currentSettings.epistemicIntent);
+  const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>(currentSettings.ethicalSensitivity);
+  const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>(currentSettings.createdBy);
+  const [guardianId, setGuardianId] = useState(currentSettings.guardianId);
+  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata?.sharedWithDAO || false);
+  const [drift, setDrift] = useState(currentSettings.guardianTrigger?.drift || 0.5);
+  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger?.entropy || 0.7);
+  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger?.ethicalFlag || false);
 
   const handleSave = () => {
-    onUpdate(zone.id, { info, confidentiality });
+    onUpdate(zone.id, {
+      info,
+      confidentiality,
+      simAgentProfile,
+      autoSimFrequency,
+      impactDomain,
+      epistemicIntent,
+      ethicalSensitivity,
+      createdBy,
+      guardianId,
+      metadata: {
+        sharedWithDAO,
+        confidentiality,
+        userNotes: info,
+      },
+      ce2: {
+        intent: epistemicIntent,
+        sensitivity: ethicalSensitivity,
+        createdBy,
+        guardianId,
+        guardianTrigger: {
+          drift,
+          entropy,
+          ethicalFlag,
+        },
+      },
+    });
     setExpanded(false);
   };
 
   const handleCancel = () => {
     setInfo(currentSettings.info);
     setConfidentiality(currentSettings.confidentiality);
+    setSimAgentProfile(currentSettings.simAgentProfile);
+    setAutoSimFrequency(currentSettings.autoSimFrequency);
+    setImpactDomain(currentSettings.impactDomain);
+    setEpistemicIntent(currentSettings.epistemicIntent);
+    setEthicalSensitivity(currentSettings.ethicalSensitivity);
+    setCreatedBy(currentSettings.createdBy);
+    setGuardianId(currentSettings.guardianId);
+    setSharedWithDAO(currentSettings.metadata?.sharedWithDAO || false);
+    setDrift(currentSettings.guardianTrigger?.drift || 0.5);
+    setEntropy(currentSettings.guardianTrigger?.entropy || 0.7);
+    setEthicalFlag(currentSettings.guardianTrigger?.ethicalFlag || false);
     setExpanded(false);
   };
 
@@ -66,6 +141,7 @@ const ZoneNode: React.FC<{
               className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows={3}
             />
+
             <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
             <select
               value={confidentiality}
@@ -76,6 +152,132 @@ const ZoneNode: React.FC<{
               <option>Confidential</option>
               <option>Private</option>
             </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Share with DAO</label>
+            <input
+              type="checkbox"
+              checked={sharedWithDAO}
+              onChange={e => setSharedWithDAO(e.target.checked)}
+              className="mt-1"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Simulation Profile</label>
+            <select
+              value={simAgentProfile}
+              onChange={e => setSimAgentProfile(e.target.value as ZoneSettings['simAgentProfile'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Exploratory</option>
+              <option>Defensive</option>
+              <option>Predictive</option>
+              <option>Ethical Validator</option>
+              <option>Custom</option>
+            </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Sim Trigger Mode</label>
+            <select
+              value={autoSimFrequency}
+              onChange={e => setAutoSimFrequency(e.target.value as ZoneSettings['autoSimFrequency'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Manual</option>
+              <option>Threshold-based</option>
+              <option>On Parent Drift</option>
+              <option>Weekly</option>
+            </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Impact Domain</label>
+            <select
+              value={impactDomain}
+              onChange={e => setImpactDomain(e.target.value as ZoneSettings['impactDomain'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Local Policy</option>
+              <option>Regional Healthcare</option>
+              <option>Global BioStrategy</option>
+              <option>Ethical</option>
+            </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Epistemic Intent</label>
+            <select
+              value={epistemicIntent}
+              onChange={e => setEpistemicIntent(e.target.value as ZoneSettings['epistemicIntent'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Diagnostic</option>
+              <option>Forecasting</option>
+              <option>Moral Risk Evaluation</option>
+              <option>Policy Proposal</option>
+              <option>Unknown / Exploratory</option>
+            </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Ethical Sensitivity</label>
+            <select
+              value={ethicalSensitivity}
+              onChange={e => setEthicalSensitivity(e.target.value as ZoneSettings['ethicalSensitivity'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+              <option>Extreme</option>
+            </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Created by</label>
+            <select
+              value={createdBy}
+              onChange={e => setCreatedBy(e.target.value as ZoneSettings['createdBy'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>user</option>
+              <option>system</option>
+            </select>
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Guardian ID</label>
+            <input
+              type="text"
+              value={guardianId}
+              onChange={e => setGuardianId(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
+            <div className="flex space-x-2">
+              <div>
+                <label className="text-sm text-gray-700">Drift</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={drift}
+                  onChange={e => setDrift(Number(e.target.value))}
+                  className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-700">Entropy</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={entropy}
+                  onChange={e => setEntropy(Number(e.target.value))}
+                  className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-700">Ethical Flag</label>
+                <input
+                  type="checkbox"
+                  checked={ethicalFlag}
+                  onChange={e => setEthicalFlag(e.target.checked)}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+
             <div className="mt-4 flex space-x-2">
               <button
                 onClick={handleSave}
@@ -108,6 +310,22 @@ export default function ZoneDashboardPage() {
   const router = useRouter();
   const { archetypeId, archetypeName, depth } = router.query;
 
+  const [zoneDomain, setZoneDomain] = useState('Biotech');
+  const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
+  const [recursionLevel, setRecursionLevel] = useState(4);
+  const [simAgentProfile, setSimAgentProfile] = useState('Exploratory');
+  const [autoSimFrequency, setAutoSimFrequency] = useState('Manual');
+  const [impactDomain, setImpactDomain] = useState('Local Policy');
+  const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>('Public');
+  const [sharedWithDAO, setSharedWithDAO] = useState(false);
+  const [epistemicIntent, setEpistemicIntent] = useState('Diagnostic');
+  const [ethicalSensitivity, setEthicalSensitivity] = useState('Low');
+  const [createdBy, setCreatedBy] = useState('user');
+  const [guardianId, setGuardianId] = useState('');
+  const [drift, setDrift] = useState(0.5);
+  const [entropy, setEntropy] = useState(0.7);
+  const [ethicalFlag, setEthicalFlag] = useState(false);
+
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
@@ -126,6 +344,23 @@ export default function ZoneDashboardPage() {
         path: z.path || `/default/path/${z.id}`, // Provide a default path if necessary
         depth: z.depth,
         approved: false,
+        archetype: archetypeId as string,
+        metadata: {
+          sharedWithDAO,
+          confidentiality,
+          userNotes: '',
+        },
+        ce2: {
+          intent: epistemicIntent,
+          sensitivity: ethicalSensitivity,
+          createdBy,
+          guardianId,
+          guardianTrigger: {
+            drift,
+            entropy,
+            ethicalFlag,
+          },
+        },
         children: [],
       });
       z.children?.forEach(child => collectZones(child as ZoneType));
@@ -138,7 +373,7 @@ export default function ZoneDashboardPage() {
     localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
     console.log('Dispatching zoneRegistryChange event');
     window.dispatchEvent(new Event('zoneRegistryChange'));
-  }, [tree]);
+  }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,10 +386,36 @@ export default function ZoneDashboardPage() {
     path: '/dashboard/root',
     approved: false,
     depth: 1,
+    archetype: 'Biotech',
+    metadata: {
+      sharedWithDAO: false,
+      confidentiality: 'Public',
+      userNotes: '',
+    },
+    ce2: {
+      intent: 'Diagnostic',
+      sensitivity: 'Low',
+      createdBy: 'user',
+      guardianId: 'default_guardian',
+      guardianTrigger: {
+        drift: 0.5,
+        entropy: 0.7,
+        ethicalFlag: false,
+      },
+    },
     children: [],
   };
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
+
+  const [settings, setSettings] = useState<Record<string, ZoneSettings>>({});
+
+  const handleUpdate = (zoneId: string, updatedSettings: ZoneSettings) => {
+    setSettings(prev => ({
+      ...prev,
+      [zoneId]: updatedSettings,
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
@@ -164,8 +425,8 @@ export default function ZoneDashboardPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
             <select
-              value={archetypeId as string}
-              onChange={e => router.push(`/zonedashboard?archetypeId=${e.target.value}&archetypeName=${archetypeName}&depth=${depth}`)}
+              value={zoneDomain}
+              onChange={e => setZoneDomain(e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             >
               <option>Biotech</option>
@@ -192,8 +453,8 @@ export default function ZoneDashboardPage() {
             </label>
             <input
               type="text"
-              value={archetypeName as string}
-              onChange={e => router.push(`/zonedashboard?archetypeId=${archetypeId}&archetypeName=${e.target.value}&depth=${depth}`)}
+              value={prototypeZoneName}
+              onChange={e => setPrototypeZoneName(e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
@@ -203,10 +464,156 @@ export default function ZoneDashboardPage() {
               type="number"
               min={1}
               max={6}
-              value={Number(depth) || 3}
-              onChange={e => router.push(`/zonedashboard?archetypeId=${archetypeId}&archetypeName=${archetypeName}&depth=${e.target.value}`)}
+              value={recursionLevel}
+              onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Simulation Profile</label>
+            <select
+              value={simAgentProfile}
+              onChange={e => setSimAgentProfile(e.target.value as ZoneSettings['simAgentProfile'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Exploratory</option>
+              <option>Defensive</option>
+              <option>Predictive</option>
+              <option>Ethical Validator</option>
+              <option>Custom</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Sim Trigger Mode</label>
+            <select
+              value={autoSimFrequency}
+              onChange={e => setAutoSimFrequency(e.target.value as ZoneSettings['autoSimFrequency'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Manual</option>
+              <option>Threshold-based</option>
+              <option>On Parent Drift</option>
+              <option>Weekly</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Impact Domain</label>
+            <select
+              value={impactDomain}
+              onChange={e => setImpactDomain(e.target.value as ZoneSettings['impactDomain'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Local Policy</option>
+              <option>Regional Healthcare</option>
+              <option>Global BioStrategy</option>
+              <option>Ethical</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Confidentiality Level</label>
+            <select
+              value={confidentiality}
+              onChange={e => setConfidentiality(e.target.value as ZoneSettings['confidentiality'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Public</option>
+              <option>Confidential</option>
+              <option>Private</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Share with DAO</label>
+            <input
+              type="checkbox"
+              checked={sharedWithDAO}
+              onChange={e => setSharedWithDAO(e.target.checked)}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Epistemic Intent</label>
+            <select
+              value={epistemicIntent}
+              onChange={e => setEpistemicIntent(e.target.value as ZoneSettings['epistemicIntent'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Diagnostic</option>
+              <option>Forecasting</option>
+              <option>Moral Risk Evaluation</option>
+              <option>Policy Proposal</option>
+              <option>Unknown / Exploratory</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Ethical Sensitivity</label>
+            <select
+              value={ethicalSensitivity}
+              onChange={e => setEthicalSensitivity(e.target.value as ZoneSettings['ethicalSensitivity'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+              <option>Extreme</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Created by</label>
+            <select
+              value={createdBy}
+              onChange={e => setCreatedBy(e.target.value as ZoneSettings['createdBy'])}
+              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option>user</option>
+              <option>system</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Guardian ID</label>
+            <input
+              type="text"
+              value={guardianId}
+              onChange={e => setGuardianId(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Guardian Trigger Level</label>
+            <div className="flex space-x-2">
+              <div>
+                <label className="text-sm text-gray-700">Drift</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={drift}
+                  onChange={e => setDrift(Number(e.target.value))}
+                  className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-700">Entropy</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={entropy}
+                  onChange={e => setEntropy(Number(e.target.value))}
+                  className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-700">Ethical Flag</label>
+                <input
+                  type="checkbox"
+                  checked={ethicalFlag}
+                  onChange={e => setEthicalFlag(e.target.checked)}
+                  className="mt-1"
+                />
+              </div>
+            </div>
           </div>
           <button
             type="submit"
@@ -218,7 +625,7 @@ export default function ZoneDashboardPage() {
 
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
-        <ZoneNode zone={displayTree} settings={{}} onUpdate={() => {}} />
+        <ZoneNode zone={displayTree} settings={settings} onUpdate={handleUpdate} />
       </div>
     </div>
   );
