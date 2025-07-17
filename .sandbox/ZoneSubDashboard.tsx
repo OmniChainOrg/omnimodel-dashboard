@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { approveZone, declineZone } from '@/lib/zoneRegistry';
-import { Zone } from '@/lib/zoneRegistry';
+import { Zone, approveZone, declineZone } from '@/lib/zoneRegistry';
 
 interface ZoneSubDashboardProps {
   zone: Zone;
