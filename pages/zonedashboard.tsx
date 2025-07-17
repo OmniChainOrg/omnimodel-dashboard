@@ -86,10 +86,16 @@ const ZoneNode: React.FC<{
         sharedWithDAO,
         userNotes: info,
       },
-      guardianTrigger: {
-        drift,
-        entropy,
-        ethicalFlag,
+      ce2: {
+        intent: epistemicIntent,
+        sensitivity: ethicalSensitivity,
+        createdBy,
+        guardianId,
+        guardianTrigger: {
+          drift,
+          entropy,
+          ethicalFlag,
+        },
       },
     });
     setExpanded(false);
@@ -349,7 +355,7 @@ export default function ZoneDashboardPage() {
         metadata: {
           sharedWithDAO,
           confidentiality,
-          userNotes: info,
+          userNotes: '', // Initialize userNotes to an empty string
         },
         ce2: {
           intent: epistemicIntent,
@@ -378,17 +384,7 @@ export default function ZoneDashboardPage() {
     localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
     console.log('Dispatching zoneRegistryChange event');
     window.dispatchEvent(new Event('zoneRegistryChange'));
-
-    // Send zones to email for manual validation
-    fetch('/api/sendEmail', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ zones: allZones }),
-    })
-    .then(response => response.json())
-    .then(data => console.log('Email sent:', data))
-    .catch(error => console.error('Error sending email:', error));
-  }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag, info]);
+  }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
