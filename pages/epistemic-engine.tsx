@@ -6,7 +6,9 @@ import EpistemicEngine from '../components/EpistemicEngine';
 const dummyZone: Zone = {
   id: 'root',
   name: 'Root Zone Prototype',
+  path: '/root',
   depth: 1,
+  approved: false,
   children: [],
 };
 
