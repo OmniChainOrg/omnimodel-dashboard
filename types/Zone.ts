@@ -8,4 +8,5 @@ export type Zone = {
   archetype?: string;       // Optional: base type of the zone
   parentId?: string | null; // Optional: parent zone ID for nesting
   metadata?: Record<string, any>; // Optional: flexible metadata for extensibility
+  children?: Zone[];        // Optional: child zones
 };
