@@ -9,4 +9,15 @@ export type Zone = {
   parentId?: string | null; // Optional: parent zone ID for nesting
   metadata?: Record<string, any>; // Optional: flexible metadata for extensibility
   children?: Zone[];        // Optional: child zones
+  ce2?: {
+    intent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
+    sensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
+    createdBy: 'user' | 'system';
+    guardianId: string;
+    guardianTrigger: {
+      drift: number;
+      entropy: number;
+      ethicalFlag: boolean;
+    };
+  };
 };
