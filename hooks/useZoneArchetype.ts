@@ -1,6 +1,14 @@
 // hooks/useZoneArchetype.ts
 import { useEffect, useState, useCallback } from 'react';
-import { Zone } from '@/lib/zoneRegistry';
+
+export interface Zone {
+  id: string;
+  name: string;
+  path: string;
+  depth: number;
+  approved: boolean;
+  children?: Zone[];
+}
 
 interface UseZoneArchetypeOptions {
   archetypeId: string;
