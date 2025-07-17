@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { getZoneRegistry, approveZone, declineZone } from '../../lib/zoneRegistry';
-import type { Zone } from '../../lib/zoneRegistry';
+import { loadRegistryFromStorage, addZone, Zone } from '@/lib/zoneRegistry';
 import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
