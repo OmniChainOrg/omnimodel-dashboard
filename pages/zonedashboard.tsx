@@ -24,6 +24,10 @@ interface ZoneSettings {
     entropy: number;
     ethicalFlag: boolean;
   };
+  metadata: {
+    sharedWithDAO: boolean;
+    userNotes: string;
+  };
 }
 
 // Recursive node with inline customization form
@@ -48,6 +52,10 @@ const ZoneNode: React.FC<{
       entropy: 0.7,
       ethicalFlag: false,
     },
+    metadata: {
+      sharedWithDAO: false,
+      userNotes: '',
+    },
   };
   const [info, setInfo] = useState(currentSettings.info);
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
@@ -58,10 +66,10 @@ const ZoneNode: React.FC<{
   const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>(currentSettings.ethicalSensitivity);
   const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>(currentSettings.createdBy);
   const [guardianId, setGuardianId] = useState(currentSettings.guardianId);
-  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata?.sharedWithDAO || false);
-  const [drift, setDrift] = useState(currentSettings.guardianTrigger?.drift || 0.5);
-  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger?.entropy || 0.7);
-  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger?.ethicalFlag || false);
+  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata.sharedWithDAO || false);
+  const [drift, setDrift] = useState(currentSettings.guardianTrigger.drift || 0.5);
+  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger.entropy || 0.7);
+  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger.ethicalFlag || false);
 
   const handleSave = () => {
     onUpdate(zone.id, {
@@ -76,19 +84,12 @@ const ZoneNode: React.FC<{
       guardianId,
       metadata: {
         sharedWithDAO,
-        confidentiality,
         userNotes: info,
       },
-      ce2: {
-        intent: epistemicIntent,
-        sensitivity: ethicalSensitivity,
-        createdBy,
-        guardianId,
-        guardianTrigger: {
-          drift,
-          entropy,
-          ethicalFlag,
-        },
+      guardianTrigger: {
+        drift,
+        entropy,
+        ethicalFlag,
       },
     });
     setExpanded(false);
@@ -104,10 +105,10 @@ const ZoneNode: React.FC<{
     setEthicalSensitivity(currentSettings.ethicalSensitivity);
     setCreatedBy(currentSettings.createdBy);
     setGuardianId(currentSettings.guardianId);
-    setSharedWithDAO(currentSettings.metadata?.sharedWithDAO || false);
-    setDrift(currentSettings.guardianTrigger?.drift || 0.5);
-    setEntropy(currentSettings.guardianTrigger?.entropy || 0.7);
-    setEthicalFlag(currentSettings.guardianTrigger?.ethicalFlag || false);
+    setSharedWithDAO(currentSettings.metadata.sharedWithDAO || false);
+    setDrift(currentSettings.guardianTrigger.drift || 0.5);
+    setEntropy(currentSettings.guardianTrigger.entropy || 0.7);
+    setEthicalFlag(currentSettings.guardianTrigger.ethicalFlag || false);
     setExpanded(false);
   };
 
@@ -348,7 +349,7 @@ export default function ZoneDashboardPage() {
         metadata: {
           sharedWithDAO,
           confidentiality,
-          userNotes: '',
+          userNotes: info,
         },
         ce2: {
           intent: epistemicIntent,
@@ -361,9 +362,13 @@ export default function ZoneDashboardPage() {
             ethicalFlag,
           },
         },
-        children: [],
+        children: z.children?.map(child => ({
+          ...child,
+          path: child.path || `/default/path/${child.id}`,
+          approved: false,
+          children: [],
+        })) || [],
       });
-      z.children?.forEach(child => collectZones(child as ZoneType));
     };
 
     collectZones(tree as ZoneType);
@@ -373,7 +378,17 @@ export default function ZoneDashboardPage() {
     localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
     console.log('Dispatching zoneRegistryChange event');
     window.dispatchEvent(new Event('zoneRegistryChange'));
-  }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag]);
+
+    // Send zones to email for manual validation
+    fetch('/api/sendEmail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ zones: allZones }),
+    })
+    .then(response => response.json())
+    .then(data => console.log('Email sent:', data))
+    .catch(error => console.error('Error sending email:', error));
+  }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag, info]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -386,7 +401,8 @@ export default function ZoneDashboardPage() {
     path: '/dashboard/root',
     approved: false,
     depth: 1,
-    archetype: 'Biotech',
+    archetype: undefined,
+    parentId: null,
     metadata: {
       sharedWithDAO: false,
       confidentiality: 'Public',
