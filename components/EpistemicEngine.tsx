@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
+import type { Zone } from '@/types/Zone';
 import { Card } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import type { Zone } from '@/types/Zone';
 
 // Chart.js and react-chartjs-2 imports for dynamic graphic
 import {
