@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Zone } from "../hooks/useZoneArchetype";
+import { Zone } from '@/lib/zoneRegistry';
 import ExpandedEvent from "./ExpandedEvent";
 import { Card, CardContent } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
