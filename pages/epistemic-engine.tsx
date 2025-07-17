@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zone } from '../hooks/useZoneArchetype';
+import { Zone } from '@/lib/zoneRegistry';
 import EpistemicEngine from '../components/EpistemicEngine';
 
 // Define a dummy zone to satisfy the Zone type
