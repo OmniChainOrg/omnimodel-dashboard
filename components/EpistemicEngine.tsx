@@ -18,7 +18,6 @@ import { Line } from "react-chartjs-2";
 ChartJS.register(LineElement, PointElement, LinearScale, CategoryScale, Tooltip);
 
 // Zone context import
-import { Zone as ArchetypeZone } from "../hooks/useZoneArchetype";
 
 interface ChartProps {
   entropy: number;
