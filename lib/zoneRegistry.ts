@@ -1,12 +1,5 @@
 // lib/zoneRegistry.ts
-export interface Zone {
-  id: string;
-  name: string;
-  path: string;
-  approved: boolean;
-  depth: number;
-  children: Zone[];
-}
+import type { Zone } from '@/types/Zone';
 
 // In-memory registry seeded with a root prototype
 // Default root zone used when no registry is persisted yet
