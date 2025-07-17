@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";M
 import { motion } from "framer-motion";
+import { Zone } from '@/lib/zoneRegistry';
+
 
 // Chart.js and react-chartjs-2 imports for dynamic graphic
 import {
