@@ -89,7 +89,7 @@ const ZoneNode: React.FC<{
                 Cancel
               </button>
             </div>
-          </div>
+          </0>
         )}
       </div>
       {zone.children && zone.children.length > 0 && (
@@ -150,24 +150,7 @@ export default function ZoneDashboardPage() {
     path: '/dashboard/root',
     approved: false,
     depth: 1,
-    children: [
-      {
-        id: 'sub1',
-        name: 'SubZone A',
-        path: '/dashboard/root/sub1',
-        approved: false,
-        depth: 2,
-        children: []
-      },
-      {
-        id: 'sub2',
-        name: 'SubZone B',
-        path: '/dashboard/root/sub2',
-        approved: false,
-        depth: 2,
-        children: []
-      }
-    ]
+    children: [],
   };
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
