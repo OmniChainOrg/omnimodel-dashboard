@@ -147,48 +147,4 @@ export default function ZoneSubDashboardPage() {
               onClick={handleApproveAllChild}
               disabled={childOnes.length === 0}
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
-              data-id="approve-all-child"
-            >
-              Approve All
-            </button>
-            <button
-              onClick={handleDeclineAllChild}
-              disabled={childOnes.length === 0}
-              className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50"
-              data-id="decline-all-child"
-            >
-              Decline All
-            </button>
-          </div>
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            {childOnes.length === 0 ? (
-              <p className="text-gray-500">Aucune child zone en attente.</p>
-            ) : (
-              childOnes.map(z => (
-                <div key={z.id} className="bg-white p-4 mb-4 rounded-lg shadow">
-                  <h3 className="text-lg font-semibold">{z.name} (niveau {z.depth})</h3>
-                  <div className="flex space-x-2 mt-3">
-                    <button
-                      onClick={() => handleApprove(z)}
-                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-                      data-id={`approve-${z.id}`}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleDecline(z)}
-                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-                      data-id={`decline-${z.id}`}
-                    >
-                      Decline
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-}
+              data-id="approve-all
