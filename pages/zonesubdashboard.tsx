@@ -1,6 +1,6 @@
 // pages/zonesubdashboard.tsx
 import React, { useState, useEffect } from 'react';
-import { approveZone, declineZone, loadRegistryFromStorage, Zone } from '@/lib/zoneRegistry';
+import { approveZone, declineZone, loadRegistryFromStorage } from '@/lib/zoneRegistry';
 import type { Zone } from '@/types/Zone';
 
 export default function ZoneSubDashboardPage() {
