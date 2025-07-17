@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zone } from '@/lib/zoneRegistry';
+import type { Zone } from '@/types/Zone';
 import EpistemicEngine from '../components/EpistemicEngine';
 
 // Define a dummy zone to satisfy the Zone type
@@ -10,6 +10,9 @@ const dummyZone: Zone = {
   depth: 1,
   approved: false,
   children: [],
+  archetype: undefined, // Optional
+  parentId: null,       // Optional
+  metadata: {},         // Optional
 };
 
 // Page component rendering the EpistemicEngine with the dummy zone
