@@ -1,6 +1,7 @@
 // pages/memory/index.tsx
 import React, { useState, useEffect } from 'react';
-import { loadRegistryFromStorage, approveZone, declineZone, Zone } from '@/lib/zoneRegistry';
+import { loadRegistryFromStorage, approveZone, declineZone } from '@/lib/zoneRegistry';
+import type { Zone } from '@/types/Zone';
 
 export default function MemoryPage() {
   const [pendingZones, setPendingZones] = useState<Zone[]>([]);
