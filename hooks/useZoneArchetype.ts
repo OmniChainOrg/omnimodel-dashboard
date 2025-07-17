@@ -1,8 +1,8 @@
 // hooks/useZoneArchetype.ts
 import { useEffect, useState, useCallback } from 'react';
-import { getZoneRegistry, Zone } from '@/lib/zoneRegistry';
+import { Zone } from '@/lib/zoneRegistry';
 
-export interface UseZoneArchetypeProps {
+interface UseZoneArchetypeOptions {
   archetypeId: string;
   archetypeName: string;
   depth?: number;
@@ -12,7 +12,7 @@ export function useZoneArchetype({
   archetypeId,
   archetypeName,
   depth = 3,
-}: UseZoneArchetypeProps) {
+}: UseZoneArchetypeOptions) {
   const [tree, setTree] = useState<Zone | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
