@@ -89,7 +89,7 @@ const ZoneNode: React.FC<{
                 Cancel
               </button>
             </div>
-          </0>
+          </div>
         )}
       </div>
       {zone.children && zone.children.length > 0 && (
