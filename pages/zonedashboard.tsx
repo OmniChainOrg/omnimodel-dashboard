@@ -8,16 +8,6 @@ import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
 
-// pages/zonedashboard.tsx
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { loadRegistryFromStorage, addZone, Zone } from '@/lib/zoneRegistry';
-import type { Zone } from '@/types/Zone';
-import { motion } from 'framer-motion';
-
-type ZoneType = Zone & { children?: ZoneType[] };
-
 // Settings type for each zone customization
 interface ZoneSettings {
   info: string;
@@ -38,17 +28,6 @@ interface ZoneSettings {
     sharedWithDAO: boolean;
     confidentiality: 'Public' | 'Confidential' | 'Private';
     userNotes: string;
-  };
-  ce2: {
-    intent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
-    sensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
-    createdBy: 'user' | 'system';
-    guardianId: string;
-    guardianTrigger: {
-      drift: number;
-      entropy: number;
-      ethicalFlag: boolean;
-    };
   };
 }
 
@@ -78,17 +57,6 @@ const ZoneNode: React.FC<{
       sharedWithDAO: false,
       confidentiality: 'Public',
       userNotes: '',
-    },
-    ce2: {
-      intent: 'Diagnostic',
-      sensitivity: 'Low',
-      createdBy: 'user',
-      guardianId: 'default_guardian',
-      guardianTrigger: {
-        drift: 0.5,
-        entropy: 0.7,
-        ethicalFlag: false,
-      },
     },
   };
   const [info, setInfo] = useState(currentSettings.info);
@@ -387,6 +355,7 @@ export default function ZoneDashboardPage() {
         depth: z.depth,
         approved: false,
         archetype: archetypeId as string,
+        parentId: z.parentId || null,
         metadata: {
           sharedWithDAO,
           confidentiality,
@@ -419,7 +388,7 @@ export default function ZoneDashboardPage() {
     localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
     console.log('Dispatching zoneRegistryChange event');
     window.dispatchEvent(new Event('zoneRegistryChange'));
-  }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag, info]);
+  }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -485,7 +454,7 @@ export default function ZoneDashboardPage() {
               <option>DeTrade</option>
               <option>DeInvest</option>
               <option>Nonprofit</option>
-              <option>Philanthropy
+              <option>Philanthropy</option>
               <option>Humanitarian</option>
               <option>AI ethics</option>
               <option>dApps DevOps</option>
