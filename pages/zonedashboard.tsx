@@ -2,34 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { loadRegistryFromStorage, addZone } from '@/lib/zoneRegistry';
-import type { Zone } from '@/types/Zone';
+import { loadRegistryFromStorage, addZone, Zone } from '@/lib/zoneRegistry';
+import type { ZoneSettings } from '@/types/Zone';
 import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
-
-// Settings type for each zone customization
-interface ZoneSettings {
-  info: string;
-  confidentiality: 'Public' | 'Confidential' | 'Private';
-  simAgentProfile: 'Exploratory' | 'Defensive' | 'Predictive' | 'Ethical Validator' | 'Custom';
-  autoSimFrequency: 'Manual' | 'Threshold-based' | 'On Parent Drift' | 'Weekly';
-  impactDomain: 'Local Policy' | 'Regional Healthcare' | 'Global BioStrategy' | 'Ethical';
-  epistemicIntent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
-  ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
-  createdBy: 'user' | 'system';
-  guardianId: string;
-  guardianTrigger: {
-    drift: number;
-    entropy: number;
-    ethicalFlag: boolean;
-  };
-  metadata: {
-    sharedWithDAO: boolean;
-    confidentiality: 'Public' | 'Confidential' | 'Private';
-    userNotes: string;
-  };
-}
 
 // Recursive node with inline customization form
 const ZoneNode: React.FC<{
@@ -58,6 +35,17 @@ const ZoneNode: React.FC<{
       confidentiality: 'Public',
       userNotes: '',
     },
+    ce2: {
+      intent: 'Diagnostic',
+      sensitivity: 'Low',
+      createdBy: 'user',
+      guardianId: '',
+      guardianTrigger: {
+        drift: 0.5,
+        entropy: 0.7,
+        ethicalFlag: false,
+      },
+    },
   };
   const [info, setInfo] = useState(currentSettings.info);
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
@@ -68,11 +56,10 @@ const ZoneNode: React.FC<{
   const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>(currentSettings.ethicalSensitivity);
   const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>(currentSettings.createdBy);
   const [guardianId, setGuardianId] = useState(currentSettings.guardianId);
-  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata.sharedWithDAO || false);
-  const [drift, setDrift] = useState(currentSettings.guardianTrigger.drift || 0.5);
-  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger.entropy || 0.7);
-  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger.ethicalFlag || false);
-
+  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata?.sharedWithDAO || false);
+  const [drift, setDrift] = useState(currentSettings.guardianTrigger?.drift || 0.5);
+  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger?.entropy || 0.7);
+  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger?.ethicalFlag || false);
   const handleSave = () => {
     onUpdate(zone.id, {
       info,
@@ -100,10 +87,14 @@ const ZoneNode: React.FC<{
           ethicalFlag,
         },
       },
+      guardianTrigger: {
+        drift,
+        entropy,
+        ethicalFlag,
+      },
     });
     setExpanded(false);
   };
-
   const handleCancel = () => {
     setInfo(currentSettings.info);
     setConfidentiality(currentSettings.confidentiality);
@@ -114,13 +105,12 @@ const ZoneNode: React.FC<{
     setEthicalSensitivity(currentSettings.ethicalSensitivity);
     setCreatedBy(currentSettings.createdBy);
     setGuardianId(currentSettings.guardianId);
-    setSharedWithDAO(currentSettings.metadata.sharedWithDAO || false);
-    setDrift(currentSettings.guardianTrigger.drift || 0.5);
-    setEntropy(currentSettings.guardianTrigger.entropy || 0.7);
-    setEthicalFlag(currentSettings.guardianTrigger.ethicalFlag || false);
+    setSharedWithDAO(currentSettings.metadata?.sharedWithDAO || false);
+    setDrift(currentSettings.guardianTrigger?.drift || 0.5);
+    setEntropy(currentSettings.guardianTrigger?.entropy || 0.7);
+    setEthicalFlag(currentSettings.guardianTrigger?.ethicalFlag || false);
     setExpanded(false);
   };
-
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -151,7 +141,6 @@ const ZoneNode: React.FC<{
               className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows={3}
             />
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
             <select
               value={confidentiality}
@@ -162,7 +151,6 @@ const ZoneNode: React.FC<{
               <option>Confidential</option>
               <option>Private</option>
             </select>
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Share with DAO</label>
             <input
               type="checkbox"
@@ -170,7 +158,6 @@ const ZoneNode: React.FC<{
               onChange={e => setSharedWithDAO(e.target.checked)}
               className="mt-1"
             />
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Simulation Profile</label>
             <select
               value={simAgentProfile}
@@ -183,7 +170,6 @@ const ZoneNode: React.FC<{
               <option>Ethical Validator</option>
               <option>Custom</option>
             </select>
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Sim Trigger Mode</label>
             <select
               value={autoSimFrequency}
@@ -195,7 +181,6 @@ const ZoneNode: React.FC<{
               <option>On Parent Drift</option>
               <option>Weekly</option>
             </select>
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Impact Domain</label>
             <select
               value={impactDomain}
@@ -207,7 +192,6 @@ const ZoneNode: React.FC<{
               <option>Global BioStrategy</option>
               <option>Ethical</option>
             </select>
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Epistemic Intent</label>
             <select
               value={epistemicIntent}
@@ -220,7 +204,6 @@ const ZoneNode: React.FC<{
               <option>Policy Proposal</option>
               <option>Unknown / Exploratory</option>
             </select>
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Ethical Sensitivity</label>
             <select
               value={ethicalSensitivity}
@@ -232,7 +215,6 @@ const ZoneNode: React.FC<{
               <option>High</option>
               <option>Extreme</option>
             </select>
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Created by</label>
             <select
               value={createdBy}
@@ -242,7 +224,6 @@ const ZoneNode: React.FC<{
               <option>user</option>
               <option>system</option>
             </select>
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Guardian ID</label>
             <input
               type="text"
@@ -250,7 +231,6 @@ const ZoneNode: React.FC<{
               onChange={e => setGuardianId(e.target.value)}
               className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
             />
-
             <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
             <div className="flex space-x-2">
               <div>
@@ -287,7 +267,6 @@ const ZoneNode: React.FC<{
                 />
               </div>
             </div>
-
             <div className="mt-4 flex space-x-2">
               <button
                 onClick={handleSave}
@@ -319,7 +298,6 @@ const ZoneNode: React.FC<{
 export default function ZoneDashboardPage() {
   const router = useRouter();
   const { archetypeId, archetypeName, depth } = router.query;
-
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
   const [recursionLevel, setRecursionLevel] = useState(4);
@@ -335,7 +313,6 @@ export default function ZoneDashboardPage() {
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
   const [ethicalFlag, setEthicalFlag] = useState(false);
-
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
@@ -344,9 +321,7 @@ export default function ZoneDashboardPage() {
 
   useEffect(() => {
     if (!tree) return;
-
     const allZones: Zone[] = [];
-
     const collectZones = (z: ZoneType) => {
       allZones.push({
         id: z.id,
@@ -355,11 +330,10 @@ export default function ZoneDashboardPage() {
         depth: z.depth,
         approved: false,
         archetype: archetypeId as string,
-        parentId: z.parentId || null,
         metadata: {
           sharedWithDAO,
           confidentiality,
-          userNotes: info,
+          userNotes: '',
         },
         ce2: {
           intent: epistemicIntent,
@@ -372,17 +346,11 @@ export default function ZoneDashboardPage() {
             ethicalFlag,
           },
         },
-        children: z.children?.map(child => ({
-          ...child,
-          path: child.path || `/default/path/${child.id}`,
-          approved: false,
-          children: [],
-        })) || [],
+        children: [],
       });
+      z.children?.forEach(child => collectZones(child as ZoneType));
     };
-
     collectZones(tree as ZoneType);
-
     // Atomic update
     console.log('Persisting zoneRegistry to localStorage:', allZones);
     localStorage.setItem('zoneRegistry', JSON.stringify(allZones));
@@ -401,8 +369,7 @@ export default function ZoneDashboardPage() {
     path: '/dashboard/root',
     approved: false,
     depth: 1,
-    archetype: undefined,
-    parentId: null,
+    archetype: 'Biotech',
     metadata: {
       sharedWithDAO: false,
       confidentiality: 'Public',
@@ -436,7 +403,7 @@ export default function ZoneDashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">CE² Zone Prototype Generator</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">CEÂ² Zone Prototype Generator</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
@@ -638,7 +605,6 @@ export default function ZoneDashboardPage() {
             Generate Zones
           </button>
         </form>
-
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
         <ZoneNode zone={displayTree} settings={settings} onUpdate={handleUpdate} />
