@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { loadRegistryFromStorage, addZone } from '@/lib/zoneRegistry';
 import type { Zone } from '@/types/Zone';
-import type { ZoneSettings } from '@/types/Zone';
 import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
