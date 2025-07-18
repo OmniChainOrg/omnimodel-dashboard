@@ -439,10 +439,10 @@ export default function ZoneDashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">CEÂ² Zone Prototype Generator</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">CE² Zone Prototype Generator</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Zone Domain</label>
+            <label className="block text-sm font-medium text-gray-700">Zone Domain of Interest</label>
             <select
               value={zoneDomain}
               onChange={e => setZoneDomain(e.target.value)}
@@ -478,11 +478,11 @@ export default function ZoneDashboardPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Level of Recursion</label>
+            <label className="block text-sm font-medium text-gray-700">Level of Recursion / Depth</label>
             <input
               type="number"
               min={1}
-              max={6}
+              max={3}
               value={recursionLevel}
               onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
