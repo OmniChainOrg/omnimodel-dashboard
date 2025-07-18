@@ -2,10 +2,44 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { loadRegistryFromStorage, addZone } from '@/lib/zoneRegistry';
-import type { Zone, ZoneSettings } from '@/types/Zone'; // Import ZoneSettings from types/Zone.ts
+import type { Zone } from '@/types/Zone';
 import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
+
+// Settings type for each zone customization
+interface ZoneSettings {
+  info: string;
+  confidentiality: 'Public' | 'Confidential' | 'Private';
+  simAgentProfile: 'Exploratory' | 'Defensive' | 'Predictive' | 'Ethical Validator' | 'Custom';
+  autoSimFrequency: 'Manual' | 'Threshold-based' | 'On Parent Drift' | 'Weekly';
+  impactDomain: 'Local Policy' | 'Regional Healthcare' | 'Global BioStrategy' | 'Ethical';
+  epistemicIntent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
+  ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
+  createdBy: 'user' | 'system';
+  guardianId: string;
+  metadata?: {
+    sharedWithDAO: boolean;
+    confidentiality: 'Public' | 'Confidential' | 'Private';
+    userNotes: string;
+  };
+  ce2?: {
+    intent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
+    sensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
+    createdBy: 'user' | 'system';
+    guardianId: string;
+    guardianTrigger: {
+      drift: number;
+      entropy: number;
+      ethicalFlag: boolean;
+    };
+  };
+  guardianTrigger: {
+    drift: number;
+    entropy: number;
+    ethicalFlag: boolean;
+  };
+}
 
 // Recursive node with inline customization form
 const ZoneNode: React.FC<{
@@ -24,7 +58,7 @@ const ZoneNode: React.FC<{
     ethicalSensitivity: 'Low',
     createdBy: 'user',
     guardianId: '',
-    meta {
+    metadata: {
       sharedWithDAO: false,
       confidentiality: 'Public',
       userNotes: '',
@@ -55,10 +89,10 @@ const ZoneNode: React.FC<{
   const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>(currentSettings.ethicalSensitivity);
   const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>(currentSettings.createdBy);
   const [guardianId, setGuardianId] = useState(currentSettings.guardianId);
-  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata.sharedWithDAO);
-  const [drift, setDrift] = useState(currentSettings.guardianTrigger.drift);
-  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger.entropy);
-  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger.ethicalFlag);
+  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata?.sharedWithDAO || false);
+  const [drift, setDrift] = useState(currentSettings.guardianTrigger?.drift || 0.5);
+  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger?.entropy || 0.7);
+  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger?.ethicalFlag || false);
 
   const handleSave = () => {
     onUpdate(zone.id, {
@@ -71,7 +105,7 @@ const ZoneNode: React.FC<{
       ethicalSensitivity,
       createdBy,
       guardianId,
-      meta {
+      metadata: {
         sharedWithDAO,
         confidentiality,
         userNotes: info,
@@ -106,10 +140,10 @@ const ZoneNode: React.FC<{
     setEthicalSensitivity(currentSettings.ethicalSensitivity);
     setCreatedBy(currentSettings.createdBy);
     setGuardianId(currentSettings.guardianId);
-    setSharedWithDAO(currentSettings.metadata.sharedWithDAO);
-    setDrift(currentSettings.guardianTrigger.drift);
-    setEntropy(currentSettings.guardianTrigger.entropy);
-    setEthicalFlag(currentSettings.guardianTrigger.ethicalFlag);
+    setSharedWithDAO(currentSettings.metadata?.sharedWithDAO || false);
+    setDrift(currentSettings.guardianTrigger?.drift || 0.5);
+    setEntropy(currentSettings.guardianTrigger?.entropy || 0.7);
+    setEthicalFlag(currentSettings.guardianTrigger?.ethicalFlag || false);
     setExpanded(false);
   };
 
@@ -332,7 +366,7 @@ export default function ZoneDashboardPage() {
         depth: z.depth,
         approved: false,
         archetype: archetypeId as string,
-        meta {
+        metadata: {
           sharedWithDAO,
           confidentiality,
           userNotes: '',
@@ -372,7 +406,7 @@ export default function ZoneDashboardPage() {
     approved: false,
     depth: 1,
     archetype: 'Biotech',
-    meta {
+    metadata: {
       sharedWithDAO: false,
       confidentiality: 'Public',
       userNotes: '',
