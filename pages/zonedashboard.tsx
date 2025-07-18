@@ -18,6 +18,11 @@ interface ZoneSettings {
   ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
   createdBy: 'user' | 'system';
   guardianId: string;
+  metadata: {
+    sharedWithDAO: boolean;
+    confidentiality: 'Public' | 'Confidential' | 'Private';
+    userNotes: string;
+  };
   guardianTrigger: {
     drift: number;
     entropy: number;
@@ -38,10 +43,15 @@ const ZoneNode: React.FC<{
     simAgentProfile: 'Exploratory',
     autoSimFrequency: 'Manual',
     impactDomain: 'Local Policy',
-    epistemicIntent: 'Diagnostic', // Ensure default value is valid
+    epistemicIntent: 'Diagnostic',
     ethicalSensitivity: 'Low',
     createdBy: 'user',
     guardianId: '',
+    metadata: {
+      sharedWithDAO: false,
+      confidentiality: 'Public',
+      userNotes: '',
+    },
     guardianTrigger: {
       drift: 0.5,
       entropy: 0.7,
@@ -57,10 +67,10 @@ const ZoneNode: React.FC<{
   const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>(currentSettings.ethicalSensitivity);
   const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>(currentSettings.createdBy);
   const [guardianId, setGuardianId] = useState(currentSettings.guardianId);
-  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata?.sharedWithDAO || false);
-  const [drift, setDrift] = useState(currentSettings.guardianTrigger?.drift || 0.5);
-  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger?.entropy || 0.7);
-  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger?.ethicalFlag || false);
+  const [sharedWithDAO, setSharedWithDAO] = useState(currentSettings.metadata.sharedWithDAO);
+  const [drift, setDrift] = useState(currentSettings.guardianTrigger.drift);
+  const [entropy, setEntropy] = useState(currentSettings.guardianTrigger.entropy);
+  const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger.ethicalFlag);
 
   const handleSave = () => {
     onUpdate(zone.id, {
@@ -103,10 +113,10 @@ const ZoneNode: React.FC<{
     setEthicalSensitivity(currentSettings.ethicalSensitivity);
     setCreatedBy(currentSettings.createdBy);
     setGuardianId(currentSettings.guardianId);
-    setSharedWithDAO(currentSettings.metadata?.sharedWithDAO || false);
-    setDrift(currentSettings.guardianTrigger?.drift || 0.5);
-    setEntropy(currentSettings.guardianTrigger?.entropy || 0.7);
-    setEthicalFlag(currentSettings.guardianTrigger?.ethicalFlag || false);
+    setSharedWithDAO(currentSettings.metadata.sharedWithDAO);
+    setDrift(currentSettings.guardianTrigger.drift);
+    setEntropy(currentSettings.guardianTrigger.entropy);
+    setEthicalFlag(currentSettings.guardianTrigger.ethicalFlag);
     setExpanded(false);
   };
 
@@ -305,7 +315,7 @@ export default function ZoneDashboardPage() {
   const [impactDomain, setImpactDomain] = useState('Local Policy');
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>('Public');
   const [sharedWithDAO, setSharedWithDAO] = useState(false);
-  const [epistemicIntent, setEpistemicIntent] = useState<ZoneSettings['epistemicIntent']>('Diagnostic'); // Ensure default value is valid
+  const [epistemicIntent, setEpistemicIntent] = useState<ZoneSettings['epistemicIntent']>('Diagnostic');
   const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>('Low');
   const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>('user');
   const [guardianId, setGuardianId] = useState('');
