@@ -80,6 +80,7 @@ const ZoneNode: React.FC<{
       ethicalFlag: false,
     },
   };
+
   const [info, setInfo] = useState(currentSettings.info);
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
   const [simAgentProfile, setSimAgentProfile] = useState<ZoneSettings['simAgentProfile']>(currentSettings.simAgentProfile);
@@ -157,7 +158,17 @@ const ZoneNode: React.FC<{
       <div className="p-6 bg-white rounded-2xl shadow-lg">
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-semibold text-blue-600">{zone.name.replace(/SubZone/g, 'Zone')}</h3>
+            <div className="flex items-center">
+              <span
+                className={`w-4 h-4 rounded-full mr-2 ${
+                  ethicalSensitivity === 'Low' ? 'bg-green-500' :
+                  ethicalSensitivity === 'Medium' ? 'bg-yellow-500' :
+                  ethicalSensitivity === 'High' ? 'bg-red-500' :
+                  'bg-black'
+                }`}
+              ></span>
+              <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
+            </div>
             <p className="text-sm text-gray-500">Level: {zone.depth}</p>
           </div>
           <button
@@ -217,56 +228,64 @@ const ZoneNode: React.FC<{
               <option>On Parent Drift</option>
               <option>Weekly</option>
             </select>
-            <label className="block text-sm font-medium text-gray-700 mt-4">Impact Domain</label>
-            <select
-              value={impactDomain}
-              onChange={e => setImpactDomain(e.target.value as ZoneSettings['impactDomain'])}
-              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option>Local Policy</option>
-              <option>Regional Healthcare</option>
-              <option>Global BioStrategy</option>
-              <option>Ethical</option>
-            </select>
-            <label className="block text-sm font-medium text-gray-700 mt-4">Epistemic Intent</label>
-            <select
-              value={epistemicIntent}
-              onChange={e => setEpistemicIntent(e.target.value as ZoneSettings['epistemicIntent'])}
-              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option>Diagnostic</option>
-              <option>Forecasting</option>
-              <option>Moral Risk Evaluation</option>
-              <option>Policy Proposal</option>
-              <option>Unknown / Exploratory</option>
-            </select>
-            <label className="block text-sm font-medium text-gray-700 mt-4">Ethical Sensitivity</label>
-            <select
-              value={ethicalSensitivity}
-              onChange={e => setEthicalSensitivity(e.target.value as ZoneSettings['ethicalSensitivity'])}
-              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option>Low</option>
-              <option>Medium</option>
-              <option>High</option>
-              <option>Extreme</option>
-            </select>
-            <label className="block text-sm font-medium text-gray-700 mt-4">Created by</label>
-            <select
-              value={createdBy}
-              onChange={e => setCreatedBy(e.target.value as ZoneSettings['createdBy'])}
-              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option>user</option>
-              <option>system</option>
-            </select>
-            <label className="block text-sm font-medium text-gray-700 mt-4">Guardian ID</label>
-            <input
-              type="text"
-              value={guardianId}
-              onChange={e => setGuardianId(e.target.value)}
-              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
+
+            {/* Conditional Fields for Root Zone Only */}
+            {zone.depth === 1 && (
+              <>
+                <label className="block text-sm font-medium text-gray-700 mt-4">Impact Domain</label>
+                <select
+                  value={impactDomain}
+                  onChange={e => setImpactDomain(e.target.value as ZoneSettings['impactDomain'])}
+                  className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option>Local Policy</option>
+                  <option>Regional Healthcare</option>
+                  <option>Global BioStrategy</option>
+                  <option>Ethical</option>
+                </select>
+                <label className="block text-sm font-medium text-gray-700 mt-4">Epistemic Intent</label>
+                <select
+                  value={epistemicIntent}
+                  onChange={e => setEpistemicIntent(e.target.value as ZoneSettings['epistemicIntent'])}
+                  className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option>Diagnostic</option>
+                  <option>Forecasting</option>
+                  <option>Moral Risk Evaluation</option>
+                  <option>Policy Proposal</option>
+                  <option>Unknown / Exploratory</option>
+                </select>
+                <label className="block text-sm font-medium text-gray-700 mt-4">Ethical Sensitivity</label>
+                <select
+                  value={ethicalSensitivity}
+                  onChange={e => setEthicalSensitivity(e.target.value as ZoneSettings['ethicalSensitivity'])}
+                  className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option>Low</option>
+                  <option>Medium</option>
+                  <option>High</option>
+                  <option>Extreme</option>
+                </select>
+                <label className="block text-sm font-medium text-gray-700 mt-4">Created by</label>
+                <select
+                  value={createdBy}
+                  onChange={e => setCreatedBy(e.target.value as ZoneSettings['createdBy'])}
+                  className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option>user</option>
+                  <option>system</option>
+                </select>
+                <label className="block text-sm font-medium text-gray-700 mt-4">Guardian ID</label>
+                <input
+                  type="text"
+                  value={guardianId}
+                  onChange={e => setGuardianId(e.target.value)}
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </>
+            )}
+
+            {/* Guardian Trigger Level (Always Present) */}
             <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
             <div className="flex space-x-2">
               <div>
@@ -303,6 +322,8 @@ const ZoneNode: React.FC<{
                 />
               </div>
             </div>
+
+            {/* Save/Cancel Buttons */}
             <div className="mt-4 flex space-x-2">
               <button
                 onClick={handleSave}
@@ -426,7 +447,6 @@ export default function ZoneDashboardPage() {
   };
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
-
   const [settings, setSettings] = useState<Record<string, ZoneSettings>>({});
 
   const handleUpdate = (zoneId: string, updatedSettings: ZoneSettings) => {
@@ -527,7 +547,7 @@ export default function ZoneDashboardPage() {
               <option>Global BioStrategy</option>
               <option>Ethical</option>
             </select>
-          </div>
+          </1div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Confidentiality Level</label>
             <select
