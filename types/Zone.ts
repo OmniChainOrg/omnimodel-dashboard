@@ -36,12 +36,12 @@ export interface ZoneSettings {
   ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
   createdBy: 'user' | 'system';
   guardianId: string;
-  metadata?: {
+  metadata: {
     sharedWithDAO: boolean;
     confidentiality: 'Public' | 'Confidential' | 'Private';
     userNotes: string;
   };
-  ce2?: {
+  ce2: {
     intent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
     sensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
     createdBy: 'user' | 'system';
