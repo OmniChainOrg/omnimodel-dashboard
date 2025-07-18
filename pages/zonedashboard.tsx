@@ -336,7 +336,7 @@ export default function ZoneDashboardPage() {
   const { archetypeId, archetypeName, depth } = router.query;
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
-  const [recursionLevel, setRecursionLevel] = useState(4);
+  const [recursionLevel, setRecursionLevel] = useState(1);
   const [simAgentProfile, setSimAgentProfile] = useState('Exploratory');
   const [autoSimFrequency, setAutoSimFrequency] = useState('Manual');
   const [impactDomain, setImpactDomain] = useState('Local Policy');
@@ -352,7 +352,7 @@ export default function ZoneDashboardPage() {
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
-    depth: Number(depth) || 3,
+    depth: Number(depth) || 2,
   });
 
   useEffect(() => {
