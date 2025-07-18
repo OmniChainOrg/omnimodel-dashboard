@@ -180,6 +180,7 @@ const ZoneNode: React.FC<{
         </div>
         {expanded && (
           <div className="mt-3 p-4 bg-gray-50 rounded-lg">
+            {/* Common Fields */}
             <label className="block text-sm font-medium text-gray-700">Info to Share</label>
             <textarea
               placeholder="Enter information to share..."
@@ -443,7 +444,52 @@ export default function ZoneDashboardPage() {
         ethicalFlag: false,
       },
     },
-    children: [],
+    children: [
+      {
+        id: 'sub1',
+        name: 'Sub Zone 1',
+        depth: 2,
+        archetype: 'Biotech',
+        metadata: {
+          sharedWithDAO: false,
+          confidentiality: 'Public',
+          userNotes: '',
+        },
+        ce2: {
+          intent: 'Diagnostic',
+          sensitivity: 'Low',
+          createdBy: 'user',
+          guardianId: 'default_guardian',
+          guardianTrigger: {
+            drift: 0.5,
+            entropy: 0.7,
+            ethicalFlag: false,
+          },
+        },
+      },
+      {
+        id: 'sub2',
+        name: 'Sub Zone 2',
+        depth: 2,
+        archetype: 'Biotech',
+        metadata: {
+          sharedWithDAO: false,
+          confidentiality: 'Public',
+          userNotes: '',
+        },
+        ce2: {
+          intent: 'Diagnostic',
+          sensitivity: 'Low',
+          createdBy: 'user',
+          guardianId: 'default_guardian',
+          guardianTrigger: {
+            drift: 0.5,
+            entropy: 0.7,
+            ethicalFlag: false,
+          },
+        },
+      },
+    ],
   };
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
