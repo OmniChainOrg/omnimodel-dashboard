@@ -12,7 +12,11 @@ const dummyZone: Zone = {
   children: [],
   archetype: undefined, // Optional
   parentId: null,       // Optional
-  metadata: {},         // Optional
+  metadata: {
+    sharedWithDAO: false,
+    confidentiality: 'Public',
+    userNotes: '',
+  },
 };
 
 // Page component rendering the EpistemicEngine with the dummy zone
