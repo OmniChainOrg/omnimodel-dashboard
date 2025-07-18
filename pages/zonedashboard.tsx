@@ -2,33 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import { loadRegistryFromStorage, addZone } from '@/lib/zoneRegistry';
-import type { Zone } from '@/types/Zone';
+import type { Zone, ZoneSettings } from '@/types/Zone'; // Import ZoneSettings from types/Zone.ts
 import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
-
-// Settings type for each zone customization
-interface ZoneSettings {
-  info: string;
-  confidentiality: 'Public' | 'Confidential' | 'Private';
-  simAgentProfile: 'Exploratory' | 'Defensive' | 'Predictive' | 'Ethical Validator' | 'Custom';
-  autoSimFrequency: 'Manual' | 'Threshold-based' | 'On Parent Drift' | 'Weekly';
-  impactDomain: 'Local Policy' | 'Regional Healthcare' | 'Global BioStrategy' | 'Ethical';
-  epistemicIntent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
-  ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
-  createdBy: 'user' | 'system';
-  guardianId: string;
-  metadata: {
-    sharedWithDAO: boolean;
-    confidentiality: 'Public' | 'Confidential' | 'Private';
-    userNotes: string;
-  };
-  guardianTrigger: {
-    drift: number;
-    entropy: number;
-    ethicalFlag: boolean;
-  };
-}
 
 // Recursive node with inline customization form
 const ZoneNode: React.FC<{
@@ -51,6 +28,17 @@ const ZoneNode: React.FC<{
       sharedWithDAO: false,
       confidentiality: 'Public',
       userNotes: '',
+    },
+    ce2: {
+      intent: 'Diagnostic',
+      sensitivity: 'Low',
+      createdBy: 'user',
+      guardianId: '',
+      guardianTrigger: {
+        drift: 0.5,
+        entropy: 0.7,
+        ethicalFlag: false,
+      },
     },
     guardianTrigger: {
       drift: 0.5,
@@ -98,6 +86,11 @@ const ZoneNode: React.FC<{
           entropy,
           ethicalFlag,
         },
+      },
+      guardianTrigger: {
+        drift,
+        entropy,
+        ethicalFlag,
       },
     });
     setExpanded(false);
@@ -315,9 +308,9 @@ export default function ZoneDashboardPage() {
   const [impactDomain, setImpactDomain] = useState('Local Policy');
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>('Public');
   const [sharedWithDAO, setSharedWithDAO] = useState(false);
-  const [epistemicIntent, setEpistemicIntent] = useState<ZoneSettings['epistemicIntent']>('Diagnostic');
-  const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>('Low');
-  const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>('user');
+  const [epistemicIntent, setEpistemicIntent] = useState('Diagnostic');
+  const [ethicalSensitivity, setEthicalSensitivity] = useState('Low');
+  const [createdBy, setCreatedBy] = useState('user');
   const [guardianId, setGuardianId] = useState('');
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
