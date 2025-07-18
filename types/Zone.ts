@@ -36,7 +36,7 @@ export interface ZoneSettings {
   ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
   createdBy: 'user' | 'system';
   guardianId: string;
-  metadata: {
+  meta {
     sharedWithDAO: boolean;
     confidentiality: 'Public' | 'Confidential' | 'Private';
     userNotes: string;
