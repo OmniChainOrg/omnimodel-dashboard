@@ -1,13 +1,29 @@
-// pages/zonedashboard.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { loadRegistryFromStorage, addZone } from '@/lib/zoneRegistry';
+import { loadRegistryFromStorage, addZone, Zone } from '@/lib/zoneRegistry';
 import type { Zone } from '@/types/Zone';
-import type { ZoneSettings } from '@/types/Zone';
 import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
+
+// Settings type for each zone customization
+interface ZoneSettings {
+  info: string;
+  confidentiality: 'Public' | 'Confidential' | 'Private';
+  simAgentProfile: 'Exploratory' | 'Defensive' | 'Predictive' | 'Ethical Validator' | 'Custom';
+  autoSimFrequency: 'Manual' | 'Threshold-based' | 'On Parent Drift' | 'Weekly';
+  impactDomain: 'Local Policy' | 'Regional Healthcare' | 'Global BioStrategy' | 'Ethical';
+  epistemicIntent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
+  ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
+  createdBy: 'user' | 'system';
+  guardianId: string;
+  guardianTrigger: {
+    drift: number;
+    entropy: number;
+    ethicalFlag: boolean;
+  };
+}
 
 // Recursive node with inline customization form
 const ZoneNode: React.FC<{
@@ -22,7 +38,7 @@ const ZoneNode: React.FC<{
     simAgentProfile: 'Exploratory',
     autoSimFrequency: 'Manual',
     impactDomain: 'Local Policy',
-    epistemicIntent: 'Diagnostic',
+    epistemicIntent: 'Diagnostic', // Ensure default value is valid
     ethicalSensitivity: 'Low',
     createdBy: 'user',
     guardianId: '',
@@ -30,22 +46,6 @@ const ZoneNode: React.FC<{
       drift: 0.5,
       entropy: 0.7,
       ethicalFlag: false,
-    },
-    metadata: {
-      sharedWithDAO: false,
-      confidentiality: 'Public',
-      userNotes: '',
-    },
-    ce2: {
-      intent: 'Diagnostic',
-      sensitivity: 'Low',
-      createdBy: 'user',
-      guardianId: '',
-      guardianTrigger: {
-        drift: 0.5,
-        entropy: 0.7,
-        ethicalFlag: false,
-      },
     },
   };
   const [info, setInfo] = useState(currentSettings.info);
@@ -61,6 +61,7 @@ const ZoneNode: React.FC<{
   const [drift, setDrift] = useState(currentSettings.guardianTrigger?.drift || 0.5);
   const [entropy, setEntropy] = useState(currentSettings.guardianTrigger?.entropy || 0.7);
   const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger?.ethicalFlag || false);
+
   const handleSave = () => {
     onUpdate(zone.id, {
       info,
@@ -88,14 +89,10 @@ const ZoneNode: React.FC<{
           ethicalFlag,
         },
       },
-      guardianTrigger: {
-        drift,
-        entropy,
-        ethicalFlag,
-      },
     });
     setExpanded(false);
   };
+
   const handleCancel = () => {
     setInfo(currentSettings.info);
     setConfidentiality(currentSettings.confidentiality);
@@ -112,6 +109,7 @@ const ZoneNode: React.FC<{
     setEthicalFlag(currentSettings.guardianTrigger?.ethicalFlag || false);
     setExpanded(false);
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -307,9 +305,9 @@ export default function ZoneDashboardPage() {
   const [impactDomain, setImpactDomain] = useState('Local Policy');
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>('Public');
   const [sharedWithDAO, setSharedWithDAO] = useState(false);
-  const [epistemicIntent, setEpistemicIntent] = useState('Diagnostic');
-  const [ethicalSensitivity, setEthicalSensitivity] = useState('Low');
-  const [createdBy, setCreatedBy] = useState('user');
+  const [epistemicIntent, setEpistemicIntent] = useState<ZoneSettings['epistemicIntent']>('Diagnostic'); // Ensure default value is valid
+  const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>('Low');
+  const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>('user');
   const [guardianId, setGuardianId] = useState('');
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
