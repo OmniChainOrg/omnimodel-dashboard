@@ -547,7 +547,7 @@ export default function ZoneDashboardPage() {
               <option>Global BioStrategy</option>
               <option>Ethical</option>
             </select>
-          </1div>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Confidentiality Level</label>
             <select
