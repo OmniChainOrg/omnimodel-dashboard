@@ -24,7 +24,7 @@ const ZoneNode: React.FC<{
     ethicalSensitivity: 'Low',
     createdBy: 'user',
     guardianId: '',
-    metadata: {
+    meta {
       sharedWithDAO: false,
       confidentiality: 'Public',
       userNotes: '',
@@ -71,7 +71,7 @@ const ZoneNode: React.FC<{
       ethicalSensitivity,
       createdBy,
       guardianId,
-      metadata: {
+      meta {
         sharedWithDAO,
         confidentiality,
         userNotes: info,
@@ -308,9 +308,9 @@ export default function ZoneDashboardPage() {
   const [impactDomain, setImpactDomain] = useState('Local Policy');
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>('Public');
   const [sharedWithDAO, setSharedWithDAO] = useState(false);
-  const [epistemicIntent, setEpistemicIntent] = useState('Diagnostic');
-  const [ethicalSensitivity, setEthicalSensitivity] = useState('Low');
-  const [createdBy, setCreatedBy] = useState('user');
+  const [epistemicIntent, setEpistemicIntent] = useState<ZoneSettings['epistemicIntent']>('Diagnostic');
+  const [ethicalSensitivity, setEthicalSensitivity] = useState<ZoneSettings['ethicalSensitivity']>('Low');
+  const [createdBy, setCreatedBy] = useState<ZoneSettings['createdBy']>('user');
   const [guardianId, setGuardianId] = useState('');
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
@@ -332,7 +332,7 @@ export default function ZoneDashboardPage() {
         depth: z.depth,
         approved: false,
         archetype: archetypeId as string,
-        metadata: {
+        meta {
           sharedWithDAO,
           confidentiality,
           userNotes: '',
@@ -372,7 +372,7 @@ export default function ZoneDashboardPage() {
     approved: false,
     depth: 1,
     archetype: 'Biotech',
-    metadata: {
+    meta {
       sharedWithDAO: false,
       confidentiality: 'Public',
       userNotes: '',
