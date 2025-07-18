@@ -167,7 +167,7 @@ const ZoneNode: React.FC<{
                   'bg-black'
                 }`}
               ></span>
-              <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
+              <h3 className="text-xl font-semibold text-blue-600">{zone.name.replace(/SubZone/g, 'Zone')}</h3>
             </div>
             <p className="text-sm text-gray-500">Level: {zone.depth}</p>
           </div>
@@ -448,6 +448,7 @@ export default function ZoneDashboardPage() {
       {
         id: 'sub1',
         name: 'Sub Zone 1',
+        path: '/dashboard/sub1',
         depth: 2,
         archetype: 'Biotech',
         metadata: {
@@ -470,6 +471,7 @@ export default function ZoneDashboardPage() {
       {
         id: 'sub2',
         name: 'Sub Zone 2',
+        path: '/dashboard/sub2',
         depth: 2,
         archetype: 'Biotech',
         metadata: {
