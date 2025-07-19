@@ -164,17 +164,7 @@ const ZoneNode: React.FC<{
       <div className="p-6 bg-white rounded-2xl shadow-lg">
         <div className="flex justify-between items-center">
           <div>
-            <div className="flex items-center">
-              <span
-                className={`w-4 h-4 rounded-full mr-2 ${
-                  ethicalSensitivity === 'Low' ? 'bg-green-500' :
-                  ethicalSensitivity === 'Medium' ? 'bg-yellow-500' :
-                  ethicalSensitivity === 'High' ? 'bg-red-500' :
-                  'bg-black'
-                }`}
-              ></span>
-              <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
-            </div>
+            <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
             <p className="text-sm text-gray-500">Level: {zone.depth}</p>
           </div>
           <button
@@ -422,9 +412,33 @@ export default function ZoneDashboardPage() {
     window.dispatchEvent(new Event('zoneRegistryChange'));
   }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    refresh();
+
+    // Validate and log the data being sent
+    const formData = {
+      prototypeZoneName,
+      recursionLevel,
+      simAgentProfile,
+      autoSimFrequency,
+      impactDomain,
+      confidentiality,
+      sharedWithDAO,
+      epistemicIntent,
+      ethicalSensitivity,
+      createdBy,
+      guardianId,
+      drift,
+      entropy,
+      ethicalFlag,
+    };
+    console.log('Form Data:', formData);
+
+    try {
+      await refresh();
+    } catch (error) {
+      console.error('Error refreshing zones:', error);
+    }
   };
 
   const dummyTree: ZoneType = {
@@ -717,7 +731,7 @@ export default function ZoneDashboardPage() {
         </form>
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
-        {/* Removed the duplicate Level 1 form */}
+        <ZoneNode zone={displayTree} settings={settings} onUpdate={handleUpdate} />
       </div>
     </div>
   );
