@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
 
-// Settings type for each zone customization
 interface ZoneSettings {
   info: string;
   confidentiality: 'Public' | 'Confidential' | 'Private';
@@ -40,7 +39,6 @@ interface ZoneSettings {
   };
 }
 
-// Recursive node with inline customization form
 const ZoneNode: React.FC<{
   zone: ZoneType;
   settings: Record<string, ZoneSettings>;
@@ -79,6 +77,7 @@ const ZoneNode: React.FC<{
       ethicalFlag: false,
     },
   };
+
   const [info, setInfo] = useState(currentSettings.info);
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
   const [simAgentProfile, setSimAgentProfile] = useState<ZoneSettings['simAgentProfile']>(currentSettings.simAgentProfile);
@@ -192,49 +191,50 @@ const ZoneNode: React.FC<{
               className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows={3}
             />
-            <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
-            <select
-              value={confidentiality}
-              onChange={e => setConfidentiality(e.target.value as ZoneSettings['confidentiality'])}
-              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option>Public</option>
-              <option>Confidential</option>
-              <option>Private</option>
-            </select>
-            <label className="block text-sm font-medium text-gray-700 mt-4">Share with DAO</label>
-            <input
-              type="checkbox"
-              checked={sharedWithDAO}
-              onChange={e => setSharedWithDAO(e.target.checked)}
-              className="mt-1"
-            />
-            <label className="block text-sm font-medium text-gray-700 mt-4">Simulation Profile</label>
-            <select
-              value={simAgentProfile}
-              onChange={e => setSimAgentProfile(e.target.value as ZoneSettings['simAgentProfile'])}
-              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option>Exploratory</option>
-              <option>Defensive</option>
-              <option>Predictive</option>
-              <option>Ethical Validator</option>
-              <option>Custom</option>
-            </select>
-            <label className="block text-sm font-medium text-gray-700 mt-4">Sim Trigger Mode</label>
-            <select
-              value={autoSimFrequency}
-              onChange={e => setAutoSimFrequency(e.target.value as ZoneSettings['autoSimFrequency'])}
-              className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option>Manual</option>
-              <option>Threshold-based</option>
-              <option>On Parent Drift</option>
-              <option>Weekly</option>
-            </select>
             {/* Conditional Fields for Root Zone Only */}
-            {zone.depth === 1 && (
+            {zone.depth !== 1 && (
               <>
+                {/* Add other fields here for non-root zones */}
+                <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
+                <select
+                  value={confidentiality}
+                  onChange={e => setConfidentiality(e.target.value as ZoneSettings['confidentiality'])}
+                  className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option>Public</option>
+                  <option>Confidential</option>
+                  <option>Private</option>
+                </select>
+                <label className="block text-sm font-medium text-gray-700 mt-4">Share with DAO</label>
+                <input
+                  type="checkbox"
+                  checked={sharedWithDAO}
+                  onChange={e => setSharedWithDAO(e.target.checked)}
+                  className="mt-1"
+                />
+                <label className="block text-sm font-medium text-gray-700 mt-4">Simulation Profile</label>
+                <select
+                  value={simAgentProfile}
+                  onChange={e => setSimAgentProfile(e.target.value as ZoneSettings['simAgentProfile'])}
+                  className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option>Exploratory</option>
+                  <option>Defensive</option>
+                  <option>Predictive</option>
+                  <option>Ethical Validator</option>
+                  <option>Custom</option>
+                </select>
+                <label className="block text-sm font-medium text-gray-700 mt-4">Sim Trigger Mode</label>
+                <select
+                  value={autoSimFrequency}
+                  onChange={e => setAutoSimFrequency(e.target.value as ZoneSettings['autoSimFrequency'])}
+                  className="mt-1 block w-48 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option>Manual</option>
+                  <option>Threshold-based</option>
+                  <option>On Parent Drift</option>
+                  <option>Weekly</option>
+                </select>
                 <label className="block text-sm font-medium text-gray-700 mt-4">Impact Domain</label>
                 <select
                   value={impactDomain}
@@ -285,45 +285,45 @@ const ZoneNode: React.FC<{
                   onChange={e => setGuardianId(e.target.value)}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
+                {/* Guardian Trigger Level (Always Present) */}
+                <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
+                <div className="flex space-x-2">
+                  <div>
+                    <label className="text-sm text-gray-700">Drift</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="1"
+                      value={drift}
+                      onChange={e => setDrift(Number(e.target.value))}
+                      className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-700">Entropy</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="1"
+                      value={entropy}
+                      onChange={e => setEntropy(Number(e.target.value))}
+                      className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-700">Ethical Flag</label>
+                    <input
+                      type="checkbox"
+                      checked={ethicalFlag}
+                      onChange={e => setEthicalFlag(e.target.checked)}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
               </>
             )}
-            {/* Guardian Trigger Level (Always Present) */}
-            <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
-            <div className="flex space-x-2">
-              <div>
-                <label className="text-sm text-gray-700">Drift</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="1"
-                  value={drift}
-                  onChange={e => setDrift(Number(e.target.value))}
-                  className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-gray-700">Entropy</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  max="1"
-                  value={entropy}
-                  onChange={e => setEntropy(Number(e.target.value))}
-                  className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-gray-700">Ethical Flag</label>
-                <input
-                  type="checkbox"
-                  checked={ethicalFlag}
-                  onChange={e => setEthicalFlag(e.target.checked)}
-                  className="mt-1"
-                />
-              </div>
-            </div>
             {/* Save/Cancel Buttons */}
             <div className="mt-4 flex space-x-2">
               <button
@@ -371,7 +371,6 @@ export default function ZoneDashboardPage() {
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
   const [ethicalFlag, setEthicalFlag] = useState(false);
-
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
@@ -593,7 +592,6 @@ export default function ZoneDashboardPage() {
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
   const [settings, setSettings] = useState<Record<string, ZoneSettings>>({});
-
   const handleUpdate = (zoneId: string, updatedSettings: ZoneSettings) => {
     setSettings(prev => ({
       ...prev,
@@ -647,7 +645,7 @@ export default function ZoneDashboardPage() {
             <input
               type="number"
               min={1}
-              max={2}
+              max={3}
               value={recursionLevel}
               onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
