@@ -717,7 +717,7 @@ export default function ZoneDashboardPage() {
         </form>
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
-        <ZoneNode zone={displayTree} settings={settings} onUpdate={handleUpdate} />
+        {/* Removed the duplicate Level 1 form */}
       </div>
     </div>
   );
