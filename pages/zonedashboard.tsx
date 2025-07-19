@@ -96,6 +96,12 @@ const ZoneNode: React.FC<{
   const [ethicalFlag, setEthicalFlag] = useState(currentSettings.guardianTrigger?.ethicalFlag || false);
 
   const handleSave = () => {
+    // Validate inputs before saving
+    if (!info.trim()) {
+      alert('Please enter information to share.');
+      return;
+    }
+
     onUpdate(zone.id, {
       info,
       confidentiality,
@@ -167,7 +173,7 @@ const ZoneNode: React.FC<{
                   'bg-black'
                 }`}
               ></span>
-              <h3 className="text-xl font-semibold text-blue-600">{zone.name.replace(/SubZone/g, 'Zone')}</h3>
+              <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
             </div>
             <p className="text-sm text-gray-500">Level: {zone.depth}</p>
           </div>
