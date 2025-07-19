@@ -647,7 +647,7 @@ export default function ZoneDashboardPage() {
             <input
               type="number"
               min={1}
-              max={3}
+              max={2}
               value={recursionLevel}
               onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
