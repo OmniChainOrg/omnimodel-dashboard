@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import { loadRegistryFromStorage, addZone } from '@/lib/zoneRegistry';
 import type { Zone } from '@/types/Zone';
 import { motion } from 'framer-motion';
 
@@ -43,7 +42,7 @@ interface ZoneSettings {
 
 // Recursive node with inline customization form
 const ZoneNode: React.FC<{
-  zone: Zone;
+  zone: ZoneType;
   settings: Record<string, ZoneSettings>;
   onUpdate: (zoneId: string, settings: ZoneSettings) => void;
 }> = ({ zone, settings, onUpdate }) => {
@@ -80,7 +79,6 @@ const ZoneNode: React.FC<{
       ethicalFlag: false,
     },
   };
-
   const [info, setInfo] = useState(currentSettings.info);
   const [confidentiality, setConfidentiality] = useState<ZoneSettings['confidentiality']>(currentSettings.confidentiality);
   const [simAgentProfile, setSimAgentProfile] = useState<ZoneSettings['simAgentProfile']>(currentSettings.simAgentProfile);
@@ -101,7 +99,6 @@ const ZoneNode: React.FC<{
       alert('Please enter information to share.');
       return;
     }
-
     onUpdate(zone.id, {
       info,
       confidentiality,
@@ -164,7 +161,17 @@ const ZoneNode: React.FC<{
       <div className="p-6 bg-white rounded-2xl shadow-lg">
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
+            <div className="flex items-center">
+              <span
+                className={`w-4 h-4 rounded-full mr-2 ${
+                  ethicalSensitivity === 'Low' ? 'bg-green-500' :
+                  ethicalSensitivity === 'Medium' ? 'bg-yellow-500' :
+                  ethicalSensitivity === 'High' ? 'bg-red-500' :
+                  'bg-black'
+                }`}
+              ></span>
+              <h3 className="text-xl font-semibold text-blue-600">{zone.name}</h3>
+            </div>
             <p className="text-sm text-gray-500">Level: {zone.depth}</p>
           </div>
           <button
@@ -225,7 +232,6 @@ const ZoneNode: React.FC<{
               <option>On Parent Drift</option>
               <option>Weekly</option>
             </select>
-
             {/* Conditional Fields for Root Zone Only */}
             {zone.depth === 1 && (
               <>
@@ -281,7 +287,6 @@ const ZoneNode: React.FC<{
                 />
               </>
             )}
-
             {/* Guardian Trigger Level (Always Present) */}
             <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
             <div className="flex space-x-2">
@@ -319,7 +324,6 @@ const ZoneNode: React.FC<{
                 />
               </div>
             </div>
-
             {/* Save/Cancel Buttons */}
             <div className="mt-4 flex space-x-2">
               <button
@@ -354,7 +358,7 @@ export default function ZoneDashboardPage() {
   const { archetypeId, archetypeName, depth } = router.query;
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
-  const [recursionLevel, setRecursionLevel] = useState(1);
+  const [recursionLevel, setRecursionLevel] = useState(Number(depth) || 1);
   const [simAgentProfile, setSimAgentProfile] = useState('Exploratory');
   const [autoSimFrequency, setAutoSimFrequency] = useState('Manual');
   const [impactDomain, setImpactDomain] = useState('Local Policy');
@@ -367,10 +371,11 @@ export default function ZoneDashboardPage() {
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
   const [ethicalFlag, setEthicalFlag] = useState(false);
+
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
-    depth: Number(depth) || 2,
+    depth: recursionLevel,
   });
 
   useEffect(() => {
@@ -412,33 +417,9 @@ export default function ZoneDashboardPage() {
     window.dispatchEvent(new Event('zoneRegistryChange'));
   }, [tree, archetypeId, confidentiality, sharedWithDAO, epistemicIntent, ethicalSensitivity, createdBy, guardianId, drift, entropy, ethicalFlag]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate and log the data being sent
-    const formData = {
-      prototypeZoneName,
-      recursionLevel,
-      simAgentProfile,
-      autoSimFrequency,
-      impactDomain,
-      confidentiality,
-      sharedWithDAO,
-      epistemicIntent,
-      ethicalSensitivity,
-      createdBy,
-      guardianId,
-      drift,
-      entropy,
-      ethicalFlag,
-    };
-    console.log('Form Data:', formData);
-
-    try {
-      await refresh();
-    } catch (error) {
-      console.error('Error refreshing zones:', error);
-    }
+    refresh();
   };
 
   const dummyTree: ZoneType = {
@@ -464,7 +445,7 @@ export default function ZoneDashboardPage() {
         ethicalFlag: false,
       },
     },
-    children: [
+    children: recursionLevel > 1 ? [
       {
         id: 'sub1',
         name: 'Sub Zone 1',
@@ -487,6 +468,54 @@ export default function ZoneDashboardPage() {
             ethicalFlag: false,
           },
         },
+        children: recursionLevel > 2 ? [
+          {
+            id: 'sub1-1',
+            name: 'Sub Zone 1-1',
+            path: '/dashboard/sub1-1',
+            depth: 3,
+            archetype: 'Biotech',
+            metadata: {
+              sharedWithDAO: false,
+              confidentiality: 'Public',
+              userNotes: '',
+            },
+            ce2: {
+              intent: 'Diagnostic',
+              sensitivity: 'Low',
+              createdBy: 'user',
+              guardianId: 'default_guardian',
+              guardianTrigger: {
+                drift: 0.5,
+                entropy: 0.7,
+                ethicalFlag: false,
+              },
+            },
+          },
+          {
+            id: 'sub1-2',
+            name: 'Sub Zone 1-2',
+            path: '/dashboard/sub1-2',
+            depth: 3,
+            archetype: 'Biotech',
+            metadata: {
+              sharedWithDAO: false,
+              confidentiality: 'Public',
+              userNotes: '',
+            },
+            ce2: {
+              intent: 'Diagnostic',
+              sensitivity: 'Low',
+              createdBy: 'user',
+              guardianId: 'default_guardian',
+              guardianTrigger: {
+                drift: 0.5,
+                entropy: 0.7,
+                ethicalFlag: false,
+              },
+            },
+          },
+        ] : [],
       },
       {
         id: 'sub2',
@@ -510,8 +539,56 @@ export default function ZoneDashboardPage() {
             ethicalFlag: false,
           },
         },
+        children: recursionLevel > 2 ? [
+          {
+            id: 'sub2-1',
+            name: 'Sub Zone 2-1',
+            path: '/dashboard/sub2-1',
+            depth: 3,
+            archetype: 'Biotech',
+            metadata: {
+              sharedWithDAO: false,
+              confidentiality: 'Public',
+              userNotes: '',
+            },
+            ce2: {
+              intent: 'Diagnostic',
+              sensitivity: 'Low',
+              createdBy: 'user',
+              guardianId: 'default_guardian',
+              guardianTrigger: {
+                drift: 0.5,
+                entropy: 0.7,
+                ethicalFlag: false,
+              },
+            },
+          },
+          {
+            id: 'sub2-2',
+            name: 'Sub Zone 2-2',
+            path: '/dashboard/sub2-2',
+            depth: 3,
+            archetype: 'Biotech',
+            metadata: {
+              sharedWithDAO: false,
+              confidentiality: 'Public',
+              userNotes: '',
+            },
+            ce2: {
+              intent: 'Diagnostic',
+              sensitivity: 'Low',
+              createdBy: 'user',
+              guardianId: 'default_guardian',
+              guardianTrigger: {
+                drift: 0.5,
+                entropy: 0.7,
+                ethicalFlag: false,
+              },
+            },
+          },
+        ] : [],
       },
-    ],
+    ] : [],
   };
 
   const displayTree = (tree as ZoneType) ?? dummyTree;
@@ -527,7 +604,7 @@ export default function ZoneDashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">CE² Zone Prototype Generator</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">CEÂ² Zone Prototype Generator</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Zone Domain of Interest</label>
@@ -731,6 +808,7 @@ export default function ZoneDashboardPage() {
         </form>
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
+        {/* Render the ZoneNode component with the tree */}
         <ZoneNode zone={displayTree} settings={settings} onUpdate={handleUpdate} />
       </div>
     </div>
