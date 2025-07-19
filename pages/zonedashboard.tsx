@@ -604,7 +604,7 @@ export default function ZoneDashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
       <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">CEÂ² Zone Prototype Generator</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">CE² Zone Prototype Generator</h1>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Zone Domain of Interest</label>
