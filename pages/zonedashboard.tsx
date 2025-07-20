@@ -98,7 +98,7 @@ const ZoneNode: React.FC<{
       alert('Please enter information to share.');
       return;
     }
-    onUpdate(zone.id, {
+    const updatedSettings: ZoneSettings = {
       info,
       confidentiality,
       simAgentProfile,
@@ -129,7 +129,9 @@ const ZoneNode: React.FC<{
         entropy,
         ethicalFlag,
       },
-    });
+    };
+    console.log('Updating zone settings:', updatedSettings);
+    onUpdate(zone.id, updatedSettings);
     setExpanded(false);
   };
 
@@ -191,10 +193,8 @@ const ZoneNode: React.FC<{
               className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows={3}
             />
-            {/* Conditional Fields for Root Zone Only */}
             {zone.depth !== 1 && (
               <>
-                {/* Add other fields here for non-root zones */}
                 <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
                 <select
                   value={confidentiality}
@@ -285,45 +285,45 @@ const ZoneNode: React.FC<{
                   onChange={e => setGuardianId(e.target.value)}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
-                {/* Guardian Trigger Level (Always Present) */}
-                <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
-                <div className="flex space-x-2">
-                  <div>
-                    <label className="text-sm text-gray-700">Drift</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="1"
-                      value={drift}
-                      onChange={e => setDrift(Number(e.target.value))}
-                      className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-700">Entropy</label>
-                    <input
-                      type="number"
-                      step="0.1"
-                      min="0"
-                      max="1"
-                      value={entropy}
-                      onChange={e => setEntropy(Number(e.target.value))}
-                      className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm text-gray-700">Ethical Flag</label>
-                    <input
-                      type="checkbox"
-                      checked={ethicalFlag}
-                      onChange={e => setEthicalFlag(e.target.checked)}
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
               </>
             )}
+            {/* Guardian Trigger Level (Always Present) */}
+            <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
+            <div className="flex space-x-2">
+              <div>
+                <label className="text-sm text-gray-700">Drift</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={drift}
+                  onChange={e => setDrift(Number(e.target.value))}
+                  className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-700">Entropy</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={entropy}
+                  onChange={e => setEntropy(Number(e.target.value))}
+                  className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label className="text-sm text-gray-700">Ethical Flag</label>
+                <input
+                  type="checkbox"
+                  checked={ethicalFlag}
+                  onChange={e => setEthicalFlag(e.target.checked)}
+                  className="mt-1"
+                />
+              </div>
+            </div>
             {/* Save/Cancel Buttons */}
             <div className="mt-4 flex space-x-2">
               <button
@@ -371,6 +371,7 @@ export default function ZoneDashboardPage() {
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
   const [ethicalFlag, setEthicalFlag] = useState(false);
+
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
@@ -418,6 +419,7 @@ export default function ZoneDashboardPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Submitting form with recursion level:', recursionLevel);
     refresh();
   };
 
