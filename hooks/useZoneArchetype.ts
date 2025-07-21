@@ -17,7 +17,11 @@ export function useZoneArchetype({
   const [tree, setTree] = useState<Zone | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  if (!archetypeId || !archetypeName) {
+    setLoading(false);
+    setError('Missing archetype parameters');
+    return;
+  }
   const fetchTree = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -50,8 +54,9 @@ export function useZoneArchetype({
   }, [archetypeId, archetypeName, depth]);
 
   useEffect(() => {
-    fetchTree();
-  }, [fetchTree]);
-
+    if (archetypeId && archetypeName) {
+      fetchTree();
+    }
+  }, [fetchTree, archetypeId, archetypeName]);
   return { tree, loading, error, refresh: fetchTree };
 }
