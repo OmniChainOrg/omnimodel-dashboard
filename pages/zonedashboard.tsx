@@ -506,82 +506,90 @@ export default function ZoneDashboardPage() {
     refresh();
   };
 
-  const dummyTree: ZoneType = {
-    id: 'root',
-    name: 'Root Zone Prototype',
-    path: '/dashboard/root',
-    approved: false,
-    depth: 1,
-    archetype: 'Biotech',
-    metadata: {
-      sharedWithDAO: false,
-      confidentiality: 'Public',
-      userNotes: '',
-    },
-    ce2: {
-      intent: 'Diagnostic',
-      sensitivity: 'Low',
-      createdBy: 'user',
-      guardianId: 'default_guardian',
-      guardianTrigger: {
-        drift: 0.5,
-        entropy: 0.7,
-        ethicalFlag: false,
+  const generateDummyTree = (depth: number): ZoneType => {
+    const root: ZoneType = {
+      id: 'root',
+      name: 'Root Zone Prototype',
+      path: '/dashboard/root',
+      approved: false,
+      depth: 1,
+      archetype: 'Biotech',
+      metadata: {
+        sharedWithDAO: false,
+        confidentiality: 'Public',
+        userNotes: '',
       },
-    },
-    children: recursionLevel > 1 ? [
-      {
-        id: 'sub1',
-        name: 'Sub Zone 1',
-        path: '/dashboard/sub1',
-        depth: 2,
-        archetype: 'Biotech',
-        metadata: {
-          sharedWithDAO: false,
-          confidentiality: 'Public',
-          userNotes: '',
+      ce2: {
+        intent: 'Diagnostic',
+        sensitivity: 'Low',
+        createdBy: 'user',
+        guardianId: 'default_guardian',
+        guardianTrigger: {
+          drift: 0.5,
+          entropy: 0.7,
+          ethicalFlag: false,
         },
-        ce2: {
-          intent: 'Diagnostic',
-          sensitivity: 'Low',
-          createdBy: 'user',
-          guardianId: 'default_guardian',
-          guardianTrigger: {
-            drift: 0.5,
-            entropy: 0.7,
-            ethicalFlag: false,
+      },
+      children: [],
+    };
+
+    if (depth > 1) {
+      root.children = [
+        {
+          id: 'sub1',
+          name: 'Sub Zone 1',
+          path: '/dashboard/sub1',
+          depth: 2,
+          archetype: 'Biotech',
+          metadata: {
+            sharedWithDAO: false,
+            confidentiality: 'Public',
+            userNotes: '',
           },
-        },
-        children: [],
-      },
-      {
-        id: 'sub2',
-        name: 'Sub Zone 2',
-        path: '/dashboard/sub2',
-        depth: 2,
-        archetype: 'Biotech',
-        metadata: {
-          sharedWithDAO: false,
-          confidentiality: 'Public',
-          userNotes: '',
-        },
-        ce2: {
-          intent: 'Diagnostic',
-          sensitivity: 'Low',
-          createdBy: 'user',
-          guardianId: 'default_guardian',
-          guardianTrigger: {
-            drift: 0.5,
-            entropy: 0.7,
-            ethicalFlag: false,
+          ce2: {
+            intent: 'Diagnostic',
+            sensitivity: 'Low',
+            createdBy: 'user',
+            guardianId: 'default_guardian',
+            guardianTrigger: {
+              drift: 0.5,
+              entropy: 0.7,
+              ethicalFlag: false,
+            },
           },
+          children: [],
         },
-        children: [],
-      },
-    ] : [],
+        {
+          id: 'sub2',
+          name: 'Sub Zone 2',
+          path: '/dashboard/sub2',
+          depth: 2,
+          archetype: 'Biotech',
+          metadata: {
+            sharedWithDAO: false,
+            confidentiality: 'Public',
+            userNotes: '',
+          },
+          ce2: {
+            intent: 'Diagnostic',
+            sensitivity: 'Low',
+            createdBy: 'user',
+            guardianId: 'default_guardian',
+            guardianTrigger: {
+              drift: 0.5,
+              entropy: 0.7,
+              ethicalFlag: false,
+            },
+          },
+          children: [],
+        },
+      ];
+    }
+
+    return root;
   };
 
-  const displayTree = (tree as ZoneType) ?? dummyTree;
+  const displayTree = tree || generateDummyTree(recursionLevel);
   const [settings, setSettings] = useState<Record<string, ZoneSettings>>({});
 
   const handleUpdate = (zoneId: string, updatedSettings: ZoneSettings) => {
@@ -646,7 +654,7 @@ export default function ZoneDashboardPage() {
             <input
               type="number"
               min={1}
-              max={2} // Limit to 2 for now
+              max={3}
               value={recursionLevel}
               onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
@@ -810,6 +818,9 @@ export default function ZoneDashboardPage() {
         {/* Render the ZoneNode component with the tree */}
         {tree && tree.depth > 1 && (
           <ZoneNode zone={tree} settings={settings} onUpdate={handleUpdate} />
+        )}
+        {!tree && recursionLevel > 1 && (
+          <ZoneNode zone={generateDummyTree(recursionLevel)} settings={settings} onUpdate={handleUpdate} />
         )}
       </div>
     </div>
