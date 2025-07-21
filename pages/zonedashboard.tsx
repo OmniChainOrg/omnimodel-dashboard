@@ -646,7 +646,7 @@ export default function ZoneDashboardPage() {
             <input
               type="number"
               min={1}
-              max={3}
+              max={2} // Limit to 2 for now
               value={recursionLevel}
               onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
@@ -808,7 +808,9 @@ export default function ZoneDashboardPage() {
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
         {/* Render the ZoneNode component with the tree */}
-        <ZoneNode zone={displayTree} settings={settings} onUpdate={handleUpdate} />
+        {tree && tree.depth > 1 && (
+          <ZoneNode zone={tree} settings={settings} onUpdate={handleUpdate} />
+        )}
       </div>
     </div>
   );
