@@ -8,19 +8,21 @@ export interface UseZoneArchetypeOptions {
   depth?: number;
 }
 
+export interface UseZoneArchetypeResult {
+  tree: Zone | null;
+  loading: boolean;
+  error: string | null;
+  refresh: () => Promise<void>;
+}
+
 export function useZoneArchetype({
   archetypeId,
   archetypeName,
   depth = 3,
-}: UseZoneArchetypeOptions) {
+}: UseZoneArchetypeOptions): UseZoneArchetypeResult {
   const [tree, setTree] = useState<Zone | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  if (!archetypeId || !archetypeName) {
-    setLoading(false);
-    setError('Missing archetype parameters');
-    return;
-  }
   const fetchTree = useCallback(async () => {
     setLoading(true);
     setError(null);
