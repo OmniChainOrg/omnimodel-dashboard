@@ -372,6 +372,16 @@ export default function ZoneDashboardPage() {
   const [entropy, setEntropy] = useState(0.7);
   const [ethicalFlag, setEthicalFlag] = useState(false);
 
+  if (!router.isReady) {
+    return <p className="text-center mt-8">Loading...</p>;
+  }
+
+  if (!archetypeId || !archetypeName) {
+    return (
+      <p className="text-center mt-8 text-red-600">Missing archetype parameters.</p>
+    );
+  }
+  
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
