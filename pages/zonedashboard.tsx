@@ -419,7 +419,7 @@ export default function ZoneDashboardPage() {
         metadata: {
           sharedWithDAO,
           confidentiality,
-          userNotes: info,
+          userNotes: z.metadata?.userNotes || '', // Use z.metadata.userNotes if available
         },
         ce2: {
           intent: epistemicIntent,
