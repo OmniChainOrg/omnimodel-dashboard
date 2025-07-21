@@ -57,7 +57,7 @@ const ZoneNode: React.FC<{
     ethicalSensitivity: 'Low',
     createdBy: 'user',
     guardianId: '',
-    metadata: {
+    meta {
       sharedWithDAO: false,
       confidentiality: 'Public',
       userNotes: '',
@@ -397,7 +397,7 @@ export default function ZoneDashboardPage() {
         depth: z.depth,
         approved: false,
         archetype: archetypeId as string,
-        metadata: {
+        meta {
           sharedWithDAO,
           confidentiality,
           userNotes: '',
@@ -514,7 +514,7 @@ export default function ZoneDashboardPage() {
       approved: false,
       depth: 1,
       archetype: 'Biotech',
-      metadata: {
+      meta {
         sharedWithDAO: false,
         confidentiality: 'Public',
         userNotes: '',
@@ -541,7 +541,7 @@ export default function ZoneDashboardPage() {
           path: '/dashboard/sub1',
           depth: 2,
           archetype: 'Biotech',
-          metadata: {
+          meta {
             sharedWithDAO: false,
             confidentiality: 'Public',
             userNotes: '',
@@ -565,7 +565,7 @@ export default function ZoneDashboardPage() {
           path: '/dashboard/sub2',
           depth: 2,
           archetype: 'Biotech',
-          metadata: {
+          meta {
             sharedWithDAO: false,
             confidentiality: 'Public',
             userNotes: '',
