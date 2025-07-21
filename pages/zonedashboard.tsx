@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 
 type ZoneType = Zone & { children?: ZoneType[] };
 
-// Settings type for each zone customization
 interface ZoneSettings {
   info: string;
   confidentiality: 'Public' | 'Confidential' | 'Private';
@@ -40,7 +39,6 @@ interface ZoneSettings {
   };
 }
 
-// Recursive node with inline customization form
 const ZoneNode: React.FC<{
   zone: ZoneType;
   settings: Record<string, ZoneSettings>;
@@ -57,7 +55,7 @@ const ZoneNode: React.FC<{
     ethicalSensitivity: 'Low',
     createdBy: 'user',
     guardianId: '',
-    meta {
+    metadata: {
       sharedWithDAO: false,
       confidentiality: 'Public',
       userNotes: '',
@@ -100,7 +98,6 @@ const ZoneNode: React.FC<{
       alert('Please enter information to share.');
       return;
     }
-
     const updatedSettings: ZoneSettings = {
       info,
       confidentiality,
@@ -133,7 +130,6 @@ const ZoneNode: React.FC<{
         ethicalFlag,
       },
     };
-
     console.log('Updating zone settings:', updatedSettings);
     onUpdate(zone.id, updatedSettings);
     setExpanded(false);
@@ -197,9 +193,7 @@ const ZoneNode: React.FC<{
               className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows={3}
             />
-
-            {/* Conditional Fields for Root Zone Only */}
-            {zone.depth === 1 && (
+            {zone.depth !== 1 && (
               <>
                 <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
                 <select
@@ -293,7 +287,6 @@ const ZoneNode: React.FC<{
                 />
               </>
             )}
-
             {/* Guardian Trigger Level (Always Present) */}
             <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
             <div className="flex space-x-2">
@@ -305,7 +298,7 @@ const ZoneNode: React.FC<{
                   min="0"
                   max="1"
                   value={drift}
-                  onChange={e => setDrift(Number(e.target.value.replace(',', '.')))}
+                  onChange={e => setDrift(Number(e.target.value))}
                   className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -317,7 +310,7 @@ const ZoneNode: React.FC<{
                   min="0"
                   max="1"
                   value={entropy}
-                  onChange={e => setEntropy(Number(e.target.value.replace(',', '.')))}
+                  onChange={e => setEntropy(Number(e.target.value))}
                   className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -331,7 +324,6 @@ const ZoneNode: React.FC<{
                 />
               </div>
             </div>
-
             {/* Save/Cancel Buttons */}
             <div className="mt-4 flex space-x-2">
               <button
@@ -379,6 +371,7 @@ export default function ZoneDashboardPage() {
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
   const [ethicalFlag, setEthicalFlag] = useState(false);
+
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
     archetypeName: archetypeName as string,
@@ -387,7 +380,6 @@ export default function ZoneDashboardPage() {
 
   useEffect(() => {
     if (!tree) return;
-
     const allZones: Zone[] = [];
     const collectZones = (z: ZoneType) => {
       allZones.push({
@@ -397,7 +389,7 @@ export default function ZoneDashboardPage() {
         depth: z.depth,
         approved: false,
         archetype: archetypeId as string,
-        meta {
+        metadata: {
           sharedWithDAO,
           confidentiality,
           userNotes: '',
@@ -415,10 +407,8 @@ export default function ZoneDashboardPage() {
         },
         children: [],
       });
-
       z.children?.forEach(child => collectZones(child as ZoneType));
     };
-
     collectZones(tree as ZoneType);
     // Atomic update
     console.log('Persisting zoneRegistry to localStorage:', allZones);
@@ -429,184 +419,187 @@ export default function ZoneDashboardPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Basic validation
-    if (!prototypeZoneName.trim()) {
-      alert('Please enter a Prototype Zone Name.');
-      return;
-    }
-
-    if (!zoneDomain) {
-      alert('Please select a Zone Domain.');
-      return;
-    }
-
-    if (!recursionLevel || recursionLevel < 1) {
-      alert('Please enter a valid Recursion Level.');
-      return;
-    }
-
-    if (!simAgentProfile) {
-      alert('Please select a Simulation Profile.');
-      return;
-    }
-
-    if (!autoSimFrequency) {
-      alert('Please select a Sim Trigger Mode.');
-      return;
-    }
-
-    if (!impactDomain) {
-      alert('Please select an Impact Domain.');
-      return;
-    }
-
-    if (!confidentiality) {
-      alert('Please select a Confidentiality Level.');
-      return;
-    }
-
-    if (!epistemicIntent) {
-      alert('Please select an Epistemic Intent.');
-      return;
-    }
-
-    if (!ethicalSensitivity) {
-      alert('Please select an Ethical Sensitivity.');
-      return;
-    }
-
-    if (!createdBy) {
-      alert('Please select who Created by.');
-      return;
-    }
-
-    // Log the form data
-    const formData = {
-      prototypeZoneName,
-      zoneDomain,
-      recursionLevel,
-      simAgentProfile,
-      autoSimFrequency,
-      impactDomain,
-      confidentiality,
-      sharedWithDAO,
-      epistemicIntent,
-      ethicalSensitivity,
-      createdBy,
-      guardianId,
-      drift,
-      entropy,
-      ethicalFlag,
-    };
-    console.log('Form Data:', formData);
-
-    // Proceed with submission
     console.log('Submitting form with recursion level:', recursionLevel);
     refresh();
   };
 
-  const generateDummyTree = (depth: number): ZoneType => {
-    const root: ZoneType = {
-      id: 'root',
-      name: 'Root Zone Prototype',
-      path: '/dashboard/root',
-      approved: false,
-      depth: 1,
-      archetype: 'Biotech',
-      meta {
-        sharedWithDAO: false,
-        confidentiality: 'Public',
-        userNotes: '',
+  const dummyTree: ZoneType = {
+    id: 'root',
+    name: 'Root Zone Prototype',
+    path: '/dashboard/root',
+    approved: false,
+    depth: 1,
+    archetype: 'Biotech',
+    metadata: {
+      sharedWithDAO: false,
+      confidentiality: 'Public',
+      userNotes: '',
+    },
+    ce2: {
+      intent: 'Diagnostic',
+      sensitivity: 'Low',
+      createdBy: 'user',
+      guardianId: 'default_guardian',
+      guardianTrigger: {
+        drift: 0.5,
+        entropy: 0.7,
+        ethicalFlag: false,
       },
-      ce2: {
-        intent: 'Diagnostic',
-        sensitivity: 'Low',
-        createdBy: 'user',
-        guardianId: 'default_guardian',
-        guardianTrigger: {
-          drift: 0.5,
-          entropy: 0.7,
-          ethicalFlag: false,
+    },
+    children: recursionLevel > 1 ? [
+      {
+        id: 'sub1',
+        name: 'Sub Zone 1',
+        path: '/dashboard/sub1',
+        depth: 2,
+        archetype: 'Biotech',
+        metadata: {
+          sharedWithDAO: false,
+          confidentiality: 'Public',
+          userNotes: '',
         },
-      },
-      children: [],
-    };
-
-    if (depth > 1) {
-      root.children = [
-        {
-          id: 'sub1',
-          name: 'Sub Zone 1',
-          path: '/dashboard/sub1',
-          depth: 2,
-          archetype: 'Biotech',
-          meta {
-            sharedWithDAO: false,
-            confidentiality: 'Public',
-            userNotes: '',
+        ce2: {
+          intent: 'Diagnostic',
+          sensitivity: 'Low',
+          createdBy: 'user',
+          guardianId: 'default_guardian',
+          guardianTrigger: {
+            drift: 0.5,
+            entropy: 0.7,
+            ethicalFlag: false,
           },
-          ce2: {
-            intent: 'Diagnostic',
-            sensitivity: 'Low',
-            createdBy: 'user',
-            guardianId: 'default_guardian',
-            guardianTrigger: {
-              drift: 0.5,
-              entropy: 0.7,
-              ethicalFlag: false,
+        },
+        children: recursionLevel > 2 ? [
+          {
+            id: 'sub1-1',
+            name: 'Sub Zone 1-1',
+            path: '/dashboard/sub1-1',
+            depth: 3,
+            archetype: 'Biotech',
+            metadata: {
+              sharedWithDAO: false,
+              confidentiality: 'Public',
+              userNotes: '',
+            },
+            ce2: {
+              intent: 'Diagnostic',
+              sensitivity: 'Low',
+              createdBy: 'user',
+              guardianId: 'default_guardian',
+              guardianTrigger: {
+                drift: 0.5,
+                entropy: 0.7,
+                ethicalFlag: false,
+              },
             },
           },
-          children: [],
-        },
-        {
-          id: 'sub2',
-          name: 'Sub Zone 2',
-          path: '/dashboard/sub2',
-          depth: 2,
-          archetype: 'Biotech',
-          meta {
-            sharedWithDAO: false,
-            confidentiality: 'Public',
-            userNotes: '',
-          },
-          ce2: {
-            intent: 'Diagnostic',
-            sensitivity: 'Low',
-            createdBy: 'user',
-            guardianId: 'default_guardian',
-            guardianTrigger: {
-              drift: 0.5,
-              entropy: 0.7,
-              ethicalFlag: false,
+          {
+            id: 'sub1-2',
+            name: 'Sub Zone 1-2',
+            path: '/dashboard/sub1-2',
+            depth: 3,
+            archetype: 'Biotech',
+            metadata: {
+              sharedWithDAO: false,
+              confidentiality: 'Public',
+              userNotes: '',
+            },
+            ce2: {
+              intent: 'Diagnostic',
+              sensitivity: 'Low',
+              createdBy: 'user',
+              guardianId: 'default_guardian',
+              guardianTrigger: {
+                drift: 0.5,
+                entropy: 0.7,
+                ethicalFlag: false,
+              },
             },
           },
-          children: [],
+        ] : [],
+      },
+      {
+        id: 'sub2',
+        name: 'Sub Zone 2',
+        path: '/dashboard/sub2',
+        depth: 2,
+        archetype: 'Biotech',
+        metadata: {
+          sharedWithDAO: false,
+          confidentiality: 'Public',
+          userNotes: '',
         },
-      ];
-    }
-
-    return root;
+        ce2: {
+          intent: 'Diagnostic',
+          sensitivity: 'Low',
+          createdBy: 'user',
+          guardianId: 'default_guardian',
+          guardianTrigger: {
+            drift: 0.5,
+            entropy: 0.7,
+            ethicalFlag: false,
+          },
+        },
+        children: recursionLevel > 2 ? [
+          {
+            id: 'sub2-1',
+            name: 'Sub Zone 2-1',
+            path: '/dashboard/sub2-1',
+            depth: 3,
+            archetype: 'Biotech',
+            metadata: {
+              sharedWithDAO: false,
+              confidentiality: 'Public',
+              userNotes: '',
+            },
+            ce2: {
+              intent: 'Diagnostic',
+              sensitivity: 'Low',
+              createdBy: 'user',
+              guardianId: 'default_guardian',
+              guardianTrigger: {
+                drift: 0.5,
+                entropy: 0.7,
+                ethicalFlag: false,
+              },
+            },
+          },
+          {
+            id: 'sub2-2',
+            name: 'Sub Zone 2-2',
+            path: '/dashboard/sub2-2',
+            depth: 3,
+            archetype: 'Biotech',
+            metadata: {
+              sharedWithDAO: false,
+              confidentiality: 'Public',
+              userNotes: '',
+            },
+            ce2: {
+              intent: 'Diagnostic',
+              sensitivity: 'Low',
+              createdBy: 'user',
+              guardianId: 'default_guardian',
+              guardianTrigger: {
+                drift: 0.5,
+                entropy: 0.7,
+                ethicalFlag: false,
+              },
+            },
+          },
+        ] : [],
+      },
+    ] : [],
   };
 
-  const displayTree = tree || generateDummyTree(recursionLevel);
+  const displayTree = (tree as ZoneType) ?? dummyTree;
   const [settings, setSettings] = useState<Record<string, ZoneSettings>>({});
-
   const handleUpdate = (zoneId: string, updatedSettings: ZoneSettings) => {
     setSettings(prev => ({
       ...prev,
       [zoneId]: updatedSettings,
     }));
   };
-
-  useEffect(() => {
-    console.log('useZoneArchetype params:', {
-      archetypeId,
-      archetypeName,
-      depth: recursionLevel,
-    });
-    console.log('useZoneArchetype response:', { tree, loading, error });
-  }, [tree, loading, error]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 p-8">
@@ -654,7 +647,7 @@ export default function ZoneDashboardPage() {
             <input
               type="number"
               min={1}
-              max={3}
+              max={2}
               value={recursionLevel}
               onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
@@ -779,7 +772,7 @@ export default function ZoneDashboardPage() {
                   min="0"
                   max="1"
                   value={drift}
-                  onChange={e => setDrift(Number(e.target.value.replace(',', '.')))}
+                  onChange={e => setDrift(Number(e.target.value))}
                   className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -791,7 +784,7 @@ export default function ZoneDashboardPage() {
                   min="0"
                   max="1"
                   value={entropy}
-                  onChange={e => setEntropy(Number(e.target.value.replace(',', '.')))}
+                  onChange={e => setEntropy(Number(e.target.value))}
                   className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -816,12 +809,7 @@ export default function ZoneDashboardPage() {
         {loading && <p className="text-center text-gray-600">Generating zone tree...</p>}
         {error && <p className="text-center text-red-600">Error: {error}</p>}
         {/* Render the ZoneNode component with the tree */}
-        {tree && tree.depth > 1 && (
-          <ZoneNode zone={tree} settings={settings} onUpdate={handleUpdate} />
-        )}
-        {!tree && recursionLevel > 1 && (
-          <ZoneNode zone={generateDummyTree(recursionLevel)} settings={settings} onUpdate={handleUpdate} />
-        )}
+        <ZoneNode zone={displayTree} settings={settings} onUpdate={handleUpdate} />
       </div>
     </div>
   );
