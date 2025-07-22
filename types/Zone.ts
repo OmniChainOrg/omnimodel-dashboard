@@ -24,6 +24,11 @@ export type Zone = {
       ethicalFlag: boolean;
     };
   };
+  guardianTrigger?: {       // Add this property
+    drift: number;
+    entropy: number;
+    ethicalFlag: boolean;
+  };
 };
 
 export interface ZoneSettings {
@@ -52,7 +57,7 @@ export interface ZoneSettings {
       ethicalFlag: boolean;
     };
   };
-  guardianTrigger: {
+  guardianTrigger?: {       // Add this property
     drift: number;
     entropy: number;
     ethicalFlag: boolean;
