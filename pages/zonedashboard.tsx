@@ -33,7 +33,7 @@ interface ZoneSettings {
       ethicalFlag: boolean;
     };
   };
-  guardianTrigger: {
+  guardianTrigger?: {
     drift: number;
     entropy: number;
     ethicalFlag: boolean;
@@ -419,7 +419,7 @@ export default function ZoneDashboardPage() {
         metadata: {
           sharedWithDAO,
           confidentiality,
-          userNotes: z.metadata?.userNotes || '', // Use z.metadata.userNotes if available
+          userNotes: z.metadata?.userNotes || '',
         },
         ce2: {
           intent: epistemicIntent,
@@ -551,6 +551,11 @@ export default function ZoneDashboardPage() {
         ethicalFlag: false,
       },
     },
+    guardianTrigger: {
+      drift: 0.5,
+      entropy: 0.7,
+      ethicalFlag: false,
+    },
     children: recursionLevel > 1 ? [
       {
         id: 'sub1',
@@ -573,6 +578,11 @@ export default function ZoneDashboardPage() {
             entropy: 0.7,
             ethicalFlag: false,
           },
+        },
+        guardianTrigger: {
+          drift: 0.5,
+          entropy: 0.7,
+          ethicalFlag: false,
         },
         children: [],
       },
@@ -597,6 +607,11 @@ export default function ZoneDashboardPage() {
             entropy: 0.7,
             ethicalFlag: false,
           },
+        },
+        guardianTrigger: {
+          drift: 0.5,
+          entropy: 0.7,
+          ethicalFlag: false,
         },
         children: [],
       },
