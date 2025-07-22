@@ -1,13 +1,21 @@
 // pages/api/send-email.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// Type-safe SendGrid initialization
-let sgMail: typeof import('@sendgrid/mail') | null = null;
+// Type declaration for SendGrid to avoid import issues
+type SendGridMail = {
+  setApiKey: (key: string) => void;
+  send: (msg: any) => Promise<any>;
+};
+
+let sgMail: SendGridMail | null = null;
 
 if (process.env.NODE_ENV === 'production') {
-  sgMail = require('@sendgrid/mail');
+  // Dynamic require to prevent dev dependency issues
+  sgMail = require('@sendgrid/mail') as unknown as SendGridMail;
+  
   if (!process.env.SENDGRID_API_KEY) {
-    throw new Error('Missing SENDGRID_API_KEY environment variable');
+    console.error('Missing SENDGRID_API_KEY');
+    process.exit(1);
   }
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
@@ -21,9 +29,10 @@ export default async function handler(
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  const { to, subject, text, html } = req.body;
+
   // Development mode - safe email logging
   if (process.env.NODE_ENV !== 'production') {
-    const { to, subject, text } = req.body;
     console.log(`
     ========== EMAIL PREVIEW ==========
     To: ${to || process.env.omnichain@icloud.com}
@@ -34,21 +43,21 @@ export default async function handler(
     return res.status(200).json({ success: true });
   }
 
-  // Production mode - real sending
+  // Production mode
   try {
     if (!sgMail) throw new Error('SendGrid not initialized');
     
     await sgMail.send({
-      to: req.body.to || process.env.omnichain@icloud.com,
+      to: to || process.env.omnichain@icloud.com,
       from: process.env.raphweninger@gmail.com as string,
-      subject: req.body.subject,
-      text: req.body.text,
-      html: req.body.html,
+      subject,
+      text,
+      html,
     });
     
     return res.status(200).json({ success: true });
   } catch (error: any) {
-    console.error('Email send failed:', error.message);
+    console.error('Email error:', error.message);
     return res.status(500).json({ 
       error: 'Failed to send email',
       details: error.response?.body?.errors || error.message 
