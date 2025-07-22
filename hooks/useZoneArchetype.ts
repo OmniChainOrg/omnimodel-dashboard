@@ -1,63 +1,65 @@
-// hooks/useZoneArchetype.ts
-import { useEffect, useState, useCallback } from 'react';
-import type { Zone } from '@/types/Zone';
+// types/Zone.ts
+export type Zone = {
+  id: string;               // Unique identifier for the zone
+  name: string;             // Display name
+  path: string;             // URL path or route
+  depth?: number;           // Optional: zone depth in hierarchy
+  approved?: boolean;       // Optional: approval status
+  archetype?: string;       // Optional: base type of the zone
+  parentId?: string | null; // Optional: parent zone ID for nesting
+  metadata?: {
+    sharedWithDAO: boolean;
+    confidentiality: 'Public' | 'Confidential' | 'Private';
+    userNotes: string;
+  };
+  children?: Zone[];        // Optional: child zones
+  ce2?: {
+    intent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
+    sensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
+    createdBy: 'user' | 'system';
+    guardianId: string;
+    guardianTrigger: {
+      drift: number;
+      entropy: number;
+      ethicalFlag: boolean;
+    };
+  };
+  guardianTrigger?: {       // Add this property
+    drift: number;
+    entropy: number;
+    ethicalFlag: boolean;
+  };
+};
 
-export interface UseZoneArchetypeOptions {
-  archetypeId: string;
-  archetypeName: string;
-  depth?: number;
-}
-
-export interface UseZoneArchetypeResult {
-  tree: Zone | null;
-  loading: boolean;
-  error: string | null;
-  refresh: () => Promise<void>;
-}
-
-export function useZoneArchetype({
-  archetypeId,
-  archetypeName,
-  depth = 3,
-}: UseZoneArchetypeOptions): UseZoneArchetypeResult {
-  const [tree, setTree] = useState<Zone | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const fetchTree = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      console.log('Fetching zone tree with parameters:', { archetypeId, archetypeName, depth });
-      const res = await fetch('/api/ce2/zoneGen', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ archetypeId, archetypeName, depth }),
-      });
-      if (!res.ok) throw new Error(`Status ${res.status}`);
-      const data = await res.json();
-      console.log('Zone tree fetched successfully:', data);
-
-      // Ensure path is set for all zones
-      const ensurePath = (z: Zone): Zone => ({
-        ...z,
-        path: z.path || `/default/path/${z.id}`,
-        children: z.children?.map(child => ensurePath(child)),
-      });
-
-      const treeWithPaths = ensurePath(data);
-      setTree(treeWithPaths);
-    } catch (e) {
-      console.error('Error fetching zone tree:', e);
-      setError((e as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  }, [archetypeId, archetypeName, depth]);
-
-  useEffect(() => {
-    if (archetypeId && archetypeName) {
-      fetchTree();
-    }
-  }, [fetchTree, archetypeId, archetypeName]);
-  return { tree, loading, error, refresh: fetchTree };
+export interface ZoneSettings {
+  info: string;
+  confidentiality: 'Public' | 'Confidential' | 'Private';
+  simAgentProfile: 'Exploratory' | 'Defensive' | 'Predictive' | 'Ethical Validator' | 'Custom';
+  autoSimFrequency: 'Manual' | 'Threshold-based' | 'On Parent Drift' | 'Weekly';
+  impactDomain: 'Local Policy' | 'Regional Healthcare' | 'Global BioStrategy' | 'Ethical';
+  epistemicIntent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
+  ethicalSensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
+  createdBy: 'user' | 'system';
+  guardianId: string;
+  metadata?: {
+    sharedWithDAO: boolean;
+    confidentiality: 'Public' | 'Confidential' | 'Private';
+    userNotes: string;
+  };
+  ce2?: {
+    intent: 'Diagnostic' | 'Forecasting' | 'Moral Risk Evaluation' | 'Policy Proposal' | 'Unknown / Exploratory';
+    sensitivity: 'Low' | 'Medium' | 'High' | 'Extreme';
+    createdBy: 'user' | 'system';
+    guardianId: string;
+    guardianTrigger: {
+      drift: number;
+      entropy: number;
+      ethicalFlag: boolean;
+    };
+  };
+  guardianTrigger?: {       // Add this property
+    drift: number;
+    entropy: number;
+    ethicalFlag: boolean;
+  };
 }
