@@ -197,7 +197,9 @@ const ZoneNode: React.FC<{
               className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
               rows={3}
             />
-            {zone.depth !== 1 && (
+
+            {/* Conditional Fields for Root Zone Only */}
+            {zone.depth === 1 && (
               <>
                 <label className="block text-sm font-medium text-gray-700 mt-4">Confidentiality Level</label>
                 <select
@@ -291,6 +293,7 @@ const ZoneNode: React.FC<{
                 />
               </>
             )}
+
             {/* Guardian Trigger Level (Always Present) */}
             <label className="block text-sm font-medium text-gray-700 mt-4">Guardian Trigger Level</label>
             <div className="flex space-x-2">
@@ -328,6 +331,7 @@ const ZoneNode: React.FC<{
                 />
               </div>
             </div>
+
             {/* Save/Cancel Buttons */}
             <div className="mt-4 flex space-x-2">
               <button
@@ -360,9 +364,26 @@ const ZoneNode: React.FC<{
 export default function ZoneDashboardPage() {
   const router = useRouter();
   const { archetypeId, archetypeName, depth } = router.query;
+
+  if (!router.isReady) {
+    return <p className="text-center mt-8">Loading...</p>;
+  }
+
+  // Log the query parameters to verify they are being retrieved correctly
+  console.log('Query Parameters:', { archetypeId, archetypeName, depth });
+
+  // Ensure archetypeId and archetypeName are present
+  if (!archetypeId || !archetypeName) {
+    return (
+      <p className="text-center mt-8 text-red-600">Missing archetype parameters.</p>
+    );
+  }
+
+  // Provide a default value for depth
+  const recursionLevel = Number(depth) || 1;
+
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
-  const [recursionLevel, setRecursionLevel] = useState(Number(depth) || 1);
   const [simAgentProfile, setSimAgentProfile] = useState('Exploratory');
   const [autoSimFrequency, setAutoSimFrequency] = useState('Manual');
   const [impactDomain, setImpactDomain] = useState('Local Policy');
@@ -375,19 +396,6 @@ export default function ZoneDashboardPage() {
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
   const [ethicalFlag, setEthicalFlag] = useState(false);
-
-  if (!router.isReady) {
-    return <p className="text-center mt-8">Loading...</p>;
-  }
-
-  // Log the query parameters to verify they are being retrieved correctly
-  console.log('Query Parameters:', { archetypeId, archetypeName, depth });
-
-  if (!archetypeId || !archetypeName) {
-    return (
-      <p className="text-center mt-8 text-red-600">Missing archetype parameters.</p>
-    );
-  }
 
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
@@ -673,7 +681,7 @@ export default function ZoneDashboardPage() {
             <input
               type="number"
               min={1}
-              max={2}
+              max={3}
               value={recursionLevel}
               onChange={e => setRecursionLevel(Number(e.target.value))}
               className="mt-1 block w-32 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
