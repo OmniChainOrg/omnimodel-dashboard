@@ -1,53 +1,19 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
+sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-type EmailPayload = {
-  to: string | string[];
-  subject: string;
-  text: string;
-  html: string;
-};
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { to, subject, text, html } = req.body as EmailPayload;
-
-  // Validate environment variables
-  if (!process.env.omnichaingenerator@gmail.com || !process.env.Generator@911) {
-    console.error('Email credentials not configured');
-    return res.status(500).json({ error: 'Server misconfiguration' });
-  }
-
-  // Create transporter
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.omnichaingenerator@gmail.com,
-      pass: process.env.Generator@911,
-    },
-  });
-
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const msg = {
+    to: req.body.to,
+    from: process.env.omnichaingenerator@gmail.com!,
+    subject: req.body.subject,
+    text: req.body.text,
+    html: req.body.html
+  };
+  
   try {
-    await transporter.sendMail({
-      from: `"Zone Generator" <${process.env.omnichaingenerator@gmail.com}>`,
-      to: Array.isArray(to) ? to : [to],
-      subject,
-      text,
-      html,
-    });
-
+    await sgMail.send(msg);
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.error('Email send error:', error);
-    return res.status(500).json({ 
-      error: 'Failed to send email',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
+    return res.status(500).json({ error: 'Failed to send email' });
   }
 }
