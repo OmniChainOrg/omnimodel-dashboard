@@ -19,7 +19,7 @@ export default async function handler(
   const { to, subject, text, html } = req.body as EmailPayload;
 
   // Validate environment variables
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+  if (!process.env.omnichaingenerator@gmail.com || !process.env.Generator@911) {
     console.error('Email credentials not configured');
     return res.status(500).json({ error: 'Server misconfiguration' });
   }
@@ -28,14 +28,14 @@ export default async function handler(
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
+      user: process.env.omnichaingenerator@gmail.com,
+      pass: process.env.Generator@911,
     },
   });
 
   try {
     await transporter.sendMail({
-      from: `"Zone Generator" <${process.env.EMAIL_USER}>`,
+      from: `"Zone Generator" <${process.env.omnichaingenerator@gmail.com}>`,
       to: Array.isArray(to) ? to : [to],
       subject,
       text,
