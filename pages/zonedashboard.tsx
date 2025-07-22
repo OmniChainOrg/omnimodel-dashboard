@@ -364,6 +364,17 @@ const ZoneNode: React.FC<{
 export default function ZoneDashboardPage() {
   const router = useRouter();
   const { archetypeId, archetypeName, depth } = router.query;
+
+  if (!router.isReady) {
+    return <p className="text-center mt-8">Loading...</p>;
+  }
+
+  if (!archetypeId || !archetypeName) {
+    return (
+      <p className="text-center mt-8 text-red-600">Missing archetype parameters. Please ensure the URL includes archetypeId and archetypeName.</p>
+    );
+  }
+
   const [zoneDomain, setZoneDomain] = useState('Biotech');
   const [prototypeZoneName, setPrototypeZoneName] = useState('Root Zone Prototype');
   const [recursionLevel, setRecursionLevel] = useState(Number(depth) || 1);
@@ -379,16 +390,6 @@ export default function ZoneDashboardPage() {
   const [drift, setDrift] = useState(0.5);
   const [entropy, setEntropy] = useState(0.7);
   const [ethicalFlag, setEthicalFlag] = useState(false);
-
-  if (!router.isReady) {
-    return <p className="text-center mt-8">Loading...</p>;
-  }
-
-  if (!archetypeId || !archetypeName) {
-    return (
-      <p className="text-center mt-8 text-red-600">Missing archetype parameters.</p>
-    );
-  }
 
   const { tree, loading, error, refresh } = useZoneArchetype({
     archetypeId: archetypeId as string,
