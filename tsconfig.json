@@ -3,12 +3,12 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext",
-      "typeRoots": ["./types", "./node_modules/@types"]
+      "esnext"
     ],
+    "typeRoots": ["./types", "./node_modules/@types"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "incremental": true,
@@ -23,7 +23,7 @@
         "name": "next"
       }
     ],
-    "target": "ES2017",
+    "target": "es5",
     "baseUrl": ".",
     "paths": {
       "@/*": ["*"]
