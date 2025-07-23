@@ -1,13 +1,15 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  functions = "pages/api/ce2"
+  functions = "pages/api"  # Processes ALL API routes
 
+# Catch-all for API routes
 [[redirects]]
-  from = "/api/ce2/*"
-  to = "/.netlify/functions/ce2/:splat"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
   force = true
 
-[plugins]
+# Fixed plugins section (must use double brackets)
+[[plugins]]
   package = "@netlify/plugin-nextjs"
