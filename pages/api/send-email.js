@@ -1,24 +1,22 @@
 // pages/api/send-email.js
 export default function handler(req, res) {
-  // Parse JSON body if content-type is application/json
-  let body = null;
+  // Enable full request logging
+  console.log('\n=== INCOMING REQUEST ===');
+  console.log('Method:', req.method);
+  console.log('Headers:', req.headers);
+  console.log('Raw Body:', req.body);
+  
   try {
-    if (req.headers['content-type'] === 'application/json') {
-      body = req.body ? JSON.parse(req.body) : null;
-    }
-  } catch (e) {
-    console.error("JSON parse error:", e);
+    const data = req.body ? JSON.parse(req.body) : null;
+    console.log('Parsed Body:', data);
+    
+    res.status(200).json({ 
+      success: true,
+      data: data || "No body received"
+    });
+    
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(400).json({ error: "Invalid JSON" });
   }
-
-  console.log("Full request:", {
-    method: req.method,
-    headers: req.headers,
-    body: body
-  });
-
-  res.status(200).json({ 
-    success: true,
-    message: "API is working",
-    data: body || "No valid JSON body received"
-  });
 }
