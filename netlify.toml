@@ -1,7 +1,6 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  functions = "pages/api"  # Processes ALL API routes
 
 # Catch-all for API routes
 [[redirects]]
