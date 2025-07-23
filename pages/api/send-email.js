@@ -1,46 +1,13 @@
-// pages/api/send-email.js
-const sgMail = require('@sendgrid/mail');
-
+// No API key needed - mock mode
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
-
-  const { to, subject, text, html } = req.body;
-
-  // Development mode - log email instead of sending
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`
-========== EMAIL PREVIEW ==========
-To: ${to}
-Subject: ${subject}
-Body Preview: ${text?.substring(0, 100)}...
-===================================
-`);
-    return res.status(200).json({ 
-      success: true,
-      message: 'In development - email logged to console'
-    });
-  }
-
-  // Production mode - use SendGrid
-  try {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-    await sgMail.send({
-      to,
-      from: process.env.SENDGRID_VERIFIED_SENDER,
-      subject,
-      text,
-      html,
-    });
-
-    return res.status(200).json({ success: true });
-  } catch (error) {
-    console.error('Email error:', error);
-    return res.status(500).json({ 
-      error: 'Failed to send email',
-      details: error.response?.body?.errors || error.message 
-    });
-  }
+  console.log("WOULD SEND EMAIL:", {
+    to: req.body.to,
+    subject: req.body.subject,
+    text: req.body.text
+  });
+  
+  return res.status(200).json({ 
+    success: true,
+    message: "Mock mode - email not actually sent" 
+  });
 }
