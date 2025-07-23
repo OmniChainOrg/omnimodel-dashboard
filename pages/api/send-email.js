@@ -1,10 +1,7 @@
 // pages/api/send-email.js
-import type { NextApiRequest, NextApiResponse } from 'next';
+const sgMail = require('@sendgrid/mail');
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
@@ -28,7 +25,6 @@ Body Preview: ${text?.substring(0, 100)}...
 
   // Production mode - use SendGrid
   try {
-    const sgMail = require('@sendgrid/mail');
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     await sgMail.send({
@@ -40,7 +36,7 @@ Body Preview: ${text?.substring(0, 100)}...
     });
 
     return res.status(200).json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Email error:', error);
     return res.status(500).json({ 
       error: 'Failed to send email',
