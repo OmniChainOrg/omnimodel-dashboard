@@ -26,7 +26,7 @@ export default async function handler(
   }
 
   const { to, subject, text, html } = req.body;
-  const recipient = to || process.env.omnichain@icloud.com;
+  const recipient = to || process.env.NEXT_PUBLIC_EMAIL_RECIPIENT;
 
   // Development mode - safe email logging
   if (process.env.NODE_ENV !== 'production') {
