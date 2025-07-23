@@ -1,10 +1,13 @@
 [build]
   command = "npm run build"
   publish = ".next"
+  functions = "pages/api/ce2"
 
-# Add this EXACT redirect (matches your folder structure)
 [[redirects]]
   from = "/api/ce2/*"
   to = "/.netlify/functions/ce2/:splat"
   status = 200
   force = true
+
+[plugins]
+  package = "@netlify/plugin-nextjs"
