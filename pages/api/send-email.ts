@@ -11,8 +11,7 @@ let sgMail: SendGridMail | null = null;
 if (process.env.NODE_ENV === 'production') {
   sgMail = require('@sendgrid/mail');
   if (!process.env.SENDGRID_API_KEY) {
-    console.error('Missing SENDGRID_API_KEY');
-    throw new Error('SendGrid configuration error');
+    throw new Error('Missing SENDGRID_API_KEY');
   }
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
@@ -33,8 +32,9 @@ export default async function handler(
     console.log(`
 ========== EMAIL PREVIEW ==========
 To: ${recipient}
+From: ${process.env.SENDGRID_VERIFIED_SENDER}
 Subject: ${subject}
-Body Preview: ${text?.substring(0, 100)}...
+Body: ${text?.substring(0, 100)}...
 ===================================
 `);
     return res.status(200).json({ success: true });
@@ -43,10 +43,13 @@ Body Preview: ${text?.substring(0, 100)}...
   // Production mode
   try {
     if (!sgMail) throw new Error('SendGrid not initialized');
+    if (!process.env.SENDGRID_VERIFIED_SENDER) {
+      throw new Error('Missing sender email configuration');
+    }
     
     await sgMail.send({
       to: recipient,
-      from: process.env.raphweninger@gmail.com as string,
+      from: process.env.SENDGRID_VERIFIED_SENDER,
       subject,
       text,
       html,
@@ -54,7 +57,7 @@ Body Preview: ${text?.substring(0, 100)}...
     
     return res.status(200).json({ success: true });
   } catch (error: any) {
-    console.error('Email error:', error.message);
+    console.error('Email error:', error);
     return res.status(500).json({ 
       error: 'Failed to send email',
       details: error.response?.body?.errors || error.message 
