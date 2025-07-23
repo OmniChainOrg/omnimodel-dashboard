@@ -1,13 +1,15 @@
-// No API key needed - mock mode
+// pages/api/send-email.js
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789'); // Free test key
+
 export default async function handler(req, res) {
-  console.log("WOULD SEND EMAIL:", {
-    to: req.body.to,
-    subject: req.body.subject,
-    text: req.body.text
+  await resend.emails.send({
+    from: 'onboarding@resend.dev', // Pre-verified domain
+    to: req.body.to || 'omnichain@icloud.com',
+    subject: 'New Zone Generated',
+    html: `<p>Zone created: ${JSON.stringify(req.body.zoneData)}</p>`
   });
-  
-  return res.status(200).json({ 
-    success: true,
-    message: "Mock mode - email not actually sent" 
-  });
+
+  return res.status(200).json({ success: true });
 }
