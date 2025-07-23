@@ -26,10 +26,10 @@
     "target": "es5",
     "baseUrl": ".",
     "paths": {
-    "@/*": ["./*"],
-    "@types/*": ["types/*"],
-    "@components/*": ["components/*"],
-    "@lib/*": ["lib/*"]
+      "@/*": ["./*"],
+      "@types/*": ["types/*"],
+      "@components/*": ["components/*"],
+      "@lib/*": ["lib/*"]
     }
   },
   "include": [
