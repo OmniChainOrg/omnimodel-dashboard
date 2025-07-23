@@ -17,6 +17,7 @@
     "sass": "latest",
     "chart.js": "^4.4.1",
     "react-chartjs-2": "^5.2.0"
+    "resend": "^latest-version"
   },
   "devDependencies": {
     "@types/node": "22.15.3",
