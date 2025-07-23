@@ -1,9 +1,10 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  functions = "api"  # Critical for serverless functions
 
+# Add this EXACT redirect (matches your folder structure)
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  from = "/api/ce2/*"
+  to = "/.netlify/functions/ce2/:splat"
   status = 200
+  force = true
