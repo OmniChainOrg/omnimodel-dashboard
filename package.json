@@ -16,8 +16,8 @@
     "recharts": "latest",
     "sass": "latest",
     "chart.js": "^4.4.1",
-    "react-chartjs-2": "^5.2.0"
-    "resend": "^latest-version"
+    "react-chartjs-2": "^5.2.0",
+    "resend": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "22.15.3",
