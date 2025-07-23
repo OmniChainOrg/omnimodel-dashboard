@@ -1,7 +1,7 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  functions = "api"  # Combined into single [build] section
+  functions = "api"
 
 [[redirects]]
   from = "/api/*"
@@ -19,5 +19,6 @@
       connect-src 'self';
     """
 
-[plugins]
+# Fixed plugins section (must use double brackets)
+[[plugins]]
   package = "@netlify/plugin-nextjs"
