@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
 
+export interface ConsensusEvent {
+  id: number;
+  zone: string;
+  action: string;
+  timestamp: string;
+  payload: Record<string, unknown>;
+}
+
 const ZONE_COLORS: Record<string, string> = {
   TradePharma: "bg-yellow-100 border-yellow-400",
   SirrenaSim: "bg-indigo-100 border-indigo-400",
@@ -14,7 +22,7 @@ export default function OmniTwinNexusPanel() {
   const fetchEvents = async () => {
     try {
       const res = await fetch("/api/consensus/events");
-      const data = await res.json();
+      const data: ConsensusEvent[] = await res.json();
       setEvents(data);
       setLoading(false);
     } catch (err) {
