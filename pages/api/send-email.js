@@ -1,34 +1,39 @@
 // pages/api/send-email.js
+import bodyParser from 'body-parser'
+
+// Configure body parsing middleware
+const jsonParser = bodyParser.json()
+
 export default async function handler(req, res) {
-  // Debugging: Log entire request
-  console.log('\n=== RAW REQUEST ===');
-  console.log({
-    method: req.method,
-    headers: req.headers,
-    body: req.body
-  });
-
-  // Parse body differently for dev vs production
-  let parsedBody = null;
   try {
-    parsedBody = req.body;
-    
-    // For production (Netlify) where body is already parsed
-    if (typeof req.body === 'string') {
-      parsedBody = JSON.parse(req.body);
-    }
-  } catch (e) {
-    console.error('Parse error:', e);
+    // Apply JSON body parser
+    await new Promise((resolve, reject) => {
+      jsonParser(req, res, (err) => {
+        if (err) return reject(err)
+        resolve()
+      })
+    })
+
+    // Debug logs
+    console.log('\n=== FULL REQUEST ===')
+    console.log('Method:', req.method)
+    console.log('Headers:', req.headers)
+    console.log('Body:', req.body)
+
+    return res.status(200).json({
+      success: true,
+      data: req.body || 'No body received',
+      debug: {
+        bodyType: typeof req.body,
+        contentLength: req.headers['content-length']
+      }
+    })
+
+  } catch (error) {
+    console.error('Error:', error)
+    return res.status(400).json({ 
+      error: 'Invalid request',
+      details: error.message 
+    })
   }
-
-  console.log('Parsed body:', parsedBody);
-
-  return res.status(200).json({
-    success: true,
-    data: parsedBody || 'No valid body received',
-    debug: {
-      rawBodyType: typeof req.body,
-      parsedBodyType: typeof parsedBody
-    }
-  });
 }
