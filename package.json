@@ -10,9 +10,9 @@
   "dependencies": {
     "framer-motion": "latest",
     "lucide-react": "latest",
-    "next": "15.4.2",
-    "react": "18.2.0",
-    "react-dom": "latest",
+    "next": "^15.4.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "recharts": "latest",
     "sass": "latest",
     "chart.js": "^4.4.1",
