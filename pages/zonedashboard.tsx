@@ -3,10 +3,56 @@ import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
 import type { Zone, ZoneSettings } from '@/types/Zone';
-import { sendZoneDataEmail } from '@/utils/sendEmail';
 
-// Types
 type ZoneType = Zone & { children?: ZoneType[] };
+
+interface FormState {
+  userEmail: string;
+  zoneDomain: string;
+  prototypeZoneName: string;
+  recursionLevel: number; // Added missing property
+  simAgentProfile: string;
+  autoSimFrequency: string;
+  impactDomain: string;
+  confidentiality: string;
+  sharedWithDAO: boolean;
+  epistemicIntent: string;
+  ethicalSensitivity: string;
+  createdBy: string;
+  guardianId: string;
+  drift: number;
+  entropy: number;
+  ethicalFlag: boolean;
+}
+
+const ZoneDashboardPage = () => {
+  const router = useRouter();
+  const { archetypeId, archetypeName, depth } = router.query;
+  
+  const [formState, setFormState] = useState<FormState>({
+    userEmail: 'omnichain@icloud.com',
+    zoneDomain: 'Biotech',
+    prototypeZoneName: 'Root Zone Prototype',
+    recursionLevel: Number(depth) || 1, // Now properly typed
+    simAgentProfile: 'Exploratory',
+    autoSimFrequency: 'Manual',
+    impactDomain: 'Local Policy',
+    confidentiality: 'Public',
+    sharedWithDAO: false,
+    epistemicIntent: 'Diagnostic',
+    ethicalSensitivity: 'Low',
+    createdBy: 'user',
+    guardianId: '',
+    drift: 0.5,
+    entropy: 0.7,
+    ethicalFlag: false
+  });
+
+  const { tree, loading, error, refresh } = useZoneArchetype({
+    archetypeId: archetypeId as string,
+    archetypeName: archetypeName as string,
+    depth: formState.recursionLevel // Now works correctly
+  });
 
 // Form configuration
 const FORM_FIELDS = [
