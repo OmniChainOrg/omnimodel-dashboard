@@ -1,24 +1,9 @@
 [build]
   command = "npm run build"
   publish = ".next"
-  functions = "api"
+  functions = "api"  # Critical for serverless functions
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Content-Security-Policy = """
-      default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline';
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data:;
-      connect-src 'self';
-    """
-
-# Fixed plugins section (must use double brackets)
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
