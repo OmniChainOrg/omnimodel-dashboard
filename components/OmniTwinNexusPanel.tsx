@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import type { ConsensusEvent } from "@/types/ConsensusEvent";
 
 export interface ConsensusEvent {
   id: number;
@@ -16,7 +17,7 @@ const ZONE_COLORS: Record<string, string> = {
 };
 
 export default function OmniTwinNexusPanel() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<ConsensusEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchEvents = async () => {
