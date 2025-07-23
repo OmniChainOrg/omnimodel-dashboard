@@ -1,7 +1,7 @@
 // pages/api/consensus/events.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import type { ConsensusEvent } from "@/types/Consen
-  
+import type { ConsensusEvent } from "@/types/ConsensusEvent";
+
 function generateEntropyEvent(id: number, zone: string): ConsensusEvent {
   const entropyDelta = parseFloat((Math.random() * 0.2).toFixed(2));
   return {
