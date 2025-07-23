@@ -1,4 +1,4 @@
-// pages/api/send-email.ts
+// pages/api/send-email.js
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(
