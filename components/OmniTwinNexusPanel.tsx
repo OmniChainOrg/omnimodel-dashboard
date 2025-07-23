@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { ConsensusEvent } from "@/types/ConsensusEvent";
 
-export interface ConsensusEvent {
-  id: number;
-  zone: string;
-  action: string;
-  timestamp: string;
-  payload: Record<string, unknown>;
-}
-
 const ZONE_COLORS: Record<string, string> = {
   TradePharma: "bg-yellow-100 border-yellow-400",
   SirrenaSim: "bg-indigo-100 border-indigo-400",
