@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { useZoneArchetype } from '../hooks/useZoneArchetype';
-import type { Zone } from '@/types/Zone';
+import type { Zone, ZoneSettings } from '@/types/Zone';
 import { sendZoneDataEmail } from '@/utils/sendEmail';
 
 // Types
