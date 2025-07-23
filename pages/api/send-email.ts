@@ -1,21 +1,6 @@
 // pages/api/send-email.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-type SendGridMail = {
-  setApiKey: (key: string) => void;
-  send: (msg: any) => Promise<any>;
-};
-
-let sgMail: SendGridMail | null = null;
-
-if (process.env.NODE_ENV === 'production') {
-  sgMail = require('@sendgrid/mail');
-  if (!process.env.SENDGRID_API_KEY) {
-    throw new Error('Missing SENDGRID_API_KEY');
-  }
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -25,36 +10,35 @@ export default async function handler(
   }
 
   const { to, subject, text, html } = req.body;
-  const recipient = to || process.env.NEXT_PUBLIC_EMAIL_RECIPIENT;
 
-  // Development mode - safe email logging
+  // Development mode - log email instead of sending
   if (process.env.NODE_ENV !== 'production') {
     console.log(`
 ========== EMAIL PREVIEW ==========
-To: ${recipient}
-From: ${process.env.SENDGRID_VERIFIED_SENDER}
+To: ${to}
 Subject: ${subject}
-Body: ${text?.substring(0, 100)}...
+Body Preview: ${text?.substring(0, 100)}...
 ===================================
 `);
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ 
+      success: true,
+      message: 'In development - email logged to console'
+    });
   }
 
-  // Production mode
+  // Production mode - use SendGrid
   try {
-    if (!sgMail) throw new Error('SendGrid not initialized');
-    if (!process.env.SENDGRID_VERIFIED_SENDER) {
-      throw new Error('Missing sender email configuration');
-    }
-    
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
     await sgMail.send({
-      to: recipient,
+      to,
       from: process.env.SENDGRID_VERIFIED_SENDER,
       subject,
       text,
       html,
     });
-    
+
     return res.status(200).json({ success: true });
   } catch (error: any) {
     console.error('Email error:', error);
