@@ -24,9 +24,10 @@ export default function OmniTwinNexusPanel() {
       const res = await fetch("/api/consensus/events");
       const data: ConsensusEvent[] = await res.json();
       setEvents(data);
-      setLoading(false);
     } catch (err) {
       console.error("Error fetching events", err);
+    } finally {
+      setLoading(false);
     }
   };
 
