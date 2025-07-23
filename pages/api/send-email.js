@@ -1,22 +1,34 @@
 // pages/api/send-email.js
-export default function handler(req, res) {
-  // Enable full request logging
-  console.log('\n=== INCOMING REQUEST ===');
-  console.log('Method:', req.method);
-  console.log('Headers:', req.headers);
-  console.log('Raw Body:', req.body);
-  
+export default async function handler(req, res) {
+  // Debugging: Log entire request
+  console.log('\n=== RAW REQUEST ===');
+  console.log({
+    method: req.method,
+    headers: req.headers,
+    body: req.body
+  });
+
+  // Parse body differently for dev vs production
+  let parsedBody = null;
   try {
-    const data = req.body ? JSON.parse(req.body) : null;
-    console.log('Parsed Body:', data);
+    parsedBody = req.body;
     
-    res.status(200).json({ 
-      success: true,
-      data: data || "No body received"
-    });
-    
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(400).json({ error: "Invalid JSON" });
+    // For production (Netlify) where body is already parsed
+    if (typeof req.body === 'string') {
+      parsedBody = JSON.parse(req.body);
+    }
+  } catch (e) {
+    console.error('Parse error:', e);
   }
+
+  console.log('Parsed body:', parsedBody);
+
+  return res.status(200).json({
+    success: true,
+    data: parsedBody || 'No valid body received',
+    debug: {
+      rawBodyType: typeof req.body,
+      parsedBodyType: typeof parsedBody
+    }
+  });
 }
