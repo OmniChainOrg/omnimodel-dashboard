@@ -1,6 +1,7 @@
 // Simulates dynamic BIODEFMatch™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["BIODEFMatch™"];
   const validators = ["Validator-22", "Validator-8", "Validator-X", "Validator-12", "Validator-5"];
   const types = [
