@@ -1,6 +1,7 @@
 // Simulates dynamic ImmunoAtlas™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["ImmunoAtlas™"];
   const validators = ["TCR-Sentinel-7", "ImmunePattern-AI", "SignatureMapper-X", "TrialEntryBot-23", "ResponseMonitor-Δ"];
   const types = [
