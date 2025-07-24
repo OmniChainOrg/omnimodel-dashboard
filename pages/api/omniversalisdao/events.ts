@@ -1,6 +1,7 @@
 // Simulates dynamic OmniversalisDAO™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["OmniversalisDAO™"];
   const validators = ["ProposalChain-Ω", "VoteLogic-7", "BudgetAI-02", "GovernNode-X", "CollectiveTrust-Alpha"];
   const types = [
