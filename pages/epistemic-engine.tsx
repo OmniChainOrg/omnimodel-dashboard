@@ -10,7 +10,7 @@ const dummyZone: Zone = {
   depth: 1,
   approved: false,
   children: [],
-  archetype: undefined, // Optional
+  archetype: 'root',
   parentId: null,       // Optional
   metadata: {
     sharedWithDAO: false,
