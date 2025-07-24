@@ -577,6 +577,15 @@ const ZoneNode: React.FC<{
               setIsEditing(true);
               onSelect?.(zone.id);
             }
+          },
+          {
+          label: 'Fix & Open',
+            handler: (zoneId: string) => {
+          // First update the settings
+              onUpdate(zoneId, {
+              ...formState,
+              confidentiality: 'Confidential'
+            }
           }
         ]
       };
