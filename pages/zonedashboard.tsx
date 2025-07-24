@@ -509,9 +509,10 @@ const ZoneNode: React.FC<{
   onUpdate: (zoneId: string, settings: ZoneSettings) => void;
   onAlert: (event: ZoneEvent) => void;
   onSelect?: (zoneId: string) => void;
-  selected?: boolean;
+  selectedZoneId?: string;
   depth?: number;
-}> = ({ zone, settings, onUpdate, onAlert, onSelect, selected = false, depth = 0 }) => {
+}> = ({ zone, settings, onUpdate, onAlert, onSelect, selectedZoneId, depth = 0 }) => {
+  const selected = selectedZoneId === zone.id;
   const [expanded, setExpanded] = useState(depth < 2);
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -746,7 +747,7 @@ const ZoneNode: React.FC<{
               onUpdate={onUpdate}
               onAlert={onAlert}
               onSelect={onSelect}
-              selected={selected === child.id}
+              selectedZoneId={selectedZoneId}
               depth={depth + 1}
             />
           ))}
@@ -1180,7 +1181,7 @@ const ZoneDashboardPage: React.FC = () => {
                       onUpdate={handleUpdateSettings}
                       onAlert={handleAlert}
                       onSelect={handleSelectZone}
-                      selected={state.selectedZone === zone.id}
+                      selectedZoneId={state.selectedZone}
                     />
                   ))}
                 </div>
