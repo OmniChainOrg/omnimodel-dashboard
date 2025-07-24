@@ -1,4 +1,7 @@
-export default function handler(req, res) {
+// Simulates omnivest™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json([
     {
       type: "Validator network expansion backed by Omniversalis Impact Fund",
