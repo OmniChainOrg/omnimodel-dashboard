@@ -8,6 +8,7 @@ let ZoneRegistry: Zone[] = [
     id: 'root',
     name: 'Root Zone Prototype',
     path: '/dashboard/root',
+    archetype: 'root',
     approved: false,
     depth: 1,
     children: [],
