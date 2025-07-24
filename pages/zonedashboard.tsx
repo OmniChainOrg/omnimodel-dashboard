@@ -105,7 +105,7 @@ interface ZoneEvent {
   source?: 'system' | 'user' | 'guardian';
   actions?: {
     label: string;
-    handler: () => void;
+    handler: (zoneId: string) => void;
   }[];
 }
 
@@ -363,7 +363,7 @@ const AlertBanner: React.FC<{
           {alert.actions.map((action, idx) => (
             <button
               key={idx}
-              onClick={action.handler}
+              onClick={action.handler(alert.zoneId)} // Pass zoneId here
               className="text-xs bg-white px-3 py-1 rounded border border-gray-200 hover:bg-gray-50 flex items-center"
             >
               {action.label}
@@ -566,14 +566,14 @@ const ZoneNode: React.FC<{
         actions: [
           {
             label: 'Make Confidential',
-            handler: () => {
+            handler: (zoneId: string) => {
               handleChange('confidentiality', 'Confidential');
               ZoneAlertSystem.getInstance().resolveAlert(`conflict-${zone.id}-${Date.now()}`);
             }
           },
           {
             label: 'View Settings',
-            handler: () => {
+            handler: (zoneId: string) => {
               setIsEditing(true);
               onSelect?.(zone.id);
             }
