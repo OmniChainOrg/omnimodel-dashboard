@@ -1,6 +1,7 @@
 // Simulates dynamic BioSynthesis™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["BioSynthesis™"];
   const validators = ["GeneCraft-Delta", "SynBioTracer-88", "LineageLab-9", "CRISPRGuard-AI", "CellForge-X"];
   const types = [
