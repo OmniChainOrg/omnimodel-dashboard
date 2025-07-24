@@ -1,6 +1,7 @@
 // Simulates dynamic TradePharma™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["TradePharma™"];
   const validators = ["ColdChainGuard-X", "DrugRedeem-Bot-7", "SupplySync-12", "PharmaTrace-88", "VendorNode-5"];
   const types = [
