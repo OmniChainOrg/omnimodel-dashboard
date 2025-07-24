@@ -1,4 +1,5 @@
 // Simulates dynamic ChronoMatch™ validator events with zone activity
+import type { NextApiRequest, NextApiResponse } from "next";
 
 const validators = ["Validator-5", "Validator-12", "Validator-X", "Validator-8"];
 const zones = ["LongevityZone™", "BIODEFMatch™", "NeuroAdapt™", "ImmunoMeta™"];
