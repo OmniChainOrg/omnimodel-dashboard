@@ -530,7 +530,10 @@ const ZoneNode: React.FC<{
 
   // Handle alerts for zone conditions
   useEffect(() => {
+    // Safely handle depth check
+    const zoneDepth = zone.depth || 0; // Fallback to 0 if undefined
     if (zone.depth > 3) {
+      
       const event: ZoneEvent = {
         id: `depth-${zone.id}-${Date.now()}`,
         zoneId: zone.id,
