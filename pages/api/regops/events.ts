@@ -1,6 +1,7 @@
 // Simulates dynamic RegOps™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["RegOps™"];
   const validators = ["GxP-Agent-3", "RegAudit-Beta", "TrialPhaseBot", "Submission-Node-X", "ComplianceTrace-7"];
   const types = [
