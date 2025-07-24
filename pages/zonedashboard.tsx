@@ -551,7 +551,10 @@ const ZoneNode: React.FC<{
       ZoneAlertSystem.getInstance().trigger(event);
     }
 
-    if (formState.ethicalSensitivity === 'Extreme' && formState.confidentiality === 'Public') {
+    const currentSensitivity = formState.ethicalSensitivity || 'Low';
+    const currentConfidentiality = formState.confidentiality || 'Public';
+    
+    if (currentSensitivity === 'Extreme' && currentConfidentiality === 'Public') {
       const event: ZoneEvent = {
         id: `conflict-${zone.id}-${Date.now()}`,
         zoneId: zone.id,
