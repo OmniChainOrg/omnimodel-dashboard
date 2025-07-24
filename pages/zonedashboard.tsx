@@ -363,9 +363,20 @@ const AlertBanner: React.FC<{
           {alert.actions.map((action, idx) => (
             <button
               key={idx}
-              onClick={action.handler(alert.zoneId)} // Pass zoneId here
-              className="text-xs bg-white px-3 py-1 rounded border border-gray-200 hover:bg-gray-50 flex items-center"
+               onClick={() => {
+                action.handler(alert.zoneId);
+                // Optional: Close alert after action
+                if (action.label !== 'View Settings') {
+                  onDismiss(alert.id);
+      }
+    }}
+              className={`text-xs px-3 py-1 rounded border flex items-center ${
+                action.label === 'Fix & Open' 
+                  ? 'bg-blue-100 border-blue-300 text-blue-800 hover:bg-blue-200'
+                  : 'bg-white border-gray-200 hover:bg-gray-50'
+              }`}
             >
+              {action.label === 'Fix & Open' && <FiCheckCircle className="mr-1" size={12} />}
               {action.label}
             </button>
           ))}
