@@ -1,6 +1,7 @@
 // Simulates metadata about the current model
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json({
     model_id: "omni-neo-2b",
     version: "v1.4.9",
