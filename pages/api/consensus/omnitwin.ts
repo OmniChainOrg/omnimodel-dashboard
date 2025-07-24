@@ -1,6 +1,7 @@
 // pages/api/consensus/omnitwin.ts
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json({
     consensus_score: 0.92,
     justification_summary: "High coherence between L8 intuition and CE² anchors.",
