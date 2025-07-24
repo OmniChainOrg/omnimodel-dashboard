@@ -1,6 +1,7 @@
 // /api/memory/anchor
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = Date.now();
   const anchors = [
     {
