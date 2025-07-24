@@ -207,35 +207,29 @@ class ZoneAlertSystem {
   private subscribers: ((alert: ZoneEvent) => void)[] = [];
   private history: ZoneEvent[] = [];
   private maxAlerts = 100;
-
   private constructor() {}
-
   public static getInstance(): ZoneAlertSystem {
     if (!ZoneAlertSystem.instance) {
       ZoneAlertSystem.instance = new ZoneAlertSystem();
     }
     return ZoneAlertSystem.instance;
   }
-
   subscribe(callback: (alert: ZoneEvent) => void) {
     this.subscribers.push(callback);
     return () => {
       this.subscribers = this.subscribers.filter(sub => sub !== callback);
     };
   }
-
   async trigger(event: ZoneEvent): Promise<void> {
     try {
       console.log(`[ZoneAlert] ${event.type.toUpperCase()}: ${event.message}`);
       this.alerts = [event, ...this.alerts].slice(0, this.maxAlerts);
       this.history = [event, ...this.history].slice(0, this.maxAlerts * 3);
-
       await fetch('/api/send-alert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(event)
       });
-
       this.subscribers.forEach(sub => sub(event));
     } catch (error) {
       console.error('Alert dispatch failed:', error);
@@ -249,7 +243,6 @@ class ZoneAlertSystem {
       this.subscribers.forEach(sub => sub(errorEvent));
     }
   }
-
   resolveAlert(id: string): void {
     const alert = this.alerts.find(a => a.id === id);
     if (alert) {
@@ -257,7 +250,6 @@ class ZoneAlertSystem {
       this.subscribers.forEach(sub => sub(alert));
     }
   }
-
   acknowledgeAlert(id: string): void {
     const alert = this.alerts.find(a => a.id === id);
     if (alert) {
@@ -265,15 +257,12 @@ class ZoneAlertSystem {
       this.subscribers.forEach(sub => sub(alert));
     }
   }
-
   getActiveAlerts(): ZoneEvent[] {
     return this.alerts.filter(a => !a.resolved);
   }
-
   getAlertHistory(count = 20): ZoneEvent[] {
     return this.history.slice(0, count);
   }
-
   clearAlerts(): void {
     this.alerts = [];
     this.subscribers.forEach(sub => sub({
@@ -302,7 +291,6 @@ const AlertBanner: React.FC<{
     info: 'bg-gray-50 border-l-4 border-gray-500 text-gray-800',
     success: 'bg-green-50 border-l-4 border-green-500 text-green-800'
   };
-
   const alertIcons = {
     critical: <FiAlertCircle className="text-red-500" />,
     warning: <FiAlertTriangle className="text-yellow-500" />,
@@ -310,7 +298,6 @@ const AlertBanner: React.FC<{
     info: <FiInfo className="text-gray-500" />,
     success: <FiCheckCircle className="text-green-500" />
   };
-
   return (
     <motion.div
       initial={{ opacity: 0, y: -10 }}
@@ -363,13 +350,13 @@ const AlertBanner: React.FC<{
           {alert.actions.map((action, idx) => (
             <button
               key={idx}
-               onClick={() => {
+              onClick={() => {
                 action.handler(alert.zoneId);
                 // Optional: Close alert after action
                 if (action.label !== 'View Settings') {
                   onDismiss(alert.id);
-      }
-    }}
+                }
+              }}
               className={`text-xs px-3 py-1 rounded border flex items-center ${
                 action.label === 'Fix & Open' 
                   ? 'bg-blue-100 border-blue-300 text-blue-800 hover:bg-blue-200'
@@ -402,7 +389,6 @@ const AlertCenterPanel: React.FC<{
       return typeMatch && resolvedMatch && acknowledgedMatch;
     });
   }, [alerts, filters]);
-
   return (
     <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col">
       <div className="p-4 border-b border-gray-200 flex justify-between items-center">
@@ -434,7 +420,6 @@ const AlertCenterPanel: React.FC<{
           </button>
         </div>
       </div>
-
       <div className="p-4 border-b border-gray-200">
         <div className="flex space-x-2 overflow-x-auto pb-2">
           {['critical', 'warning', 'normal', 'info', 'success'].map(type => (
@@ -466,7 +451,6 @@ const AlertCenterPanel: React.FC<{
           ))}
         </div>
       </div>
-
       <div className="overflow-y-auto flex-1">
         {filteredAlerts.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
@@ -489,7 +473,6 @@ const AlertCenterPanel: React.FC<{
           </div>
         )}
       </div>
-
       <div className="p-3 border-t border-gray-200 text-xs text-gray-500 text-center">
         Showing {filteredAlerts.length} of {alerts.length} total alerts
       </div>
@@ -534,7 +517,6 @@ const ZoneNode: React.FC<{
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const currentSettings = settings[zone.id] || { ...DEFAULT_ZONE_SETTINGS, id: zone.id, name: zone.name };
-
   const [formState, setFormState] = useState<ZoneSettings>(currentSettings);
   const [localAttachments, setLocalAttachments] = useState(currentSettings.metadata?.attachments || []);
   const [localTags, setLocalTags] = useState(currentSettings.metadata?.tags || []);
@@ -543,14 +525,13 @@ const ZoneNode: React.FC<{
   useEffect(() => {
     // Safely handle depth check
     const zoneDepth = zone.depth || 0; // Fallback to 0 if undefined
-    if (zone.depth > 3) {
-      
+    if (zoneDepth > 3) {
       const event: ZoneEvent = {
         id: `depth-${zone.id}-${Date.now()}`,
         zoneId: zone.id,
         zoneName: zone.name,
         type: 'warning',
-        message: `Zone depth exceeds recommended limit (current: ${zone.depth})`,
+        message: `Zone depth exceeds recommended limit (current: ${zoneDepth})`,
         timestamp: new Date(),
         source: 'system',
         actions: [{
@@ -561,10 +542,8 @@ const ZoneNode: React.FC<{
       onAlert(event);
       ZoneAlertSystem.getInstance().trigger(event);
     }
-
     const currentSensitivity = formState.ethicalSensitivity || 'Low';
     const currentConfidentiality = formState.confidentiality || 'Public';
-    
     if (currentSensitivity === 'Extreme' && currentConfidentiality === 'Public') {
       const event: ZoneEvent = {
         id: `conflict-${zone.id}-${Date.now()}`,
@@ -578,7 +557,10 @@ const ZoneNode: React.FC<{
           {
             label: 'Make Confidential',
             handler: (zoneId: string) => {
-              handleChange('confidentiality', 'Confidential');
+              onUpdate(zoneId, {
+                ...formState,
+                confidentiality: 'Confidential'
+              });
               ZoneAlertSystem.getInstance().resolveAlert(`conflict-${zone.id}-${Date.now()}`);
             }
           },
@@ -590,12 +572,15 @@ const ZoneNode: React.FC<{
             }
           },
           {
-          label: 'Fix & Open',
+            label: 'Fix & Open',
             handler: (zoneId: string) => {
-          // First update the settings
+              // First update the settings
               onUpdate(zoneId, {
-              ...formState,
-              confidentiality: 'Confidential'
+                ...formState,
+                confidentiality: 'Confidential'
+              });
+              // Then resolve the alert
+              ZoneAlertSystem.getInstance().resolveAlert(`conflict-${zone.id}-${Date.now()}`);
             }
           }
         ]
@@ -604,8 +589,6 @@ const ZoneNode: React.FC<{
       ZoneAlertSystem.getInstance().trigger(event);
     }
   }, [zone, formState.ethicalSensitivity, formState.confidentiality]);
-
-  // ... rest of the ZoneNode implementation ...
 
   return (
     <motion.div
@@ -632,9 +615,7 @@ const ZoneNode: React.FC<{
             >
               {expanded ? <FiChevronDown /> : <FiChevronUp />}
             </button>
-            
             <div className={`w-3 h-3 rounded-full flex-shrink-0 ${getSensitivityColor(formState.ethicalSensitivity)}`}></div>
-            
             <div>
               <h3 className="font-medium text-gray-900 flex items-center">
                 {zone.name}
@@ -668,7 +649,6 @@ const ZoneNode: React.FC<{
               </div>
             </div>
           </div>
-          
           {/* Right side */}
           <div className="flex space-x-2">
             <button
@@ -695,14 +675,12 @@ const ZoneNode: React.FC<{
             )}
           </div>
         </div>
-        
         {/* Expanded content */}
         {expanded && (
           <div className="mt-3 pt-3 border-t border-gray-200">
             <div className="text-sm text-gray-700">
               {formState.info || <span className="text-gray-400">No description provided</span>}
             </div>
-            
             {/* Metadata preview */}
             <div className="mt-2 flex flex-wrap gap-2">
               {localTags.map(tag => (
@@ -711,7 +689,6 @@ const ZoneNode: React.FC<{
                 </span>
               ))}
             </div>
-            
             {/* Quick actions */}
             <div className="mt-3 flex space-x-2">
               <button 
@@ -745,7 +722,6 @@ const ZoneNode: React.FC<{
           </div>
         )}
       </div>
-      
       {/* Editing panel */}
       {isEditing && (
         <motion.div
@@ -759,7 +735,6 @@ const ZoneNode: React.FC<{
           {/* ... */}
         </motion.div>
       )}
-      
       {/* Child zones */}
       {expanded && zone.children && zone.children.length > 0 && (
         <div className="ml-8 mt-2 pl-4 border-l-2 border-gray-200">
@@ -785,7 +760,7 @@ const ZoneNode: React.FC<{
 const ZoneDashboardPage: React.FC = () => {
   const router = useRouter();
   const { archetypeId, archetypeName, depth } = router.query;
-  
+
   // State management
   const [state, setState] = useState<ZoneDashboardState>({
     zones: [],
@@ -800,7 +775,7 @@ const ZoneDashboardPage: React.FC = () => {
     },
     history: []
   });
-  
+
   const [alertState, setAlertState] = useState<AlertState>({
     alerts: [],
     showAlertsPanel: false,
@@ -811,7 +786,7 @@ const ZoneDashboardPage: React.FC = () => {
       acknowledged: false
     }
   });
-  
+
   const [generationForm, setGenerationForm] = useState({
     zoneDomain: 'Biotech',
     prototypeZoneName: 'Root Zone Prototype',
@@ -852,7 +827,6 @@ const ZoneDashboardPage: React.FC = () => {
 
   useEffect(() => {
     if (!tree) return;
-    
     const processZoneTree = (zone: ZoneType): ZoneType => {
       return {
         ...zone,
@@ -863,14 +837,13 @@ const ZoneDashboardPage: React.FC = () => {
                 'active'
       };
     };
-    
     const processedTree = processZoneTree(tree);
     setState(prev => ({
       ...prev,
       zones: [processedTree],
       selectedZone: processedTree.id
     }));
-    
+
     // Generate initial settings
     const initialSettings: Record<string, ZoneSettings> = {};
     const generateSettings = (z: ZoneType) => {
@@ -911,10 +884,9 @@ const ZoneDashboardPage: React.FC = () => {
       };
       z.children?.forEach(generateSettings);
     };
-    
     generateSettings(processedTree);
     setState(prev => ({ ...prev, settings: initialSettings }));
-    
+
     // Record in history
     const historyItem: ZoneHistoryItem = {
       id: `gen-${Date.now()}`,
@@ -928,7 +900,7 @@ const ZoneDashboardPage: React.FC = () => {
       ]
     };
     setState(prev => ({ ...prev, history: [historyItem, ...prev.history] }));
-    
+
     // Success alert
     const alert: ZoneEvent = {
       id: `gen-success-${Date.now()}`,
@@ -955,7 +927,6 @@ const ZoneDashboardPage: React.FC = () => {
         [zoneId]: updatedSettings
       }
     }));
-    
     // Record in history
     const zone = findZone(state.zones, zoneId);
     if (zone) {
