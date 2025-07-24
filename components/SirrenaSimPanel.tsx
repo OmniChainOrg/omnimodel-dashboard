@@ -24,6 +24,7 @@ export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
     id: "sirrenasim",
     name: "SirrenaSim",
     path: "/sirrenasim",
+    archetype: 'sirrenasim-root',
     depth: 1,
     approved: false,
   };
