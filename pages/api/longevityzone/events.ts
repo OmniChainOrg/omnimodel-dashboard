@@ -1,6 +1,7 @@
 // Simulates longevity-focused events for cross-zone tracking
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const events = [
     {
       type: "telomere length sync",
