@@ -1,6 +1,7 @@
 // Simulates NEURODiag™ system events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json([
     {
       type: "synaptic baseline anomaly",
