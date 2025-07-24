@@ -23,7 +23,7 @@ function generateEvent() {
   };
 }
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const events = Array.from({ length: 5 }, generateEvent);
   res.status(200).json(events);
 }
