@@ -41,6 +41,7 @@ import {
 // ==================== TYPE DEFINITIONS ====================
 type ZoneType = Zone & { 
   children?: ZoneType[];
+  depth: number; // Make depth required
   status?: 'active' | 'archived' | 'draft';
   lastUpdated?: Date;
 };
