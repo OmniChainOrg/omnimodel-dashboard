@@ -1,6 +1,7 @@
 // Simulates dynamic HOPEChain™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["HOPEChain™"];
   const validators = ["ImpactNode-1", "RedeemStream-8", "UBI-Oracle-03", "EquityGuardian-X", "HopeBeacon-Ω"];
   const types = [
