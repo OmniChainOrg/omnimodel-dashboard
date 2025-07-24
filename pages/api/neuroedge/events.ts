@@ -1,6 +1,7 @@
 // Simulates dynamic NEUROEdge™ activity events
+import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req, res) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["NEUROEdge™"];
   const validators = ["NeuroSync-01", "BCI-Validator-Δ", "CognitiveMap-AI", "CortexTrace-77", "SynapseGuardian-X"];
   const types = [
