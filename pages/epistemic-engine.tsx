@@ -11,7 +11,6 @@ const dummyZone: Zone = {
   approved: false,
   children: [],
   archetype: 'root',
-  parentId: null,       // Optional
   metadata: {
     sharedWithDAO: false,
     confidentiality: 'Public',
