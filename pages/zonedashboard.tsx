@@ -509,9 +509,9 @@ const ZoneNode: React.FC<{
   onUpdate: (zoneId: string, settings: ZoneSettings) => void;
   onAlert: (event: ZoneEvent) => void;
   onSelect?: (zoneId: string) => void;
-  selected?: boolean;
+  selectedZoneId?: string;
   depth?: number;
-}> = ({ zone, settings, onUpdate, onAlert, onSelect, selected = false, depth = 0 }) => {
+}> = ({ zone, settings, onUpdate, onAlert, onSelect, selectedZoneId, depth = 0 }) => {
   const [expanded, setExpanded] = useState(depth < 2);
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -590,16 +590,18 @@ const ZoneNode: React.FC<{
     }
   }, [zone, formState.ethicalSensitivity, formState.confidentiality]);
 
+  const isSelected = selectedZoneId === zone.id;
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -10 * depth }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.2 }}
-      className={`mb-3 ${selected ? 'ring-2 ring-blue-400 rounded-lg' : ''}`}
+      className={`mb-3 ${isSelected ? 'ring-2 ring-blue-400 rounded-lg' : ''}`}
     >
       {/* Zone header */}
-      <div 
-        className={`p-4 rounded-lg shadow-sm ${getZoneBackground(zone, formState)} border ${selected ? 'border-blue-300' : 'border-gray-200'} hover:border-blue-200 transition-colors cursor-pointer`}
+      <div
+        className={`p-4 rounded-lg shadow-sm ${getZoneBackground(zone, formState)} border ${isSelected ? 'border-blue-300' : 'border-gray-200'} hover:border-blue-200 transition-colors cursor-pointer`}
         onClick={() => onSelect?.(zone.id)}
       >
         {/* Header content */}
@@ -746,7 +748,7 @@ const ZoneNode: React.FC<{
               onUpdate={onUpdate}
               onAlert={onAlert}
               onSelect={onSelect}
-              selected={selected === child.id}
+              selectedZoneId={selectedZoneId}
               depth={depth + 1}
             />
           ))}
@@ -1006,6 +1008,15 @@ const ZoneDashboardPage: React.FC = () => {
     setState(prev => ({ ...prev, selectedZone: zoneId }));
   }, []);
 
+  const generateZones = async () => {
+    const res = await fetch('/api/zones', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ archetype: 'ExampleArchetype' })
+    });
+    // Handle response
+  };
+
   // Render
   if (!router.isReady) {
     return (
@@ -1098,6 +1109,12 @@ const ZoneDashboardPage: React.FC = () => {
               </h2>
               {/* Form implementation */}
               {/* ... */}
+              <button 
+                onClick={generateZones}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Generate Zones
+              </button>
             </div>
 
             {/* Filters */}
