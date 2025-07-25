@@ -12,42 +12,52 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Zone | { error: string }>
 ) {
-  // Method check
+  // Only accept POST requests
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Body parsing
+  // Parse and validate request body
   let body;
   try {
     body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-    if (!body || typeof body !== 'object') throw new Error('Invalid body');
+    if (!body || typeof body !== 'object') {
+      throw new Error('Invalid request body');
+    }
   } catch (e) {
-    return res.status(400).json({ error: 'Request body must be valid JSON' });
+    return res.status(400).json({ error: 'Invalid JSON body' });
   }
 
-  // Parameter validation
-  const { archetypeId, archetypeName, depth = 3 } = body;
+  const { archetypeId, archetypeName } = body;
+  
   if (!archetypeId || !archetypeName) {
-    return res.status(400).json({
-      error: `Missing required parameters. Received: ${JSON.stringify(body)}`
+    return res.status(400).json({ 
+      error: 'Missing required parameters: archetypeId and archetypeName'
     });
   }
 
-  // Zone generation
+  // Generate mock zone data
   try {
-    const rootZone: Zone = {
+    const responseData: Zone = {
       id: archetypeId,
       name: archetypeName,
       depth: 1,
-      children: [1, 2].map(i => ({
-        id: `${archetypeId}-${i}`,
-        name: `${archetypeName} > SubZone ${i}`,
-        depth: 2
-      }))
+      children: [
+        {
+          id: `${archetypeId}-1`,
+          name: `${archetypeName} Subzone 1`,
+          depth: 2
+        },
+        {
+          id: `${archetypeId}-2`,
+          name: `${archetypeName} Subzone 2`,
+          depth: 2
+        }
+      ]
     };
-    return res.status(200).json(rootZone);
+
+    return res.status(200).json(responseData);
   } catch (error) {
     console.error('Generation error:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
