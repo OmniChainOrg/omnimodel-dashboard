@@ -59,5 +59,6 @@ export function useZoneArchetype({
       fetchTree();
     }
   }, [fetchTree, archetypeId, archetypeName]);
+
   return { tree, loading, error, refresh: fetchTree };
 }
