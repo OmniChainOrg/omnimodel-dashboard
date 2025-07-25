@@ -11,35 +11,39 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Zone | { error: string }>
 ) {
-  // Log the request for debugging
-  console.log(`\n[${new Date().toISOString()}] Received ${req.method} request to ${req.url}`);
-  
-  // 1. Only allow POST requests
+  console.log(`\n[${new Date().toISOString()}] ${req.method} ${req.url}`);
+
+  // 1. Method check
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
-    console.log('Method not allowed - returning 405');
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // 2. Validate request body
-  if (!req.body) {
-    console.log('Missing body - returning 400');
-    return res.status(400).json({ error: 'Request body is required' });
+  // 2. Body parsing
+  let body;
+  try {
+    body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  } catch (e) {
+    return res.status(400).json({ error: 'Invalid JSON body' });
   }
 
-  const { archetypeId, archetypeName, depth = 3 } = req.body;
+  // 3. Parameter validation
+  if (!body || typeof body !== 'object') {
+    return res.status(400).json({ error: 'Request body must be JSON' });
+  }
+
+  const { archetypeId, archetypeName, depth = 3 } = body;
   
   if (!archetypeId || !archetypeName) {
-    console.log('Missing parameters - returning 400');
     return res.status(400).json({ 
-      error: 'Missing required parameters: archetypeId and archetypeName' 
+      error: 'Missing parameters',
+      required: ['archetypeId', 'archetypeName'],
+      received: Object.keys(body)
     });
   }
 
-  // 3. Generate the zone structure
+  // 4. Generate response
   try {
-    console.log(`Generating zone for ${archetypeName} (ID: ${archetypeId})`);
-    
     const rootZone: Zone = {
       id: archetypeId,
       name: archetypeName,
@@ -51,11 +55,9 @@ export default function handler(
       }))
     };
 
-    console.log('Successfully generated zone:', JSON.stringify(rootZone, null, 2));
     return res.status(200).json(rootZone);
-
   } catch (error) {
-    console.error('Generation failed:', error);
+    console.error('Generation error:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
