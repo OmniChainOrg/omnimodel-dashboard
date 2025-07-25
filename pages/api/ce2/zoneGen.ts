@@ -1,3 +1,4 @@
+// pages/api/ce2/zoneGen.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type Zone = {
