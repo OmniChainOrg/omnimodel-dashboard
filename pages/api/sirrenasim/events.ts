@@ -1,7 +1,6 @@
 // Simulates dynamic SirrenaSim™ activity events
-import type { NextApiRequest, NextApiResponse } from "next";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(req, res) {
   const zones = ["SirrenaSim™"];
   const validators = ["Inference-Agent-α", "SimValidator-Ω", "RecursiveNode-07", "LLM-Verifier-X", "BeliefGuard-∆3", "SyntheticReview-Unit", "CognitionPeer-19"];
   const types = [
