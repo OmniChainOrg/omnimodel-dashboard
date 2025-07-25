@@ -509,10 +509,9 @@ const ZoneNode: React.FC<{
   onUpdate: (zoneId: string, settings: ZoneSettings) => void;
   onAlert: (event: ZoneEvent) => void;
   onSelect?: (zoneId: string) => void;
-  selectedZoneId?: string;
+  selected?: boolean;
   depth?: number;
-}> = ({ zone, settings, onUpdate, onAlert, onSelect, selectedZoneId, depth = 0 }) => {
-  const selected = selectedZoneId === zone.id;
+}> = ({ zone, settings, onUpdate, onAlert, onSelect, selected = false, depth = 0 }) => {
   const [expanded, setExpanded] = useState(depth < 2);
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -747,7 +746,7 @@ const ZoneNode: React.FC<{
               onUpdate={onUpdate}
               onAlert={onAlert}
               onSelect={onSelect}
-              selectedZoneId={selectedZoneId}
+              selected={selected === child.id}
               depth={depth + 1}
             />
           ))}
@@ -866,10 +865,9 @@ const ZoneDashboardPage: React.FC = () => {
           ethicalFlag: generationForm.ethicalFlag,
         },
         metadata: {
-          ...DEFAULT_ZONE_SETTINGS.metadata!,
+          ...DEFAULT_ZONE_SETTINGS.metadata,
           sharedWithDAO: generationForm.sharedWithDAO,
           confidentiality: generationForm.confidentiality,
-          userNotes: DEFAULT_ZONE_SETTINGS.metadata?.userNotes ?? '',
         },
         ce2: {
           ...DEFAULT_ZONE_SETTINGS.ce2,
