@@ -31,6 +31,8 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Zone | { error: string }>
 ) {
+  console.log('Received request:', req.method, req.body); // Log request method and body
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'Method Not Allowed' });
@@ -48,6 +50,7 @@ export default function handler(
       1,
       depth
     );
+    console.log('Generated zone:', root); // Log generated zone
     return res.status(200).json(root);
   } catch (err) {
     console.error(err);
