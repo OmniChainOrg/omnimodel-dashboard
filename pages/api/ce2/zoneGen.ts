@@ -36,9 +36,7 @@ export default function handler(
   
   if (!archetypeId || !archetypeName) {
     return res.status(400).json({ 
-      error: 'Missing parameters',
-      required: ['archetypeId', 'archetypeName'],
-      received: Object.keys(body)
+      error: `Missing required parameters: archetypeId and archetypeName. Received: ${Object.keys(body).join(', ')}`
     });
   }
 
