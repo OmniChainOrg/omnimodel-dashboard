@@ -1,3 +1,4 @@
+// pages/api/ce2/zoneGen.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 interface Zone {
@@ -11,36 +12,30 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Zone | { error: string }>
 ) {
-  console.log(`\n[${new Date().toISOString()}] ${req.method} ${req.url}`);
-
-  // 1. Method check
+  // Method check
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // 2. Body parsing
+  // Body parsing
   let body;
   try {
     body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    if (!body || typeof body !== 'object') throw new Error('Invalid body');
   } catch (e) {
-    return res.status(400).json({ error: 'Invalid JSON body' });
+    return res.status(400).json({ error: 'Request body must be valid JSON' });
   }
 
-  // 3. Parameter validation
-  if (!body || typeof body !== 'object') {
-    return res.status(400).json({ error: 'Request body must be JSON' });
-  }
-
+  // Parameter validation
   const { archetypeId, archetypeName, depth = 3 } = body;
-  
   if (!archetypeId || !archetypeName) {
     return res.status(400).json({ 
-      error: `Missing required parameters: archetypeId and archetypeName. Received: ${Object.keys(body).join(', ')}`
+      error: `Missing required parameters. Received: ${JSON.stringify(body)}`
     });
   }
 
-  // 4. Generate response
+  // Zone generation
   try {
     const rootZone: Zone = {
       id: archetypeId,
@@ -52,7 +47,6 @@ export default function handler(
         depth: 2
       }))
     };
-
     return res.status(200).json(rootZone);
   } catch (error) {
     console.error('Generation error:', error);
