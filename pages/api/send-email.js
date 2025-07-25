@@ -1,19 +1,9 @@
 // pages/api/send-email.js
-import bodyParser from 'body-parser'
 
-// Configure body parsing middleware
-const jsonParser = bodyParser.json()
-
+// Next.js automatically parses req.body; no body-parser needed
 export default async function handler(req, res) {
   try {
-    // Apply JSON body parser
-    await new Promise((resolve, reject) => {
-      jsonParser(req, res, (err) => {
-        if (err) return reject(err)
-        resolve()
-      })
-    })
-
+   
     // Debug logs
     console.log('\n=== FULL REQUEST ===')
     console.log('Method:', req.method)
