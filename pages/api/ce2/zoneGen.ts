@@ -30,7 +30,7 @@ export default function handler(
   // Parameter validation
   const { archetypeId, archetypeName, depth = 3 } = body;
   if (!archetypeId || !archetypeName) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: `Missing required parameters. Received: ${JSON.stringify(body)}`
     });
   }
