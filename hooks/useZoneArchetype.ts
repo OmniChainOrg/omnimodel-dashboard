@@ -23,6 +23,7 @@ export function useZoneArchetype({
   const [tree, setTree] = useState<Zone | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const fetchTree = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -33,6 +34,7 @@ export function useZoneArchetype({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ archetypeId, archetypeName, depth }),
       });
+      console.log('API Response:', res); // Log the response object
       if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = await res.json();
       console.log('Zone tree fetched successfully:', data);
