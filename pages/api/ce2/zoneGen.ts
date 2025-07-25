@@ -1,5 +1,5 @@
 // pages/api/ce2/zoneGen.ts
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Zone = {
   id: string;
@@ -8,53 +8,71 @@ type Zone = {
   children?: Zone[];
 };
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Zone | { error: string }>
 ) {
-  console.log('\n=== NEW REQUEST ===');
+  // Log the incoming request
+  console.log('\n=== Incoming Request ===');
   console.log('Method:', req.method);
+  console.log('URL:', req.url);
   console.log('Headers:', req.headers);
   console.log('Body:', req.body);
 
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    console.log('Rejected: Method Not Allowed');
-    return res.status(405).json({ error: 'Method Not Allowed' });
-  }
-
   try {
+    // Only allow POST requests
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', ['POST']);
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+
+    // Validate request body
+    if (!req.body) {
+      return res.status(400).json({ error: 'Request body is required' });
+    }
+
     const { archetypeId, archetypeName, depth = 3 } = req.body;
     
     if (!archetypeId || !archetypeName) {
-      console.log('Rejected: Missing parameters');
-      return res.status(400).json({ error: 'Missing archetypeId or archetypeName' });
+      return res.status(400).json({ 
+        error: 'Missing required parameters: archetypeId and archetypeName' 
+      });
     }
 
-    console.log('Generating zone tree...');
-    const root = generateZoneRecursive(archetypeId, archetypeName, 1, depth);
-    console.log('Generation successful:', JSON.stringify(root, null, 2));
+    // Generate zone tree
+    const rootZone = generateZoneRecursive(archetypeId, archetypeName, 1, depth);
     
-    return res.status(200).json(root);
-  } catch (err) {
-    console.error('Generation failed:', err);
+    console.log('Successfully generated zone:', JSON.stringify(rootZone, null, 2));
+    return res.status(200).json(rootZone);
+
+  } catch (error) {
+    console.error('Server error:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
-function generateZoneRecursive(id: string, name: string, depth: number, maxDepth: number): Zone {
-  const zone: Zone = { id, name, depth };
-  
-  if (depth < maxDepth) {
+function generateZoneRecursive(
+  id: string,
+  name: string,
+  currentDepth: number,
+  maxDepth: number
+): Zone {
+  const zone: Zone = {
+    id,
+    name,
+    depth: currentDepth
+  };
+
+  if (currentDepth < maxDepth) {
     zone.children = [1, 2].map(i => 
       generateZoneRecursive(
         `${id}-${i}`,
         `${name} > SubZone ${i}`,
-        depth + 1,
+        currentDepth + 1,
         maxDepth
       )
     );
   }
-  
+
   return zone;
 }
