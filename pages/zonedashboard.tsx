@@ -37,6 +37,7 @@ import {
   FiEdit,
   FiExternalLink
 } from 'react-icons/fi';
+import ZoneGenerator from '../components/ZoneGenerator';
 
 // ==================== TYPE DEFINITIONS ====================
 type ZoneType = Zone & { 
