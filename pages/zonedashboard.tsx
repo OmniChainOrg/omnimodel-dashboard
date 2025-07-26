@@ -511,7 +511,9 @@ const ZoneNode: React.FC<{
   onAlert: (event: ZoneEvent) => void;
   onSelect?: (zoneId: string) => void;
   selectedZoneId?: string;
+  onGenerateZones?: () => void;
   depth?: number;
+}> = ({ zone, settings, onUpdate, onAlert, onSelect, selectedZoneId, onGenerateZones, depth = 0 }) => {
 }> = ({ zone, settings, onUpdate, onAlert, onSelect, selectedZoneId, depth = 0 }) => {
   const [expanded, setExpanded] = useState(depth < 2);
   const [isEditing, setIsEditing] = useState(false);
@@ -757,6 +759,7 @@ const ZoneNode: React.FC<{
               onAlert={onAlert}
               onSelect={onSelect}
               selectedZoneId={selectedZoneId}
+              onGenerateZones={onGenerateZones}
               depth={depth + 1}
             />
           ))}
@@ -1046,15 +1049,6 @@ const ZoneDashboardPage: React.FC = () => {
   const handleSelectZone = useCallback((zoneId: string) => {
     setState(prev => ({ ...prev, selectedZone: zoneId }));
   }, []);
-
-  const generateZones = async () => {
-    const res = await fetch('/api/zones', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ archetype: 'ExampleArchetype' })
-    });
-    // Handle response
-  };
 
   const handleGenerateZones = useCallback(async () => {
     try {
@@ -1575,6 +1569,7 @@ const ZoneDashboardPage: React.FC = () => {
                       onAlert={handleAlert}
                       onSelect={handleSelectZone}
                       selected={state.selectedZone === zone.id}
+                      onGenerateZones={handleGenerateZones}
                     />
                   ))}
                 </div>
