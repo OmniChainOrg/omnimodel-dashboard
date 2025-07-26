@@ -1054,7 +1054,12 @@ const ZoneDashboardPage: React.FC = () => {
       const res = await fetch('/api/ce2/zoneGen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(generationForm),
+        body: JSON.stringify({
+          archetypeId,
+          archetypeName,
+          depth: generationForm.recursionLevel,
+          ...generationForm,
+        }),
       });
       if (!res.ok) throw new Error(`Status ${res.status}`);
       const data = await res.json();
