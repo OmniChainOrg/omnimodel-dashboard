@@ -1,8 +1,10 @@
 // Simulates dynamic SirrenaSim™ activity events
 import type { NextApiRequest, NextApiResponse } from "next";
+import { randomUUID } from "crypto";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const zones = ["SirrenaSim™"];
+  const zoneParam = (req.query.zone as string) || zones[0];
   const validators = ["Inference-Agent-α", "SimValidator-Ω", "RecursiveNode-07", "LLM-Verifier-X", "BeliefGuard-∆3", "SyntheticReview-Unit", "CognitionPeer-19"];
   const types = [
     "epistemic simulation initialized",
@@ -18,6 +20,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   ];
 
   const generateEvent = () => ({
+    id: randomUUID(),
+    zone: zoneParam,
     zone: zones[0],
     type: types[Math.floor(Math.random() * types.length)],
     timestamp: Date.now(),
