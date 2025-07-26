@@ -514,7 +514,6 @@ const ZoneNode: React.FC<{
   onGenerateZones?: () => void;
   depth?: number;
 }> = ({ zone, settings, onUpdate, onAlert, onSelect, selectedZoneId, onGenerateZones, depth = 0 }) => {
-}> = ({ zone, settings, onUpdate, onAlert, onSelect, selectedZoneId, depth = 0 }) => {
   const [expanded, setExpanded] = useState(depth < 2);
   const [isEditing, setIsEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
