@@ -734,14 +734,13 @@ const ZoneNode: React.FC<{
           transition={{ duration: 0.2 }}
           className="mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200"
         >
-          {/* Full editing {/* filters */} */}
+          {/* Full editing filters */}
           <button 
                 onClick={generateZones}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
                 Generate Zones
               </button>
-            </div>
       
           {/* ... */}
         </motion.div>
@@ -767,7 +766,7 @@ const ZoneNode: React.FC<{
   );
 };
 
-==================== FORM CONFIGURATION ====================
+// ==================== FORM CONFIGURATION ====================
 const FORM_FIELDS = [
   { name: 'zoneDomain', label: 'Zone Domain of Interest', type: 'select', options: [
     'Biotech', 'MedTech', 'Pharma Formulation', 'Clinical Trials', 'RegOps',
