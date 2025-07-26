@@ -736,8 +736,8 @@ const ZoneNode: React.FC<{
           className="mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200"
         >
           {/* Full editing filters */}
-          <button 
-                onClick={generateZones}
+          <button
+                onClick={onGenerateZones}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
                 Generate Zones
