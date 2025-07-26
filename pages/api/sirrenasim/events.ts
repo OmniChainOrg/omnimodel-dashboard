@@ -22,7 +22,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const generateEvent = () => ({
     id: randomUUID(),
     zone: zoneParam,
-    zone: zones[0],
     type: types[Math.floor(Math.random() * types.length)],
     timestamp: Date.now(),
     validator: validators[Math.floor(Math.random() * validators.length)]
