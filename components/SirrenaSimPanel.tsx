@@ -30,7 +30,7 @@ export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
   };
   const activeZone = zone || defaultZone;
 
-  const [events, setEvents] = useState<Event[] | null>(null);␊
+  const [events, setEvents] = useState<Event[] | null>(null);
   // Transform to AnchorTrail events with required fields
   const anchorTrailEvents = events
     ? events.map((ev) => ({
