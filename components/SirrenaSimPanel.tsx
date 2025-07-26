@@ -30,10 +30,10 @@ export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
   };
   const activeZone = zone || defaultZone;
 
-  const [events, setEvents] = useState<Event[] | null>(null);
+  const [events, setEvents] = useState<Event[] | null>(null);␊
   // Transform to AnchorTrail events with required fields
   const anchorTrailEvents = events
-    ? events.map(ev => ({
+    ? events.map((ev) => ({
         id: ev.id,
         timestamp: new Date(ev.timestamp).toISOString(),
         text: ev.type,
@@ -42,6 +42,9 @@ export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
         verifiedBy: [] as string[],
       }))
     : [];
+
+  console.log(events);
+  console.log(anchorTrailEvents);
 
   useEffect(() => {
     fetch(`/api/sirrenasim/events?zone=${activeZone.id}`)
@@ -66,12 +69,10 @@ export default function SirrenaSimPanel({ zone }: SirrenaSimPanelProps) {
             <Loader2 className="animate-spin w-6 h-6" />
           ) : (
             <div className="space-y-2">
-              {events.map((event, idx) => (
-                <React.Fragment key={event.id || idx}>
-                  <ExpandedEvent event={event} />
-                  <AnchorTrail events={anchorTrailEvents} />
-                </React.Fragment>
+              {events.map((event) => (
+                <ExpandedEvent key={event.id} event={event} />
               ))}
+              <AnchorTrail events={anchorTrailEvents} />
             </div>
           )}
         </CardContent>
