@@ -1099,7 +1099,7 @@ const ZoneDashboardPage: React.FC = () => {
             ethicalFlag: generationForm.ethicalFlag,
           },
           metadata: {
-            ...DEFAULT_ZONE_SETTINGS.metadata,
+            ...(DEFAULT_ZONE_SETTINGS.metadata ?? { userNotes: '' }),
             sharedWithDAO: generationForm.sharedWithDAO,
             confidentiality: generationForm.confidentiality,
           },
