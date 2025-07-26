@@ -786,37 +786,6 @@ const ZoneNode: React.FC<{
   );
 };
 
-// ==================== FORM CONFIGURATION ====================
-const FORM_FIELDS = [
-  { name: 'zoneDomain', label: 'Zone Domain of Interest', type: 'select', options: [
-    'Biotech', 'MedTech', 'Pharma Formulation', 'Clinical Trials', 'RegOps',
-    'DeSci', 'DeTrade', 'DeInvest', 'Nonprofit', 'Philanthropy',
-    'Humanitarian', 'AI ethics', 'dApps DevOps', 'Investment', 'Granting', 'Other'
-  ]},
-  { name: 'prototypeZoneName', label: 'Prototype Zone Name', type: 'text' },
-  { name: 'recursionLevel', label: 'Level of Recursion / Depth', type: 'number', min: 1, max: 5 },
-  { name: 'simAgentProfile', label: 'Simulation Profile', type: 'select', options: [
-    'Exploratory', 'Defensive', 'Predictive', 'Ethical Validator', 'Custom'
-  ]},
-  { name: 'autoSimFrequency', label: 'Sim Trigger Mode', type: 'select', options: [
-    'Manual', 'Threshold-based', 'On Parent Drift', 'Weekly'
-  ]},
-  { name: 'impactDomain', label: 'Impact Domain', type: 'select', options: [
-    'Local Policy', 'Regional Healthcare', 'Global BioStrategy', 'Ethical'
-  ]},
-  { name: 'confidentiality', label: 'Confidentiality Level', type: 'select', options: [
-    'Public', 'Confidential', 'Private'
-  ]},
-  { name: 'epistemicIntent', label: 'Epistemic Intent', type: 'select', options: [
-    'Diagnostic', 'Forecasting', 'Moral Risk Evaluation', 'Policy Proposal', 'Unknown / Exploratory'
-  ]},
-  { name: 'ethicalSensitivity', label: 'Ethical Sensitivity', type: 'select', options: [
-    'Low', 'Medium', 'High', 'Extreme'
-  ]},
-  { name: 'createdBy', label: 'Created by', type: 'select', options: ['user', 'system'] },
-  { name: 'guardianId', label: 'Guardian ID', type: 'text' }
-];
-
 // ==================== MAIN DASHBOARD COMPONENT ====================
 const ZoneDashboardPage: React.FC = () => {
   const router = useRouter();
@@ -849,7 +818,7 @@ const ZoneDashboardPage: React.FC = () => {
   });
 
   const [generationForm, setGenerationForm] = useState({
-    zoneDomain: 'Biotech',
+    zoneDomain: ZONE_DOMAIN_OPTIONS[0]
     prototypeZoneName: 'Root Zone Prototype',
     recursionLevel: Number(depth) || 1,
     simAgentProfile: 'Exploratory' as const,
@@ -1276,16 +1245,23 @@ const ZoneDashboardPage: React.FC = () => {
                 <div className="space-y-4">
                   <div>
                     <label htmlFor="zoneDomain" className="block text-sm font-medium text-gray-700">Zone Domain</label>
-                    <input
-                      type="text"
+                    <select
+
                       id="zoneDomain"
                       value={generationForm.zoneDomain}
                       onChange={(e) => setGenerationForm(prev => ({
                         ...prev,
-                        zoneDomain: e.target.value
-                      }))}
+                        zoneDomain: e.target.value as typeof generationForm.zoneDomain
+                        }))
+                      }
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    />
+                    >
+                      {ZONE_DOMAIN_OPTIONS.map(option => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label htmlFor="prototypeZoneName" className="block text-sm font-medium text-gray-700">Prototype Zone Name</label>
