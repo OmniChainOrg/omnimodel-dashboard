@@ -6,10 +6,10 @@ export default function ZoneGenerator() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchZones = async () => {
-    setIsLoading(true);
+  // Pure fetch function, handles API response and errors
+  const fetchZones = async (): Promise<any> => {
     try {
-      const res = await fetch('/api/ce2/zoneGen', {
+      const response = await fetch('/api/ce2/zoneGen', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,14 +20,27 @@ export default function ZoneGenerator() {
         }),
       });
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch zones');
       }
 
-      const data = await res.json();
+      return await response.json();
+    } catch (err) {
+      console.error('Fetch error:', err);
+      throw err;
+    }
+  };
+
+  // Handler to manage loading state and set data or errors
+  const handleLoadZones = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchZones();
       setZones(data.children || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load zones');
+      setError(err instanceof Error ? err.message : 'Failed to fetch zones');
     } finally {
       setIsLoading(false);
     }
@@ -39,7 +52,7 @@ export default function ZoneGenerator() {
       <p>Last updated: {new Date().toLocaleString()}</p>
 
       <button
-        onClick={fetchZones}
+        onClick={handleLoadZones}
         disabled={isLoading}
         className="generate-button"
       >
