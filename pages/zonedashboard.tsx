@@ -1098,7 +1098,7 @@ const ZoneDashboardPage: React.FC = () => {
             entropy: generationForm.entropy,
             ethicalFlag: generationForm.ethicalFlag,
           },
-          meta: {
+          metadata: {
             ...DEFAULT_ZONE_SETTINGS.metadata,
             sharedWithDAO: generationForm.sharedWithDAO,
             confidentiality: generationForm.confidentiality,
