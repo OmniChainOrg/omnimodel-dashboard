@@ -156,6 +156,24 @@ const IMPACT_DOMAIN_OPTIONS = ['Local Policy', 'Regional Healthcare', 'Global Bi
 const EPISTEMIC_INTENT_OPTIONS = ['Diagnostic', 'Forecasting', 'Moral Risk Evaluation', 'Policy Proposal', 'Unknown / Exploratory'] as const;
 const ETHICAL_SENSITIVITY_OPTIONS = ['Low', 'Medium', 'High', 'Extreme'] as const;
 const CREATED_BY_OPTIONS = ['user', 'system'] as const;
+const ZONE_DOMAIN_OPTIONS = [
+  'Biotech',
+  'MedTech',
+  'Pharma Formulation',
+  'Clinical Trials',
+  'RegOps',
+  'DeSci',
+  'DeTrade',
+  'DeInvest',
+  'Nonprofit',
+  'Philanthropy',
+  'Humanitarian',
+  'AI ethics',
+  'dApps DevOps',
+  'Investment',
+  'Granting',
+  'Other'
+] as const;
 
 // ==================== DEFAULT SETTINGS ====================
 const DEFAULT_ZONE_SETTINGS: ZoneSettings = {
