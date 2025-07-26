@@ -1567,7 +1567,7 @@ const ZoneDashboardPage: React.FC = () => {
                       onUpdate={handleUpdateSettings}
                       onAlert={handleAlert}
                       onSelect={handleSelectZone}
-                      selected={state.selectedZone === zone.id}
+                      selectedZoneId={state.selectedZone}
                       onGenerateZones={handleGenerateZones}
                     />
                   ))}
