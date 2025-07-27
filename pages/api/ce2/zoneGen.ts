@@ -8,9 +8,15 @@ interface Zone {
   children?: Zone[];
 }
 
+interface ErrorResponse {
+  error: string;
+  missingFields?: string[];
+  received?: string[];
+}
+
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Zone | { error: string }>
+  res: NextApiResponse<Zone | ErrorResponse>
 ) {
   // Debugging log
   console.log('Incoming request:', {
