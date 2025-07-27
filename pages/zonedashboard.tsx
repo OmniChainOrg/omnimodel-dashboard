@@ -818,7 +818,7 @@ const ZoneDashboardPage: React.FC = () => {
   });
 
   const [generationForm, setGenerationForm] = useState({
-    zoneDomain: ZONE_DOMAIN_OPTIONS[0]
+    zoneDomain: ZONE_DOMAIN_OPTIONS[0],
     prototypeZoneName: 'Root Zone Prototype',
     recursionLevel: Number(depth) || 1,
     simAgentProfile: 'Exploratory' as const,
